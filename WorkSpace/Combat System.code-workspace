@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		}
+  ],
+  "settings": {
+    "dotnet.defaultSolution": "Combat System.sln",
+    "cSpell.words": [
+      "lerp",
+      "Rigidbody",
+      "slerp",
+      "Booom",
+      "MonoBehaviour",
+      "IInputable"
+    ],
+    "git.ignoreLimitWarning": true,
+  }
+}

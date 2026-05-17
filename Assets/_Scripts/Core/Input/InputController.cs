@@ -18,6 +18,8 @@ namespace Core.Input
         /// <inheritdoc cref="IInputable.MoveDirection"/>
         public Vector2 MoveDirection => _moveDirection;
 
+        #region Life Cycle
+
         private void Awake()
         {
             _inputActions = new @InputSystem();
@@ -40,6 +42,8 @@ namespace Core.Input
         {
             _inputActions?.Dispose();
         }
+
+        #endregion
 
         void @InputSystem.ICombatMapActions.OnMove(InputAction.CallbackContext context)
         {

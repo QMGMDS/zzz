@@ -12,7 +12,8 @@
       "slerp",
       "Booom",
       "MonoBehaviour",
-      "IInputable"
+      "IInputable",
+      "Mathf",
     ],
     "git.ignoreLimitWarning": true,
   }

@@ -22,6 +22,11 @@ namespace GamePlay.Player
         [Tooltip("Root Motion 位移缩放倍率，1 为原始动画速度")]
         [SerializeField] private float _rootMotionScale = 1f;
 
+        [Tooltip("旋转平滑阻尼时间（秒），值越大过渡越慢")]
+        [SerializeField] private float _rotationSmoothTime = 0.1f;
+
+        private float _rotationVelocity;
+
         private IInputable Input => _inputController;
 
         #region Life Cycle
@@ -62,8 +67,19 @@ namespace GamePlay.Player
 
             if (magnitude > 0.01f)
             {
-                Vector3 lookDirection = new Vector3(direction.x, 0f, direction.y);
-                transform.rotation = Quaternion.LookRotation(lookDirection);
+                Vector3 cameraForward = Camera.main.transform.forward;
+                Vector3 cameraRight = Camera.main.transform.right;
+                cameraForward.y = 0f;
+                cameraRight.y = 0f;
+                Vector3 worldMoveDir = (cameraForward * direction.y + cameraRight * direction.x).normalized;
+                float targetAngle = Mathf.Atan2(worldMoveDir.x, worldMoveDir.z) * Mathf.Rad2Deg;
+                float smoothedAngle = Mathf.SmoothDampAngle(
+                    transform.eulerAngles.y,
+                    targetAngle,
+                    ref _rotationVelocity,
+                    _rotationSmoothTime
+                );
+                transform.eulerAngles = new Vector3(0f, smoothedAngle, 0f);
             }
         }
 

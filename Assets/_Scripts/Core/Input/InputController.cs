@@ -23,6 +23,7 @@ namespace Core.Input
         private void Awake()
         {
             _inputActions = new @InputSystem();
+            Cursor.visible = false;
         }
 
         private void OnEnable()
@@ -58,6 +59,11 @@ namespace Core.Input
         {
             _moveDirection = direction;
             MoveDirectionChanged?.Invoke(_moveDirection);
+        }
+
+        public void OnCameraLook(InputAction.CallbackContext context)
+        {
+
         }
     }
 }

@@ -1,15 +1,19 @@
 using Core.Input;
+using GamePlay.Common;
+using GamePlay.State;
+using GamePlay.StateMachine;
 using UnityEngine;
 
 namespace GamePlay.Player
 {
     /// <summary>
-    /// 玩家控制器，通过 IInputable 订阅输入事件驱动角色移动与动画状态机
+    /// 玩家控制器，实现 IStateContext 为状态提供依赖，委托状态机驱动角色行为
     /// </summary>
-    public class PlayerController : MonoBehaviour
+    [RequireComponent(typeof(InputController))]
+    [RequireComponent(typeof(Animator))]
+    [RequireComponent(typeof(CharacterController))]
+    public class PlayerController : MonoBehaviour, IStateContext
     {
-        private static readonly int HasInputId = Animator.StringToHash("HasInput");
-
         [Tooltip("输入控制器引用，需挂载 InputController 组件")]
         [SerializeField] private InputController _inputController;
 
@@ -22,14 +26,29 @@ namespace GamePlay.Player
         [Tooltip("Root Motion 位移缩放倍率，1 为原始动画速度")]
         [SerializeField] private float _rootMotionScale = 1f;
 
-        [Tooltip("旋转平滑阻尼时间（秒），值越大过渡越慢")]
-        [SerializeField] private float _rotationSmoothTime = 0.1f;
+        private MovementStateMachine _movementStateMachine;
+        private Camera _mainCamera;
+        private Vector2 _moveDirection;
 
-        private float _rotationVelocity;
+        #region IStateContext
 
-        private IInputable Input => _inputController;
+        public Animator Animator => _animator;
+        public CharacterController CharacterController => _characterController;
+        public Transform Transform => transform;
+        public Vector2 MoveDirection => _moveDirection;
+        public IStateMachine StateMachine => _movementStateMachine;
+        public Camera MainCamera => _mainCamera;
+
+        #endregion
 
         #region Life Cycle
+
+        private void Awake()
+        {
+            _mainCamera = Camera.main;
+            _movementStateMachine = new MovementStateMachine();
+            _movementStateMachine.Initialize<IdleState>(this);
+        }
 
         private void OnEnable()
         {
@@ -38,49 +57,29 @@ namespace GamePlay.Player
                 _animator.applyRootMotion = true;
             }
 
-            if (Input != null)
+            if (_inputController != null)
             {
-                Input.MoveDirectionChanged += HandleMove;
+                _inputController.MoveDirectionChanged += HandleMove;
             }
         }
 
         private void OnDisable()
         {
-            if (Input != null)
+            if (_inputController != null)
             {
-                Input.MoveDirectionChanged -= HandleMove;
+                _inputController.MoveDirectionChanged -= HandleMove;
             }
 
             if (_animator != null)
             {
-                _animator.SetBool(HasInputId, false);
+                _animator.SetBool(AnimationHashes.HasInput, false);
                 _animator.applyRootMotion = false;
             }
         }
 
         private void Update()
         {
-            if (Input == null) return;
-
-            Vector2 direction = Input.MoveDirection;
-            float magnitude = direction.magnitude;
-
-            if (magnitude > 0.01f)
-            {
-                Vector3 cameraForward = Camera.main.transform.forward;
-                Vector3 cameraRight = Camera.main.transform.right;
-                cameraForward.y = 0f;
-                cameraRight.y = 0f;
-                Vector3 worldMoveDir = (cameraForward * direction.y + cameraRight * direction.x).normalized;
-                float targetAngle = Mathf.Atan2(worldMoveDir.x, worldMoveDir.z) * Mathf.Rad2Deg;
-                float smoothedAngle = Mathf.SmoothDampAngle(
-                    transform.eulerAngles.y,
-                    targetAngle,
-                    ref _rotationVelocity,
-                    _rotationSmoothTime
-                );
-                transform.eulerAngles = new Vector3(0f, smoothedAngle, 0f);
-            }
+            _movementStateMachine.Update();
         }
 
         private void OnAnimatorMove()
@@ -95,13 +94,7 @@ namespace GamePlay.Player
 
         private void HandleMove(Vector2 direction)
         {
-            float magnitude = direction.magnitude;
-            bool hasInput = magnitude > 0.01f;
-
-            if (_animator != null)
-            {
-                _animator.SetBool(HasInputId, hasInput);
-            }
+            _moveDirection = direction;
         }
     }
 }

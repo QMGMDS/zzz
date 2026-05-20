@@ -4,7 +4,7 @@ using UnityEngine;
 namespace GamePlay.State
 {
     /// <summary>
-    /// 行走状态：处理摄像机朝向旋转，无输入时切回 IdleState
+    /// 行走状态：处理摄像机朝向旋转，连续无输入超缓冲时间后切回 IdleState
     /// </summary>
     public class WalkState : IState
     {
@@ -13,12 +13,14 @@ namespace GamePlay.State
         private IStateContext _context;
         private Transform _cameraTransform;
         private float _rotationVelocity;
+        private float _noInputTimer;
 
         public void Enter(IStateContext context)
         {
             _context = context;
             _cameraTransform = _context.MainCamera.transform;
             _context.Animator.SetBool(AnimationHashes.HasInput, true);
+            _noInputTimer = 0f;
         }
 
         public void Exit()
@@ -31,8 +33,16 @@ namespace GamePlay.State
 
             if (direction.sqrMagnitude < 0.0001f)
             {
-                _context.StateMachine.ChangeState<IdleState>();
-                return;
+                _noInputTimer += Time.deltaTime;
+                if (_noInputTimer >= _context.InputBufferTime)
+                {
+                    _context.StateMachine.ChangeState<IdleState>();
+                    return;
+                }
+            }
+            else
+            {
+                _noInputTimer = 0f;
             }
 
             Vector3 cameraForward = _cameraTransform.forward;

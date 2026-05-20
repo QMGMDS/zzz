@@ -23,7 +23,7 @@ namespace Core.Input
         private void Awake()
         {
             _inputActions = new @InputSystem();
-            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
         }
 
         private void OnEnable()

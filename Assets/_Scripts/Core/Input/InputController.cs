@@ -46,6 +46,8 @@ namespace Core.Input
 
         #endregion
 
+        #region ICombatMapActions
+
         void @InputSystem.ICombatMapActions.OnMove(InputAction.CallbackContext context)
         {
             var direction = context.ReadValue<Vector2>();
@@ -65,6 +67,8 @@ namespace Core.Input
         {
 
         }
+
+        #endregion
     }
 }
 

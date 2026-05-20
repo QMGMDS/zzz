@@ -25,5 +25,8 @@ namespace GamePlay.State
 
         /// <summary>当前状态机引用，供状态内部触发切换</summary>
         IStateMachine StateMachine { get; }
+
+        /// <summary>输入缓冲时间（秒），在该时间内持续无输入才判定为停止</summary>
+        float InputBufferTime { get; }
     }
 }

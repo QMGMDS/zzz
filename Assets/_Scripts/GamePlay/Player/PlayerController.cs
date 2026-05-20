@@ -26,9 +26,13 @@ namespace GamePlay.Player
         [Tooltip("Root Motion 位移缩放倍率，1 为原始动画速度")]
         [SerializeField] private float _rootMotionScale = 1f;
 
+        [Tooltip("输入缓冲时间（秒），防止方向快速切换时误判为停止")]
+        [SerializeField] private float _inputBufferTime = 0.05f;
+
         private MovementStateMachine _movementStateMachine;
         private Camera _mainCamera;
         private Vector2 _moveDirection;
+        private Quaternion _rotationBeforeAnimator;
 
         #region IStateContext
 
@@ -38,6 +42,7 @@ namespace GamePlay.Player
         public Vector2 MoveDirection => _moveDirection;
         public IStateMachine StateMachine => _movementStateMachine;
         public Camera MainCamera => _mainCamera;
+        public float InputBufferTime => _inputBufferTime;
 
         #endregion
 
@@ -79,6 +84,7 @@ namespace GamePlay.Player
 
         private void Update()
         {
+            _rotationBeforeAnimator = transform.rotation;
             _movementStateMachine.Update();
         }
 
@@ -88,6 +94,11 @@ namespace GamePlay.Player
 
             Vector3 delta = _animator.deltaPosition * _rootMotionScale;
             _characterController.Move(delta);
+
+            if (_movementStateMachine.CurrentStateType == typeof(IdleState))
+            {
+                transform.rotation = _rotationBeforeAnimator;
+            }
         }
 
         #endregion

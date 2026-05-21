@@ -9,5 +9,8 @@ namespace GamePlay.Common
     {
         /// <summary>是否有输入</summary>
         public static readonly int HasInput = Animator.StringToHash("HasInput");
+
+        /// <summary>闪避触发</summary>
+        public static readonly int Evade = Animator.StringToHash("Evade");
     }
 }

@@ -109,6 +109,15 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Evade"",
+                    ""type"": ""Button"",
+                    ""id"": ""d5d452c3-46d1-4d78-a180-5aa355f288df"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -177,6 +186,28 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
                     ""action"": ""CameraLook"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""45d221da-b153-4e7b-899f-9cf67d967b0a"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Evade"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ec1f1151-195c-4915-9497-64e3115576bc"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Evade"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -187,6 +218,7 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
         m_CombatMap = asset.FindActionMap("Combat Map", throwIfNotFound: true);
         m_CombatMap_Move = m_CombatMap.FindAction("Move", throwIfNotFound: true);
         m_CombatMap_CameraLook = m_CombatMap.FindAction("CameraLook", throwIfNotFound: true);
+        m_CombatMap_Evade = m_CombatMap.FindAction("Evade", throwIfNotFound: true);
     }
 
     ~@InputSystem()
@@ -269,6 +301,7 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
     private List<ICombatMapActions> m_CombatMapActionsCallbackInterfaces = new List<ICombatMapActions>();
     private readonly InputAction m_CombatMap_Move;
     private readonly InputAction m_CombatMap_CameraLook;
+    private readonly InputAction m_CombatMap_Evade;
     /// <summary>
     /// Provides access to input actions defined in input action map "Combat Map".
     /// </summary>
@@ -288,6 +321,10 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "CombatMap/CameraLook".
         /// </summary>
         public InputAction @CameraLook => m_Wrapper.m_CombatMap_CameraLook;
+        /// <summary>
+        /// Provides access to the underlying input action "CombatMap/Evade".
+        /// </summary>
+        public InputAction @Evade => m_Wrapper.m_CombatMap_Evade;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -320,6 +357,9 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
             @CameraLook.started += instance.OnCameraLook;
             @CameraLook.performed += instance.OnCameraLook;
             @CameraLook.canceled += instance.OnCameraLook;
+            @Evade.started += instance.OnEvade;
+            @Evade.performed += instance.OnEvade;
+            @Evade.canceled += instance.OnEvade;
         }
 
         /// <summary>
@@ -337,6 +377,9 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
             @CameraLook.started -= instance.OnCameraLook;
             @CameraLook.performed -= instance.OnCameraLook;
             @CameraLook.canceled -= instance.OnCameraLook;
+            @Evade.started -= instance.OnEvade;
+            @Evade.performed -= instance.OnEvade;
+            @Evade.canceled -= instance.OnEvade;
         }
 
         /// <summary>
@@ -391,5 +434,12 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnCameraLook(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Evade" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnEvade(InputAction.CallbackContext context);
     }
 }

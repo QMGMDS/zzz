@@ -15,6 +15,9 @@ namespace Core.Input
         /// <inheritdoc cref="IInputable.MoveDirectionChanged"/>
         public event Action<Vector2> MoveDirectionChanged;
 
+        /// <inheritdoc cref="IInputable.EvadeTriggered"/>
+        public event Action EvadeTriggered;
+
         /// <inheritdoc cref="IInputable.MoveDirection"/>
         public Vector2 MoveDirection => _moveDirection;
 
@@ -65,7 +68,14 @@ namespace Core.Input
 
         public void OnCameraLook(InputAction.CallbackContext context)
         {
+        }
 
+        public void OnEvade(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                EvadeTriggered?.Invoke();
+            }
         }
 
         #endregion

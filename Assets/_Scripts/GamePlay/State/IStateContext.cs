@@ -28,5 +28,11 @@ namespace GamePlay.State
 
         /// <summary>输入缓冲时间（秒），在该时间内持续无输入才判定为停止</summary>
         float InputBufferTime { get; }
+
+        /// <summary>当前帧是否有闪避输入待消费</summary>
+        bool IsEvadeTriggered { get; }
+
+        /// <summary>消费闪避输入标记，防止重复触发</summary>
+        void ConsumeEvade();
     }
 }

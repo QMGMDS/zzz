@@ -11,7 +11,9 @@ namespace GamePlay.StateMachine
     {
         private readonly Dictionary<Type, IState> _states = new();
         private IState _currentState;
-        private IStateContext _context;
+
+        /// <summary>状态上下文，子类可访问以在 Update 等生命周期方法中读取</summary>
+        protected IStateContext _context;
 
         public Type CurrentStateType => _currentState?.GetType();
 
@@ -40,8 +42,8 @@ namespace GamePlay.StateMachine
             _currentState.Enter(_context);
         }
 
-        /// <summary>每帧调用当前状态的 Update</summary>
-        public void Update()
+        /// <summary>每帧调用当前状态的 Update，子类可重写以插入状态机层逻辑</summary>
+        public virtual void Update()
         {
             _currentState?.Update();
         }

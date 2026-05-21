@@ -32,6 +32,7 @@ namespace GamePlay.Player
         private MovementStateMachine _movementStateMachine;
         private Camera _mainCamera;
         private Vector2 _moveDirection;
+        private bool _evadeTriggered;
 
         #region IStateContext
 
@@ -42,6 +43,12 @@ namespace GamePlay.Player
         public IStateMachine StateMachine => _movementStateMachine;
         public Camera MainCamera => _mainCamera;
         public float InputBufferTime => _inputBufferTime;
+        public bool IsEvadeTriggered => _evadeTriggered;
+
+        public void ConsumeEvade()
+        {
+            _evadeTriggered = false;
+        }
 
         #endregion
 
@@ -64,6 +71,7 @@ namespace GamePlay.Player
             if (_inputController != null)
             {
                 _inputController.MoveDirectionChanged += HandleMove;
+                _inputController.EvadeTriggered += HandleEvade;
             }
         }
 
@@ -72,6 +80,7 @@ namespace GamePlay.Player
             if (_inputController != null)
             {
                 _inputController.MoveDirectionChanged -= HandleMove;
+                _inputController.EvadeTriggered -= HandleEvade;
             }
 
             if (_animator != null)
@@ -104,6 +113,11 @@ namespace GamePlay.Player
         private void HandleMove(Vector2 direction)
         {
             _moveDirection = direction;
+        }
+
+        private void HandleEvade()
+        {
+            _evadeTriggered = true;
         }
     }
 }

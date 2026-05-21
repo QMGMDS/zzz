@@ -7,7 +7,7 @@ namespace GamePlay.StateMachine
     /// <summary>
     /// 状态机基类，提供状态注册、切换与生命周期驱动的通用实现
     /// </summary>
-    public class StateMachine : IStateMachine
+    public abstract class StateMachine : IStateMachine
     {
         private readonly Dictionary<Type, IState> _states = new();
         private IState _currentState;
@@ -44,6 +44,12 @@ namespace GamePlay.StateMachine
         public void Update()
         {
             _currentState?.Update();
+        }
+
+        /// <summary>每帧 LateUpdate，在 Animator 更新后调用</summary>
+        public void LateUpdate()
+        {
+            _currentState?.LateUpdate();
         }
 
         /// <summary>每物理帧调用当前状态的 PhysicsUpdate</summary>

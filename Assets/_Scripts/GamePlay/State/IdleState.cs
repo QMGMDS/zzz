@@ -1,18 +1,21 @@
 using GamePlay.Common;
+using UnityEngine;
 
 namespace GamePlay.State
 {
     /// <summary>
-    /// 待机状态：检测到输入时切换至 WalkState
+    /// 待机状态：检测到输入时切换至 WalkState，LateUpdate 中锁定旋转
     /// </summary>
     public class IdleState : IState
     {
         private IStateContext _context;
+        private Quaternion _lockedRotation;
 
         public void Enter(IStateContext context)
         {
             _context = context;
             _context.Animator.SetBool(AnimationHashes.HasInput, false);
+            _lockedRotation = _context.Transform.rotation;
         }
 
         public void Exit()
@@ -25,6 +28,12 @@ namespace GamePlay.State
             {
                 _context.StateMachine.ChangeState<WalkState>();
             }
+        }
+
+        /// <summary>在 Animator 更新后强制锁定旋转，覆盖骨架动画曲线</summary>
+        public void LateUpdate()
+        {
+            _context.Transform.rotation = _lockedRotation;
         }
 
         public void PhysicsUpdate()

@@ -32,7 +32,6 @@ namespace GamePlay.Player
         private MovementStateMachine _movementStateMachine;
         private Camera _mainCamera;
         private Vector2 _moveDirection;
-        private Quaternion _rotationBeforeAnimator;
 
         #region IStateContext
 
@@ -84,8 +83,12 @@ namespace GamePlay.Player
 
         private void Update()
         {
-            _rotationBeforeAnimator = transform.rotation;
             _movementStateMachine.Update();
+        }
+
+        private void LateUpdate()
+        {
+            _movementStateMachine.LateUpdate();
         }
 
         private void OnAnimatorMove()
@@ -94,11 +97,6 @@ namespace GamePlay.Player
 
             Vector3 delta = _animator.deltaPosition * _rootMotionScale;
             _characterController.Move(delta);
-
-            if (_movementStateMachine.CurrentStateType == typeof(IdleState))
-            {
-                transform.rotation = _rotationBeforeAnimator;
-            }
         }
 
         #endregion

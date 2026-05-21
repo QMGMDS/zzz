@@ -14,6 +14,9 @@ namespace GamePlay.State
         /// <summary>每帧逻辑更新</summary>
         void Update();
 
+        /// <summary>LateUpdate，在 Animator 更新后执行，用于修正模型非预期偏移</summary>
+        void LateUpdate();
+
         /// <summary>每物理帧更新</summary>
         void PhysicsUpdate();
     }

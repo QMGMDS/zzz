@@ -37,13 +37,19 @@ namespace GamePlay.State
                 if (_noInputTimer >= _context.InputBufferTime)
                 {
                     _context.StateMachine.ChangeState<IdleState>();
-                    return;
                 }
             }
             else
             {
                 _noInputTimer = 0f;
             }
+        }
+
+        /// <summary>在 Animator 更新后执行旋转，确保覆盖骨架动画曲线</summary>
+        public void LateUpdate()
+        {
+            Vector2 direction = _context.MoveDirection;
+            if (direction.sqrMagnitude < 0.0001f) return;
 
             Vector3 cameraForward = _cameraTransform.forward;
             Vector3 cameraRight = _cameraTransform.right;

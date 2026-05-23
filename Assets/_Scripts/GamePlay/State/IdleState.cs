@@ -1,4 +1,3 @@
-using GamePlay.Common;
 using UnityEngine;
 
 namespace GamePlay.State
@@ -8,13 +7,15 @@ namespace GamePlay.State
     /// </summary>
     public class IdleState : IState
     {
+        private const float CrossFadeDuration = 0.15f;
+
         private IStateContext _context;
         private Quaternion _lockedRotation;
 
         public void Enter(IStateContext context)
         {
             _context = context;
-            _context.Animator.SetBool(AnimationHashes.HasInput, false);
+            _context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.Idle, CrossFadeDuration);
             _lockedRotation = _context.Transform.rotation;
         }
 

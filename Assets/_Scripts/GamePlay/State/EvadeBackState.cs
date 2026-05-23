@@ -3,10 +3,10 @@ using UnityEngine;
 namespace GamePlay.State
 {
     /// <summary>
-    /// 前闪避状态：播 EvadeFront 动画。有输入时在延迟窗口后可打断切入 RunState，
+    /// 后撤步状态：播 EvadeBack 动画。有输入时在延迟窗口后可打断切入 WalkState，
     /// 无输入时等动画播完（normalizedTime ≥ 0.95）后自然过渡到 IdleState。
     /// </summary>
-    public class EvadeFrontState : IState
+    public class EvadeBackState : IState
     {
         private const float InputDetectionDelay = 0.15f;
         private const float CrossFadeDuration = 0.05f;
@@ -19,7 +19,7 @@ namespace GamePlay.State
         public void Enter(IStateContext context)
         {
             _context = context;
-            _context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.EvadeFront, CrossFadeDuration);
+            _context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.EvadeBack, CrossFadeDuration);
             _hasEnteredAnimState = false;
         }
 
@@ -33,7 +33,7 @@ namespace GamePlay.State
 
             if (!_hasEnteredAnimState)
             {
-                if (stateInfo.shortNameHash == Common.AnimationHashes.EvadeFront)
+                if (stateInfo.shortNameHash == Common.AnimationHashes.EvadeBack)
                 {
                     _hasEnteredAnimState = true;
                     _animEnterTime = Time.time;
@@ -42,7 +42,7 @@ namespace GamePlay.State
                 return;
             }
 
-            if (stateInfo.shortNameHash != Common.AnimationHashes.EvadeFront)
+            if (stateInfo.shortNameHash != Common.AnimationHashes.EvadeBack)
                 return;
 
             if (Time.time - _animEnterTime < InputDetectionDelay)
@@ -50,7 +50,7 @@ namespace GamePlay.State
 
             if (_context.MoveDirection.sqrMagnitude > 0.0001f)
             {
-                _context.StateMachine.ChangeState<RunState>();
+                _context.StateMachine.ChangeState<WalkState>();
                 return;
             }
 

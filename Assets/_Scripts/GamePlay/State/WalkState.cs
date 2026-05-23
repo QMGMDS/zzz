@@ -3,28 +3,40 @@ using UnityEngine;
 namespace GamePlay.State
 {
     /// <summary>
-    /// 行走状态：处理摄像机朝向旋转。连续无输入超缓冲时间后进入 RunEnd→Idle 停止动画链，
-    /// 停止过程中检测到输入则取消停止并切回 WalkStart。
+    /// 行走状态，三阶段驱动：
+    /// Entering — 输入后等待判定短/长按，不播动画；Walking — 长按确认，正常移动；
+    /// Stopping — 短按/松手，播 RunEnd 并重置到 time=0。
+    /// RunEnd 播放期间检测到输入则回到 Entering 重新判定；再次短按则打断并重播 RunEnd。
     /// </summary>
     public class WalkState : IState
     {
+        private enum Phase
+        {
+            Entering,
+            Walking,
+            Stopping
+        }
+
         private const float RotationSmoothTime = 0.1f;
         private const float CrossFadeDuration = 0.10f;
         private const float StopCrossFadeDuration = 0.15f;
+        /// <summary>长/短按判定阈值</summary>
+        private const float ShortPressThreshold = 0.15f;
 
         private IStateContext _context;
         private Transform _cameraTransform;
         private float _rotationVelocity;
         private float _noInputTimer;
-        private bool _isStopping;
+        private float _holdTimer;
+        private Phase _phase;
 
         public void Enter(IStateContext context)
         {
             _context = context;
             _cameraTransform = _context.MainCamera.transform;
-            _context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.WalkStart, CrossFadeDuration);
             _noInputTimer = 0f;
-            _isStopping = false;
+            _holdTimer = 0f;
+            _phase = Phase.Entering;
         }
 
         public void Exit()
@@ -34,37 +46,69 @@ namespace GamePlay.State
         public void Update()
         {
             Vector2 direction = _context.MoveDirection;
+            bool hasInput = direction.sqrMagnitude > 0.0001f;
 
-            if (_isStopping)
+            switch (_phase)
             {
-                if (direction.sqrMagnitude > 0.0001f)
-                {
-                    _context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.WalkStart, CrossFadeDuration);
-                    _isStopping = false;
-                    _noInputTimer = 0f;
-                    return;
-                }
+                case Phase.Entering:
+                    UpdateEntering(hasInput);
+                    break;
+                case Phase.Walking:
+                    UpdateWalking(hasInput);
+                    break;
+                case Phase.Stopping:
+                    UpdateStopping(hasInput);
+                    break;
+            }
+        }
 
-                if (IsInAnimatorState(Common.AnimationHashes.Idle))
-                {
-                    _context.StateMachine.ChangeState<IdleState>();
-                }
-
+        private void UpdateEntering(bool hasInput)
+        {
+            if (!hasInput)
+            {
+                _context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.RunEnd, StopCrossFadeDuration, 0, 0f);
+                _phase = Phase.Stopping;
                 return;
             }
 
-            if (direction.sqrMagnitude < 0.0001f)
+            _holdTimer += Time.deltaTime;
+            if (_holdTimer >= ShortPressThreshold)
+            {
+                _context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.WalkStart, CrossFadeDuration);
+                _phase = Phase.Walking;
+            }
+        }
+
+        private void UpdateWalking(bool hasInput)
+        {
+            if (!hasInput)
             {
                 _noInputTimer += Time.deltaTime;
                 if (_noInputTimer >= _context.InputBufferTime)
                 {
-                    _context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.RunEnd, StopCrossFadeDuration);
-                    _isStopping = true;
+                    _context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.RunEnd, StopCrossFadeDuration, 0, 0f);
+                    _phase = Phase.Stopping;
                 }
             }
             else
             {
                 _noInputTimer = 0f;
+            }
+        }
+
+        private void UpdateStopping(bool hasInput)
+        {
+            if (hasInput)
+            {
+                _holdTimer = 0f;
+                _noInputTimer = 0f;
+                _phase = Phase.Entering;
+                return;
+            }
+
+            if (IsInAnimatorState(Common.AnimationHashes.Idle))
+            {
+                _context.StateMachine.ChangeState<IdleState>();
             }
         }
 

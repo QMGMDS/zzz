@@ -10,8 +10,14 @@ namespace GamePlay.Common
         /// <summary>Idle 动画状态名</summary>
         public static readonly int Idle = Animator.StringToHash("Idle");
 
+        /// <summary>Walk 动画状态名</summary>
+        public static readonly int Walk = Animator.StringToHash("Walk");
+
         /// <summary>WalkStart 动画状态名</summary>
         public static readonly int WalkStart = Animator.StringToHash("WalkStart");
+
+        /// <summary>Run 动画状态名</summary>
+        public static readonly int Run = Animator.StringToHash("Run");
 
         /// <summary>RunStart 动画状态名</summary>
         public static readonly int RunStart = Animator.StringToHash("RunStart");

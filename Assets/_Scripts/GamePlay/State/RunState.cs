@@ -4,12 +4,13 @@ namespace GamePlay.State
 {
     /// <summary>
     /// 跑步状态：处理摄像机朝向旋转。连续无输入超缓冲时间后进入 RunEnd→Idle 停止动画链，
-    /// 停止过程中检测到输入则取消停止并切回 RunStart。
+    /// 停止过程中检测到输入则取消停止并热切到 Run。
     /// </summary>
     public class RunState : IState
     {
         private const float RotationSmoothTime = 0.1f;
         private const float CrossFadeDuration = 0.10f;
+        private const float ResumeCrossFadeDuration = 0.05f;
         private const float StopCrossFadeDuration = 0.15f;
 
         private IStateContext _context;
@@ -39,7 +40,7 @@ namespace GamePlay.State
             {
                 if (direction.sqrMagnitude > 0.0001f)
                 {
-                    _context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.RunStart, CrossFadeDuration);
+                    _context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.Run, ResumeCrossFadeDuration);
                     _isStopping = false;
                     _noInputTimer = 0f;
                     return;

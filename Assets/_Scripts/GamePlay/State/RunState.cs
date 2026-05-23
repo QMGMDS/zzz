@@ -3,14 +3,13 @@ using UnityEngine;
 namespace GamePlay.State
 {
     /// <summary>
-    /// 跑步状态：处理摄像机朝向旋转。连续无输入超缓冲时间后进入 RunEnd→Idle 停止动画链，
-    /// 停止过程中检测到输入则取消停止并热切到 Run。
+    /// 跑步状态：仅通过 Evade 键进入。松手后播 RunEnd→Idle，停止期间检测到移动输入则切入 WalkState。
+    /// 要重新跑必须再次触发 Evade（经 EvadeFrontState）。
     /// </summary>
     public class RunState : IState
     {
         private const float RotationSmoothTime = 0.1f;
         private const float CrossFadeDuration = 0.10f;
-        private const float ResumeCrossFadeDuration = 0.05f;
         private const float StopCrossFadeDuration = 0.15f;
 
         private IStateContext _context;
@@ -40,9 +39,7 @@ namespace GamePlay.State
             {
                 if (direction.sqrMagnitude > 0.0001f)
                 {
-                    _context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.Run, ResumeCrossFadeDuration);
-                    _isStopping = false;
-                    _noInputTimer = 0f;
+                    _context.StateMachine.ChangeState<WalkState>();
                     return;
                 }
 
@@ -59,7 +56,7 @@ namespace GamePlay.State
                 _noInputTimer += Time.deltaTime;
                 if (_noInputTimer >= _context.InputBufferTime)
                 {
-                    _context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.RunEnd, StopCrossFadeDuration);
+                    _context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.RunEnd, StopCrossFadeDuration, 0, 0f);
                     _isStopping = true;
                 }
             }

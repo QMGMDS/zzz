@@ -1,26 +1,30 @@
-using GamePlay.Common;
 using UnityEngine;
 
 namespace GamePlay.State
 {
     /// <summary>
-    /// 跑步状态：处理摄像机朝向旋转，连续无输入超缓冲时间后切回 IdleState
+    /// 跑步状态：处理摄像机朝向旋转。连续无输入超缓冲时间后进入 RunEnd→Idle 停止动画链，
+    /// 停止过程中检测到输入则取消停止并切回 RunStart。
     /// </summary>
     public class RunState : IState
     {
         private const float RotationSmoothTime = 0.1f;
+        private const float CrossFadeDuration = 0.10f;
+        private const float StopCrossFadeDuration = 0.15f;
 
         private IStateContext _context;
         private Transform _cameraTransform;
         private float _rotationVelocity;
         private float _noInputTimer;
+        private bool _isStopping;
 
         public void Enter(IStateContext context)
         {
             _context = context;
             _cameraTransform = _context.MainCamera.transform;
-            _context.Animator.SetBool(AnimationHashes.HasInput, true);
+            _context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.RunStart, CrossFadeDuration);
             _noInputTimer = 0f;
+            _isStopping = false;
         }
 
         public void Exit()
@@ -31,12 +35,31 @@ namespace GamePlay.State
         {
             Vector2 direction = _context.MoveDirection;
 
+            if (_isStopping)
+            {
+                if (direction.sqrMagnitude > 0.0001f)
+                {
+                    _context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.RunStart, CrossFadeDuration);
+                    _isStopping = false;
+                    _noInputTimer = 0f;
+                    return;
+                }
+
+                if (IsInAnimatorState(Common.AnimationHashes.Idle))
+                {
+                    _context.StateMachine.ChangeState<IdleState>();
+                }
+
+                return;
+            }
+
             if (direction.sqrMagnitude < 0.0001f)
             {
                 _noInputTimer += Time.deltaTime;
                 if (_noInputTimer >= _context.InputBufferTime)
                 {
-                    _context.StateMachine.ChangeState<IdleState>();
+                    _context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.RunEnd, StopCrossFadeDuration);
+                    _isStopping = true;
                 }
             }
             else
@@ -69,6 +92,11 @@ namespace GamePlay.State
 
         public void PhysicsUpdate()
         {
+        }
+
+        private bool IsInAnimatorState(int stateHash)
+        {
+            return _context.Animator.GetCurrentAnimatorStateInfo(0).shortNameHash == stateHash;
         }
     }
 }

@@ -15,6 +15,7 @@
       "IInputable",
       "Mathf",
       "Cinemachine",
+      "_evadeCooldown",
     ],
     "git.ignoreLimitWarning": true,
   }

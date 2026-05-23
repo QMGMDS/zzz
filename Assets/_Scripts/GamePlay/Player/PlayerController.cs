@@ -1,5 +1,4 @@
 using Core.Input;
-using GamePlay.Common;
 using GamePlay.State;
 using GamePlay.StateMachine;
 using UnityEngine;
@@ -29,6 +28,9 @@ namespace GamePlay.Player
         [Tooltip("输入缓冲时间（秒），防止方向快速切换时误判为停止")]
         [SerializeField] private float _inputBufferTime = 0.05f;
 
+        [Tooltip("闪避动作冷却时间（秒），CD 期间无法再次触发闪避")]
+        [SerializeField] private float _evadeCooldown = 0.7f;
+
         private MovementStateMachine _movementStateMachine;
         private Camera _mainCamera;
         private Vector2 _moveDirection;
@@ -57,7 +59,7 @@ namespace GamePlay.Player
         private void Awake()
         {
             _mainCamera = Camera.main;
-            _movementStateMachine = new MovementStateMachine();
+            _movementStateMachine = new MovementStateMachine(_evadeCooldown);
             _movementStateMachine.Initialize<IdleState>(this);
         }
 
@@ -85,7 +87,6 @@ namespace GamePlay.Player
 
             if (_animator != null)
             {
-                _animator.SetBool(AnimationHashes.HasInput, false);
                 _animator.applyRootMotion = false;
             }
         }

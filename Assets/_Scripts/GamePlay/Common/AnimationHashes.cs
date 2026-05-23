@@ -7,10 +7,22 @@ namespace GamePlay.Common
     /// </summary>
     public static class AnimationHashes
     {
-        /// <summary>是否有输入</summary>
-        public static readonly int HasInput = Animator.StringToHash("HasInput");
+        /// <summary>Idle 动画状态名</summary>
+        public static readonly int Idle = Animator.StringToHash("Idle");
 
-        /// <summary>闪避触发</summary>
-        public static readonly int Evade = Animator.StringToHash("Evade");
+        /// <summary>WalkStart 动画状态名</summary>
+        public static readonly int WalkStart = Animator.StringToHash("WalkStart");
+
+        /// <summary>RunStart 动画状态名</summary>
+        public static readonly int RunStart = Animator.StringToHash("RunStart");
+
+        /// <summary>EvadeFront 动画状态名</summary>
+        public static readonly int EvadeFront = Animator.StringToHash("EvadeFront");
+
+        /// <summary>EvadeBack 动画状态名</summary>
+        public static readonly int EvadeBack = Animator.StringToHash("EvadeBack");
+
+        /// <summary>RunEnd 动画状态名</summary>
+        public static readonly int RunEnd = Animator.StringToHash("RunEnd");
     }
 }

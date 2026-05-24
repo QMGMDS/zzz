@@ -40,5 +40,14 @@ namespace GamePlay.State
 
         /// <summary>消费闪避输入标记，防止重复触发</summary>
         void ConsumeEvade();
+
+        /// <summary>当前帧是否有攻击输入待消费</summary>
+        bool IsAttackTriggered { get; }
+
+        /// <summary>消费攻击输入标记，防止重复触发</summary>
+        void ConsumeAttack();
+
+        /// <summary>连击窗口持续时间（秒），动画结束后在该时间内收到攻击输入则进入下一段</summary>
+        float ComboWindowDuration { get; }
     }
 }

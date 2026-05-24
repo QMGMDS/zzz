@@ -23,14 +23,22 @@ namespace GamePlay.Player
 
         private static readonly Dictionary<int, string> HashToName = new()
         {
-            { Animator.StringToHash("Idle"),        "Idle" },
-            { Animator.StringToHash("WalkStart"),   "WalkStart" },
-            { Animator.StringToHash("Walk"),        "Walk" },
-            { Animator.StringToHash("RunStart"),    "RunStart" },
-            { Animator.StringToHash("Run"),         "Run" },
-            { Animator.StringToHash("RunEnd"),      "RunEnd" },
-            { Animator.StringToHash("EvadeFront"),  "EvadeFront" },
-            { Animator.StringToHash("EvadeBack"),   "EvadeBack" },
+            { Animator.StringToHash("Idle"),              "Idle" },
+            { Animator.StringToHash("WalkStart"),         "WalkStart" },
+            { Animator.StringToHash("Walk"),              "Walk" },
+            { Animator.StringToHash("RunStart"),          "RunStart" },
+            { Animator.StringToHash("Run"),               "Run" },
+            { Animator.StringToHash("RunEnd"),            "RunEnd" },
+            { Animator.StringToHash("EvadeFront"),        "EvadeFront" },
+            { Animator.StringToHash("EvadeBack"),         "EvadeBack" },
+            { Animator.StringToHash("NormalAttack_1"),    "NormalAttack_1" },
+            { Animator.StringToHash("NormalAttack_2"),    "NormalAttack_2" },
+            { Animator.StringToHash("NormalAttack_3"),    "NormalAttack_3" },
+            { Animator.StringToHash("NormalAttack_4"),    "NormalAttack_4" },
+            { Animator.StringToHash("NormalAttack_1_End"),"NormalAttack_1_End" },
+            { Animator.StringToHash("NormalAttack_2_End"),"NormalAttack_2_End" },
+            { Animator.StringToHash("NormalAttack_3_End"),"NormalAttack_3_End" },
+            { Animator.StringToHash("NormalAttack_4_End"),"NormalAttack_4_End" },
         };
 
         private void Awake()

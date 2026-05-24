@@ -18,6 +18,9 @@ namespace Core.Input
         /// <inheritdoc cref="IInputable.EvadeTriggered"/>
         public event Action EvadeTriggered;
 
+        /// <inheritdoc cref="IInputable.AttackTriggered"/>
+        public event Action AttackTriggered;
+
         /// <inheritdoc cref="IInputable.MoveDirection"/>
         public Vector2 MoveDirection => _moveDirection;
 
@@ -75,6 +78,14 @@ namespace Core.Input
             if (context.performed)
             {
                 EvadeTriggered?.Invoke();
+            }
+        }
+
+        public void OnAttack(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                AttackTriggered?.Invoke();
             }
         }
 

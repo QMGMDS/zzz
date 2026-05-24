@@ -14,5 +14,8 @@ namespace Core.Input
 
         /// <summary>闪避输入触发时调用</summary>
         event Action EvadeTriggered;
+
+        /// <summary>攻击输入触发时调用</summary>
+        event Action AttackTriggered;
     }
 }

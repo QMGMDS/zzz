@@ -3,12 +3,11 @@ using UnityEngine;
 namespace GamePlay.State
 {
     /// <summary>
-    /// 后撤步状态：播 EvadeBack 动画。有输入时在延迟窗口后可打断切入 WalkState，
-    /// 无输入时等动画播完（normalizedTime ≥ 0.95）后自然过渡到 IdleState。
+    /// 后撤步状态：播 EvadeBack 动画。CD 时间内不可被移动或其他状态打断，
+    /// CD 结束后有输入则切入 WalkState，无输入等动画播完（normalizedTime ≥ 0.95）后切 IdleState。
     /// </summary>
     public class EvadeBackState : IState
     {
-        private const float InputDetectionDelay = 0.15f;
         private const float CrossFadeDuration = 0.05f;
         private const float NaturalExitThreshold = 0.95f;
 
@@ -45,7 +44,7 @@ namespace GamePlay.State
             if (stateInfo.shortNameHash != Common.AnimationHashes.EvadeBack)
                 return;
 
-            if (Time.time - _animEnterTime < InputDetectionDelay)
+            if (Time.time - _animEnterTime < _context.EvadeBackCommitDuration)
                 return;
 
             if (_context.MoveDirection.sqrMagnitude > 0.0001f)

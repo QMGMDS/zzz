@@ -29,6 +29,12 @@ namespace GamePlay.State
         /// <summary>输入缓冲时间（秒），在该时间内持续无输入才判定为停止</summary>
         float InputBufferTime { get; }
 
+        /// <summary>前闪避硬直时间（秒），期间不可被其他状态打断</summary>
+        float EvadeFrontCommitDuration { get; }
+
+        /// <summary>后撤步硬直时间（秒），期间不可被其他状态打断</summary>
+        float EvadeBackCommitDuration { get; }
+
         /// <summary>当前帧是否有闪避输入待消费</summary>
         bool IsEvadeTriggered { get; }
 

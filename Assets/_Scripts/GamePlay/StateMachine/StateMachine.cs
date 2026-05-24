@@ -42,6 +42,17 @@ namespace GamePlay.StateMachine
             _currentState.Enter(_context);
         }
 
+        /// <summary>强制重入目标状态，即使已是该状态也会执行 Exit → Enter</summary>
+        public void ReenterState<T>() where T : IState
+        {
+            Type targetType = typeof(T);
+            if (!_states.TryGetValue(targetType, out IState newState)) return;
+
+            _currentState?.Exit();
+            _currentState = newState;
+            _currentState.Enter(_context);
+        }
+
         /// <summary>每帧调用当前状态的 Update，子类可重写以插入状态机层逻辑</summary>
         public virtual void Update()
         {

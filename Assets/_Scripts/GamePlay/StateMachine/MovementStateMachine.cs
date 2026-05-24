@@ -25,6 +25,7 @@ namespace GamePlay.StateMachine
             RegisterState<EvadeFrontState>(new EvadeFrontState());
             RegisterState<EvadeBackState>(new EvadeBackState());
             RegisterState<RunState>(new RunState());
+            RegisterState<NormalAttackState>(new NormalAttackState());
         }
 
         public override void Update()
@@ -39,7 +40,7 @@ namespace GamePlay.StateMachine
                     // 跨类型：需等来源 EvadeBack 的 CD 到期
                     if (CurrentStateType == typeof(EvadeBackState)
                         && Time.time - _lastEvadeBackTime < _evadeBackCooldown)
-                        return;
+                        goto HandleAttack;
 
                     if (Time.time - _lastEvadeFrontTime >= _evadeFrontCooldown)
                     {
@@ -56,7 +57,7 @@ namespace GamePlay.StateMachine
                     // 跨类型：需等来源 EvadeFront 的 CD 到期
                     if (CurrentStateType == typeof(EvadeFrontState)
                         && Time.time - _lastEvadeFrontTime < _evadeFrontCooldown)
-                        return;
+                        goto HandleAttack;
 
                     if (Time.time - _lastEvadeBackTime >= _evadeBackCooldown)
                     {
@@ -68,6 +69,13 @@ namespace GamePlay.StateMachine
                             ChangeState<EvadeBackState>();
                     }
                 }
+            }
+
+            HandleAttack:
+            if (_context.IsAttackTriggered && CurrentStateType != typeof(NormalAttackState))
+            {
+                _context.ConsumeAttack();
+                ChangeState<NormalAttackState>();
             }
 
             base.Update();

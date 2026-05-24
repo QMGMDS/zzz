@@ -34,10 +34,14 @@ namespace GamePlay.Player
         [Tooltip("后撤步冷却时间（秒），CD 期间无法再次触发后撤步")]
         [SerializeField] private float _evadeBackCooldown = 0.7f;
 
+        [Tooltip("连击窗口持续时间（秒），当前攻击动画结束后在该时间内再次按下攻击键可进入下一段连击")]
+        [SerializeField] private float _comboWindowDuration = 0.6f;
+
         private MovementStateMachine _movementStateMachine;
         private Camera _mainCamera;
         private Vector2 _moveDirection;
         private bool _evadeTriggered;
+        private bool _attackTriggered;
 
         #region IStateContext
 
@@ -56,6 +60,15 @@ namespace GamePlay.Player
         {
             _evadeTriggered = false;
         }
+
+        public bool IsAttackTriggered => _attackTriggered;
+
+        public void ConsumeAttack()
+        {
+            _attackTriggered = false;
+        }
+
+        public float ComboWindowDuration => _comboWindowDuration;
 
         #endregion
 
@@ -79,6 +92,7 @@ namespace GamePlay.Player
             {
                 _inputController.MoveDirectionChanged += HandleMove;
                 _inputController.EvadeTriggered += HandleEvade;
+                _inputController.AttackTriggered += HandleAttack;
             }
         }
 
@@ -88,6 +102,7 @@ namespace GamePlay.Player
             {
                 _inputController.MoveDirectionChanged -= HandleMove;
                 _inputController.EvadeTriggered -= HandleEvade;
+                _inputController.AttackTriggered -= HandleAttack;
             }
 
             if (_animator != null)
@@ -124,6 +139,11 @@ namespace GamePlay.Player
         private void HandleEvade()
         {
             _evadeTriggered = true;
+        }
+
+        private void HandleAttack()
+        {
+            _attackTriggered = true;
         }
     }
 }

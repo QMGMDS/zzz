@@ -15,7 +15,8 @@ namespace GamePlay.State
         public void Enter(IStateContext context)
         {
             _context = context;
-            _context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.Idle, CrossFadeDuration);
+            if (!IsInAnimatorState(Common.AnimationHashes.Idle))
+                _context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.Idle, CrossFadeDuration);
             _lockedRotation = _context.Transform.rotation;
         }
 
@@ -39,6 +40,11 @@ namespace GamePlay.State
 
         public void PhysicsUpdate()
         {
+        }
+
+        private bool IsInAnimatorState(int stateHash)
+        {
+            return _context.Animator.GetCurrentAnimatorStateInfo(0).shortNameHash == stateHash;
         }
     }
 }

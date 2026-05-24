@@ -28,8 +28,11 @@ namespace GamePlay.Player
         [Tooltip("输入缓冲时间（秒），防止方向快速切换时误判为停止")]
         [SerializeField] private float _inputBufferTime = 0.05f;
 
-        [Tooltip("闪避动作冷却时间（秒），CD 期间无法再次触发闪避")]
-        [SerializeField] private float _evadeCooldown = 0.7f;
+        [Tooltip("前闪避冷却时间（秒），CD 期间无法再次触发前闪避")]
+        [SerializeField] private float _evadeFrontCooldown = 0.3f;
+
+        [Tooltip("后撤步冷却时间（秒），CD 期间无法再次触发后撤步")]
+        [SerializeField] private float _evadeBackCooldown = 0.7f;
 
         private MovementStateMachine _movementStateMachine;
         private Camera _mainCamera;
@@ -45,6 +48,8 @@ namespace GamePlay.Player
         public IStateMachine StateMachine => _movementStateMachine;
         public Camera MainCamera => _mainCamera;
         public float InputBufferTime => _inputBufferTime;
+        public float EvadeFrontCommitDuration => _evadeFrontCooldown;
+        public float EvadeBackCommitDuration => _evadeBackCooldown;
         public bool IsEvadeTriggered => _evadeTriggered;
 
         public void ConsumeEvade()
@@ -59,7 +64,7 @@ namespace GamePlay.Player
         private void Awake()
         {
             _mainCamera = Camera.main;
-            _movementStateMachine = new MovementStateMachine(_evadeCooldown);
+            _movementStateMachine = new MovementStateMachine(_evadeFrontCooldown, _evadeBackCooldown);
             _movementStateMachine.Initialize<IdleState>(this);
         }
 

@@ -6,7 +6,7 @@
 
 ## 核心设计原则
 
-- **面向接口解耦**：`IState` / `IStateContext` / `IStateMachine` / `IInputable` 全部基于接口通信，MonoBehaviour 仅作入口，不依赖具体实现。
+- **面向接口解耦**：`IStateContext` / `IInputable` 基于接口通信；状态通过抽象基类 `StateBase` 继承，消除重复代码。
 - **C# 状态机驱动动画**：不用 Animator 的 Transition/Parameter 做逻辑判断（能走纯动画过渡的除外），核心逻辑由状态机 C# 代码决策，最后通过 `CrossFadeInFixedTime` 发指令给 Animator。
 - **Root Motion 移动**：`CharacterController.Move(animator.deltaPosition)` 驱动角色位移，不手动计算移动向量。
 
@@ -21,8 +21,8 @@ Assets\_Scripts\
 │   ├── Common\                   ← 动画参数哈希常量
 │   ├── CustomCameras\            ← 摄像机扩展行为
 │   ├── Player\                   ← 玩家入口 + 调试 UI
-│   ├── State\                    ← 具体状态类（Idle / Walk / Run / Evade / Attack）
-│   └── StateMachine\             ← 状态机基类 + 移动状态机
+│   ├── State\                    ← StateBase 抽象基类 + 6 个具体状态
+│   └── StateMachine\             ← StateMachine 基类 + PlayerStateMachine（移动+战斗）
 ```
 
 > 命名空间 = 文件路径去掉 `_Scripts` 前缀，如 `Core.Input`、`GamePlay.StateMachine`
@@ -52,11 +52,10 @@ Assets\_Scripts\
 
 | 涉及内容 | 代码路径 |
 |----------|----------|
-| 状态接口（Enter/Exit/Update/LateUpdate/PhysicsUpdate） | `Assets\_Scripts\GamePlay\State\IState.cs` |
+| 状态抽象基类（Enter/Exit/Update/LateUpdate/PhysicsUpdate + IsInAnimatorState） | `Assets\_Scripts\GamePlay\State\StateBase.cs` |
 | 状态上下文接口（提供 Animator/Transform/输入等依赖） | `Assets\_Scripts\GamePlay\State\IStateContext.cs` |
-| 状态机接口（ChangeState / ReenterState / CurrentStateType） | `Assets\_Scripts\GamePlay\StateMachine\IStateMachine.cs` |
-| 状态机基类（状态注册/切换/生命周期驱动） | `Assets\_Scripts\GamePlay\StateMachine\StateMachine.cs` |
-| 移动状态机（Evade 输入 + CD + 攻击输入处理） | `Assets\_Scripts\GamePlay\StateMachine\MovementStateMachine.cs` |
+| 状态机基类（状态注册/切换/生命周期驱动 + ChangeState/ReenterState） | `Assets\_Scripts\GamePlay\StateMachine\StateMachine.cs` |
+| 玩家状态机（Evade 输入 + CD + 攻击输入路由） | `Assets\_Scripts\GamePlay\StateMachine\PlayerStateMachine.cs` |
 
 ### 3. 具体状态实现
 
@@ -73,11 +72,11 @@ Assets\_Scripts\
 
 | 涉及内容 | 代码路径 |
 |----------|----------|
-| PlayerController（实现 IStateContext、持有 MovementStateMachine） | `Assets\_Scripts\GamePlay\Player\PlayerController.cs` |
+| PlayerController（实现 IStateContext、持有 PlayerStateMachine） | `Assets\_Scripts\GamePlay\Player\PlayerController.cs` |
 | 调试 UI（C# 状态 / Animator 状态 / 输入信息） | `Assets\_Scripts\GamePlay\Player\PlayerDebugDisplay.cs` |
 
 **PlayerController 关键结构**：
-- `Awake`：创建 `MovementStateMachine`，初始化为 `IdleState`
+- `Awake`：创建 `PlayerStateMachine`，初始化为 `IdleState`
 - `OnEnable/OnDisable`：订阅/取消 `InputController` 事件
 - `Update` / `LateUpdate`：驱动状态机
 - `OnAnimatorMove`：应用 Root Motion 位移到 `CharacterController`
@@ -181,8 +180,8 @@ Assets\_Scripts\
 | 用户说… | 先看这个文件 |
 |----------|---------------|
 | 改按键 / 改输入 | `IInputable.cs` → `InputController.cs` → `Input System.inputactions` |
-| 加新状态 | `IState.cs` → 参考一个具体 State → `MovementStateMachine.cs` 注册 |
-| 改闪避逻辑 | `EvadeFrontState.cs` + `EvadeBackState.cs` + `MovementStateMachine.cs` 的 Update() |
+| 加新状态 | `StateBase.cs` → 参考一个具体 State → `PlayerStateMachine.cs` 注册 |
+| 改闪避逻辑 | `EvadeFrontState.cs` + `EvadeBackState.cs` + `PlayerStateMachine.cs` 的 Update() |
 | 改攻击 / 连击 | `NormalAttackState.cs` + `AnimationHashes.cs` |
 | 改移动 / 转向 | `WalkState.cs` / `RunState.cs` 的 LateUpdate()（旋转代码在此） |
 | 改 CD / 硬直 / 缓冲 | `PlayerController.cs` 的 SerializeField + `IStateContext` 暴露的属性 |

@@ -97,6 +97,12 @@ namespace GamePlay.State
                 return;
             }
 
+            if (Context.MoveDirection.sqrMagnitude > 0.0001f)
+            {
+                Context.StateMachine.ChangeState<WalkState>();
+                return;
+            }
+
             if (_windowTimer >= Context.ComboWindowDuration)
             {
                 _comboIndex = 0;
@@ -112,6 +118,12 @@ namespace GamePlay.State
                 _comboIndex = 0;
                 Context.Animator.CrossFadeInFixedTime(AttackHashes[0], CrossFadeDuration);
                 _phase = Phase.Playing;
+                return;
+            }
+
+            if (Context.MoveDirection.sqrMagnitude > 0.0001f)
+            {
+                Context.StateMachine.ChangeState<WalkState>();
                 return;
             }
 

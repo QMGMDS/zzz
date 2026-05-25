@@ -6,46 +6,45 @@ namespace GamePlay.State
     /// 跑步状态：仅通过 Evade 键进入。松手后播 RunEnd→Idle，停止期间检测到移动输入则切入 WalkState。
     /// 要重新跑必须再次触发 Evade（经 EvadeFrontState）。
     /// </summary>
-    public class RunState : IState
+    public class RunState : StateBase
     {
         private const float RotationSmoothTime = 0.1f;
         private const float CrossFadeDuration = 0.10f;
         private const float StopCrossFadeDuration = 0.15f;
 
-        private IStateContext _context;
         private Transform _cameraTransform;
         private float _rotationVelocity;
         private float _noInputTimer;
         private bool _isStopping;
 
-        public void Enter(IStateContext context)
+        public override void Enter(IStateContext context) 
         {
-            _context = context;
-            _cameraTransform = _context.MainCamera.transform;
-            _context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.RunStart, CrossFadeDuration);
+            Context = context;
+            _cameraTransform = Context.MainCamera.transform;
+            Context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.RunStart, CrossFadeDuration);
             _noInputTimer = 0f;
             _isStopping = false;
         }
 
-        public void Exit()
+        public override void Exit()
         {
         }
 
-        public void Update()
+        public override void Update()
         {
-            Vector2 direction = _context.MoveDirection;
+            Vector2 direction = Context.MoveDirection;
 
             if (_isStopping)
             {
                 if (direction.sqrMagnitude > 0.0001f)
                 {
-                    _context.StateMachine.ChangeState<WalkState>();
+                    Context.StateMachine.ChangeState<WalkState>();
                     return;
                 }
 
                 if (IsInAnimatorState(Common.AnimationHashes.Idle))
                 {
-                    _context.StateMachine.ChangeState<IdleState>();
+                    Context.StateMachine.ChangeState<IdleState>();
                 }
 
                 return;
@@ -54,9 +53,9 @@ namespace GamePlay.State
             if (direction.sqrMagnitude < 0.0001f)
             {
                 _noInputTimer += Time.deltaTime;
-                if (_noInputTimer >= _context.InputBufferTime)
+                if (_noInputTimer >= Context.InputBufferTime)
                 {
-                    _context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.RunEnd, StopCrossFadeDuration, 0, 0f);
+                    Context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.RunEnd, StopCrossFadeDuration, 0, 0f);
                     _isStopping = true;
                 }
             }
@@ -67,9 +66,9 @@ namespace GamePlay.State
         }
 
         /// <summary>在 Animator 更新后执行旋转，确保覆盖骨架动画曲线</summary>
-        public void LateUpdate()
+        public override void LateUpdate()
         {
-            Vector2 direction = _context.MoveDirection;
+            Vector2 direction = Context.MoveDirection;
             if (direction.sqrMagnitude < 0.0001f) return;
 
             Vector3 cameraForward = _cameraTransform.forward;
@@ -78,7 +77,7 @@ namespace GamePlay.State
             cameraRight.y = 0f;
             Vector3 worldMoveDir = (cameraForward * direction.y + cameraRight * direction.x).normalized;
             float targetAngle = Mathf.Atan2(worldMoveDir.x, worldMoveDir.z) * Mathf.Rad2Deg;
-            Transform t = _context.Transform;
+            Transform t = Context.Transform;
             float smoothedAngle = Mathf.SmoothDampAngle(
                 t.eulerAngles.y,
                 targetAngle,
@@ -88,13 +87,5 @@ namespace GamePlay.State
             t.eulerAngles = new Vector3(0f, smoothedAngle, 0f);
         }
 
-        public void PhysicsUpdate()
-        {
-        }
-
-        private bool IsInAnimatorState(int stateHash)
-        {
-            return _context.Animator.GetCurrentAnimatorStateInfo(0).shortNameHash == stateHash;
-        }
     }
 }

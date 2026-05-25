@@ -37,7 +37,7 @@ namespace GamePlay.Player
         [Tooltip("连击窗口持续时间（秒），当前攻击动画结束后在该时间内再次按下攻击键可进入下一段连击")]
         [SerializeField] private float _comboWindowDuration = 0.6f;
 
-        private MovementStateMachine _movementStateMachine;
+        private PlayerStateMachine _playerStateMachine;
         private Camera _mainCamera;
         private Vector2 _moveDirection;
         private bool _evadeTriggered;
@@ -49,7 +49,7 @@ namespace GamePlay.Player
         public CharacterController CharacterController => _characterController;
         public Transform Transform => transform;
         public Vector2 MoveDirection => _moveDirection;
-        public IStateMachine StateMachine => _movementStateMachine;
+        public StateMachineBase StateMachine => _playerStateMachine;
         public Camera MainCamera => _mainCamera;
         public float InputBufferTime => _inputBufferTime;
         public float EvadeFrontCommitDuration => _evadeFrontCooldown;
@@ -77,8 +77,8 @@ namespace GamePlay.Player
         private void Awake()
         {
             _mainCamera = Camera.main;
-            _movementStateMachine = new MovementStateMachine(_evadeFrontCooldown, _evadeBackCooldown);
-            _movementStateMachine.Initialize<IdleState>(this);
+            _playerStateMachine = new PlayerStateMachine(_evadeFrontCooldown, _evadeBackCooldown);
+            _playerStateMachine.Initialize<IdleState>(this);
         }
 
         private void OnEnable()
@@ -113,12 +113,12 @@ namespace GamePlay.Player
 
         private void Update()
         {
-            _movementStateMachine.Update();
+            _playerStateMachine.Update();
         }
 
         private void LateUpdate()
         {
-            _movementStateMachine.LateUpdate();
+            _playerStateMachine.LateUpdate();
         }
 
         private void OnAnimatorMove()

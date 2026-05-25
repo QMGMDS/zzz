@@ -7,10 +7,10 @@ namespace GamePlay.StateMachine
     /// <summary>
     /// 状态机基类，提供状态注册、切换与生命周期驱动的通用实现
     /// </summary>
-    public abstract class StateMachine : IStateMachine
+    public abstract class StateMachineBase
     {
-        private readonly Dictionary<Type, IState> _states = new();
-        private IState _currentState;
+        private readonly Dictionary<Type, StateBase> _states = new();
+        private StateBase _currentState;
 
         /// <summary>状态上下文，子类可访问以在 Update 等生命周期方法中读取</summary>
         protected IStateContext _context;
@@ -18,23 +18,23 @@ namespace GamePlay.StateMachine
         public Type CurrentStateType => _currentState?.GetType();
 
         /// <summary>注册一个状态实例，与泛型类型绑定</summary>
-        protected void RegisterState<T>(IState state) where T : IState
+        protected void RegisterState<T>(StateBase state) where T : StateBase
         {
             _states[typeof(T)] = state;
         }
 
         /// <summary>初始化上下文并进入指定的默认状态</summary>
-        public void Initialize<T>(IStateContext context) where T : IState
+        public void Initialize<T>(IStateContext context) where T : StateBase
         {
             _context = context;
             ChangeState<T>();
         }
 
         /// <summary>切换到指定类型的状态，同状态切换会被忽略</summary>
-        public void ChangeState<T>() where T : IState
+        public void ChangeState<T>() where T : StateBase
         {
             Type targetType = typeof(T);
-            if (!_states.TryGetValue(targetType, out IState newState)) return;
+            if (!_states.TryGetValue(targetType, out StateBase newState)) return;
             if (newState == _currentState) return;
 
             _currentState?.Exit();
@@ -43,10 +43,10 @@ namespace GamePlay.StateMachine
         }
 
         /// <summary>强制重入目标状态，即使已是该状态也会执行 Exit → Enter</summary>
-        public void ReenterState<T>() where T : IState
+        public void ReenterState<T>() where T : StateBase
         {
             Type targetType = typeof(T);
-            if (!_states.TryGetValue(targetType, out IState newState)) return;
+            if (!_states.TryGetValue(targetType, out StateBase newState)) return;
 
             _currentState?.Exit();
             _currentState = newState;

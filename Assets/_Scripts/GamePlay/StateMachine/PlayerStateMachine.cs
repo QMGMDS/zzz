@@ -4,18 +4,18 @@ using UnityEngine;
 namespace GamePlay.StateMachine
 {
     /// <summary>
-    /// 移动状态机，管理 Idle、Walk、EvadeFront、EvadeBack、Run 状态之间的切换。
+    /// 玩家状态机，管理全部玩家状态（移动 + 战斗）间的输入路由与切换。
     /// EvadeFront 与 EvadeBack 各自独立 CD，同类型 CD 到期后走 ReenterState 重播动画，
-    /// 跨类型需来源 CD 与目标 CD 均到期才放行；动画由各 State 的 Enter 通过 CrossFadeInFixedTime 驱动。
+    /// 跨类型需来源 CD 与目标 CD 均到期才放行；战斗输入直接路由到 NormalAttackState。
     /// </summary>
-    public class MovementStateMachine : StateMachine
+    public class PlayerStateMachine : StateMachineBase
     {
         private readonly float _evadeFrontCooldown;
         private readonly float _evadeBackCooldown;
         private float _lastEvadeFrontTime = float.MinValue;
         private float _lastEvadeBackTime = float.MinValue;
 
-        public MovementStateMachine(float evadeFrontCooldown = 0.7f, float evadeBackCooldown = 0.7f)
+        public PlayerStateMachine(float evadeFrontCooldown = 0.7f, float evadeBackCooldown = 0.7f)
         {
             _evadeFrontCooldown = evadeFrontCooldown;
             _evadeBackCooldown = evadeBackCooldown;
@@ -71,7 +71,7 @@ namespace GamePlay.StateMachine
                 }
             }
 
-            HandleAttack:
+        HandleAttack:
             if (_context.IsAttackTriggered && CurrentStateType != typeof(NormalAttackState))
             {
                 _context.ConsumeAttack();

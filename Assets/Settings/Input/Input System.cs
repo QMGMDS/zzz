@@ -127,6 +127,15 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LockEnemy"",
+                    ""type"": ""Button"",
+                    ""id"": ""49940557-4d8c-4b3b-9e8c-6d98a7acd916"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -228,6 +237,17 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
                     ""action"": ""Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6282a2c1-52d1-4d41-a55d-3015b6938240"",
+                    ""path"": ""<Mouse>/middleButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LockEnemy"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -240,6 +260,7 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
         m_CombatMap_CameraLook = m_CombatMap.FindAction("CameraLook", throwIfNotFound: true);
         m_CombatMap_Evade = m_CombatMap.FindAction("Evade", throwIfNotFound: true);
         m_CombatMap_Attack = m_CombatMap.FindAction("Attack", throwIfNotFound: true);
+        m_CombatMap_LockEnemy = m_CombatMap.FindAction("LockEnemy", throwIfNotFound: true);
     }
 
     ~@InputSystem()
@@ -324,6 +345,7 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
     private readonly InputAction m_CombatMap_CameraLook;
     private readonly InputAction m_CombatMap_Evade;
     private readonly InputAction m_CombatMap_Attack;
+    private readonly InputAction m_CombatMap_LockEnemy;
     /// <summary>
     /// Provides access to input actions defined in input action map "Combat Map".
     /// </summary>
@@ -351,6 +373,10 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "CombatMap/Attack".
         /// </summary>
         public InputAction @Attack => m_Wrapper.m_CombatMap_Attack;
+        /// <summary>
+        /// Provides access to the underlying input action "CombatMap/LockEnemy".
+        /// </summary>
+        public InputAction @LockEnemy => m_Wrapper.m_CombatMap_LockEnemy;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -389,6 +415,9 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
             @Attack.started += instance.OnAttack;
             @Attack.performed += instance.OnAttack;
             @Attack.canceled += instance.OnAttack;
+            @LockEnemy.started += instance.OnLockEnemy;
+            @LockEnemy.performed += instance.OnLockEnemy;
+            @LockEnemy.canceled += instance.OnLockEnemy;
         }
 
         /// <summary>
@@ -412,6 +441,9 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
             @Attack.started -= instance.OnAttack;
             @Attack.performed -= instance.OnAttack;
             @Attack.canceled -= instance.OnAttack;
+            @LockEnemy.started -= instance.OnLockEnemy;
+            @LockEnemy.performed -= instance.OnLockEnemy;
+            @LockEnemy.canceled -= instance.OnLockEnemy;
         }
 
         /// <summary>
@@ -480,5 +512,12 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnAttack(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "LockEnemy" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnLockEnemy(InputAction.CallbackContext context);
     }
 }

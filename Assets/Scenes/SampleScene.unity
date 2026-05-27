@@ -833,6 +833,7 @@ GameObject:
   - component: {fileID: 1735758582}
   - component: {fileID: 1735758583}
   - component: {fileID: 1735758584}
+  - component: {fileID: 1735758585}
   m_Layer: 0
   m_Name: Virtual Camera
   m_TagString: Untagged
@@ -930,6 +931,21 @@ MonoBehaviour:
   _midDistance: 3.1
   _topDistance: 2.6
   _smoothSpeed: 5
+--- !u!114 &1735758585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1735758580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e40717f8520503f49b5434b0e66d1fa2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _lockRange: 15
+  _targetTag: Enemy
+  _povResetSpeed: 20
 --- !u!4 &1866810521 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6117037670660869009, guid: 1cd74f4110f374c4e990dd320cb1ee15, type: 3}
@@ -1653,6 +1669,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: "\u602A\u517D"
       objectReference: {fileID: 0}
+    - target: {fileID: 9140177995953688238, guid: b74199f0e541f844ba04cbd27072cdce, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 9173798564365179598, guid: b74199f0e541f844ba04cbd27072cdce, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: -77.150505
@@ -1694,6 +1714,10 @@ PrefabInstance:
       propertyPath: _evadeCooldown
       value: 0.7
       objectReference: {fileID: 0}
+    - target: {fileID: 605011714701202613, guid: 1cd74f4110f374c4e990dd320cb1ee15, type: 3}
+      propertyPath: _cameraLockEnemy
+      value: 
+      objectReference: {fileID: 1735758585}
     - target: {fileID: 605011714701202613, guid: 1cd74f4110f374c4e990dd320cb1ee15, type: 3}
       propertyPath: _evadeFrontCooldown
       value: 0.3

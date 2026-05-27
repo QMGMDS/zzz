@@ -49,5 +49,8 @@ namespace GamePlay.State
 
         /// <summary>连击窗口持续时间（秒），动画结束后在该时间内收到攻击输入则进入下一段</summary>
         float ComboWindowDuration { get; }
+
+        /// <summary>当前锁定的敌人 Transform，未锁定时为 null</summary>
+        Transform LockTarget { get; }
     }
 }

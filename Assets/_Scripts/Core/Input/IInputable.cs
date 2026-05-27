@@ -17,5 +17,8 @@ namespace Core.Input
 
         /// <summary>攻击输入触发时调用</summary>
         event Action AttackTriggered;
+
+        /// <summary>锁敌输入触发时调用</summary>
+        event Action LockEnemyTriggered;
     }
 }

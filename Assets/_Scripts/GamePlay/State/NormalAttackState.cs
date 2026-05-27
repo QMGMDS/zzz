@@ -18,6 +18,7 @@ namespace GamePlay.State
         }
 
         private const float CrossFadeDuration = 0.05f;
+        private const float RotationSmoothTime = 0.1f;
 
         private static readonly int[] AttackHashes =
         {
@@ -39,6 +40,7 @@ namespace GamePlay.State
         private int _comboIndex;
         private float _windowTimer;
         private int _playingEndHash;
+        private float _rotationVelocity;
 
         public override void Enter(IStateContext context)
         {
@@ -131,6 +133,26 @@ namespace GamePlay.State
             if (stateInfo.shortNameHash != _playingEndHash) return;
             if (stateInfo.normalizedTime >= 1f)
                 Context.StateMachine.ChangeState<IdleState>();
+        }
+
+        public override void LateUpdate()
+        {
+            Transform lockTarget = Context.LockTarget;
+            if (lockTarget == null) return;
+
+            Vector3 dirToEnemy = lockTarget.position - Context.Transform.position;
+            dirToEnemy.y = 0f;
+            if (dirToEnemy.sqrMagnitude <= 0.0001f) return;
+
+            float targetAngle = Mathf.Atan2(dirToEnemy.x, dirToEnemy.z) * Mathf.Rad2Deg;
+            Transform t = Context.Transform;
+            float smoothedAngle = Mathf.SmoothDampAngle(
+                t.eulerAngles.y,
+                targetAngle,
+                ref _rotationVelocity,
+                RotationSmoothTime
+            );
+            t.eulerAngles = new Vector3(0f, smoothedAngle, 0f);
         }
     }
 }

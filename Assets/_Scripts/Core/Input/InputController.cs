@@ -21,6 +21,9 @@ namespace Core.Input
         /// <inheritdoc cref="IInputable.AttackTriggered"/>
         public event Action AttackTriggered;
 
+        /// <inheritdoc cref="IInputable.LockEnemyTriggered"/>
+        public event Action LockEnemyTriggered;
+
         /// <inheritdoc cref="IInputable.MoveDirection"/>
         public Vector2 MoveDirection => _moveDirection;
 
@@ -86,6 +89,14 @@ namespace Core.Input
             if (context.performed)
             {
                 AttackTriggered?.Invoke();
+            }
+        }
+
+        public void OnLockEnemy(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                LockEnemyTriggered?.Invoke();
             }
         }
 

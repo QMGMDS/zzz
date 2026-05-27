@@ -1,4 +1,5 @@
 using Core.Input;
+using CustomCameras;
 using GamePlay.State;
 using GamePlay.StateMachine;
 using UnityEngine;
@@ -37,6 +38,9 @@ namespace GamePlay.Player
         [Tooltip("连击窗口持续时间（秒），当前攻击动画结束后在该时间内再次按下攻击键可进入下一段连击")]
         [SerializeField] private float _comboWindowDuration = 0.6f;
 
+        [Tooltip("锁敌摄像机组件引用，挂载在 Cinemachine Virtual Camera 上")]
+        [SerializeField] private CameraLockEnemy _cameraLockEnemy;
+
         private PlayerStateMachine _playerStateMachine;
         private Camera _mainCamera;
         private Vector2 _moveDirection;
@@ -70,6 +74,8 @@ namespace GamePlay.Player
 
         public float ComboWindowDuration => _comboWindowDuration;
 
+        public Transform LockTarget => _cameraLockEnemy != null ? _cameraLockEnemy.CurrentTarget : null;
+
         #endregion
 
         #region Life Cycle
@@ -93,6 +99,7 @@ namespace GamePlay.Player
                 _inputController.MoveDirectionChanged += HandleMove;
                 _inputController.EvadeTriggered += HandleEvade;
                 _inputController.AttackTriggered += HandleAttack;
+                _inputController.LockEnemyTriggered += HandleLockEnemy;
             }
         }
 
@@ -103,6 +110,7 @@ namespace GamePlay.Player
                 _inputController.MoveDirectionChanged -= HandleMove;
                 _inputController.EvadeTriggered -= HandleEvade;
                 _inputController.AttackTriggered -= HandleAttack;
+                _inputController.LockEnemyTriggered -= HandleLockEnemy;
             }
 
             if (_animator != null)
@@ -144,6 +152,14 @@ namespace GamePlay.Player
         private void HandleAttack()
         {
             _attackTriggered = true;
+        }
+
+        private void HandleLockEnemy()
+        {
+            if (_cameraLockEnemy != null)
+            {
+                _cameraLockEnemy.ToggleLock();
+            }
         }
     }
 }

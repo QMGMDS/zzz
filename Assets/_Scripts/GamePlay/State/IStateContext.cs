@@ -1,3 +1,5 @@
+using GamePlay.Combat;
+using CombatConfig = GamePlay.Combat.AttackComboConfigSO;
 using GamePlay.StateMachine;
 using UnityEngine;
 
@@ -52,5 +54,11 @@ namespace GamePlay.State
 
         /// <summary>当前锁定的敌人 Transform，未锁定时为 null</summary>
         Transform LockTarget { get; }
+
+        /// <summary>攻击碰撞体组件，由 NormalAttackState 控制 Enable/Disable</summary>
+        AttackHitbox AttackHitbox { get; }
+
+        /// <summary>连击攻击配置 SO，按段索引取参数</summary>
+        CombatConfig AttackConfig { get; }
     }
 }

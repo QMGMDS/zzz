@@ -922,6 +922,7 @@ GameObject:
   - component: {fileID: 1735758583}
   - component: {fileID: 1735758584}
   - component: {fileID: 1735758585}
+  - component: {fileID: 1735758586}
   m_Layer: 0
   m_Name: Virtual Camera
   m_TagString: Untagged
@@ -1034,6 +1035,34 @@ MonoBehaviour:
   _lockRange: 15
   _targetTag: Enemy
   _lockDamping: 8
+--- !u!114 &1735758586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1735758580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 364189d81179dcc4682dc6a19d586d64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _channel: {fileID: 11400000, guid: 8d252007189da2d47b5e187806f2a3db, type: 2}
+  _onEventRaised:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1735758585}
+        m_TargetAssemblyTypeName: CustomCameras.CameraLockEnemy, Assembly-CSharp
+        m_MethodName: ToggleLock
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!4 &1866810521 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6117037670660869009, guid: 1cd74f4110f374c4e990dd320cb1ee15, type: 3}
@@ -1830,6 +1859,10 @@ PrefabInstance:
       propertyPath: _comboWindowDuration
       value: 0.3
       objectReference: {fileID: 0}
+    - target: {fileID: 605011714701202613, guid: 1cd74f4110f374c4e990dd320cb1ee15, type: 3}
+      propertyPath: _lockEnemyToggleChannel
+      value: 
+      objectReference: {fileID: 11400000, guid: 8d252007189da2d47b5e187806f2a3db, type: 2}
     - target: {fileID: 2489951342010572183, guid: 1cd74f4110f374c4e990dd320cb1ee15, type: 3}
       propertyPath: m_IsActive
       value: 1

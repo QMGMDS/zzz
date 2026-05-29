@@ -1,3 +1,4 @@
+using Core.Event;
 using Core.Input;
 using GamePlay.Combat;
 using CombatConfig = GamePlay.Combat.AttackComboConfigSO;
@@ -42,6 +43,9 @@ namespace GamePlay.Player
 
         [Tooltip("锁敌摄像机组件引用，挂载在 Cinemachine Virtual Camera 上")]
         [SerializeField] private CameraLockEnemy _cameraLockEnemy;
+
+        [Tooltip("锁敌切换事件通道，触发时通知 CameraLockEnemy 执行 ToggleLock")]
+        [SerializeField] private VoidEventChannelSO _lockEnemyToggleChannel;
 
         [Tooltip("攻击碰撞体组件引用，挂载在武器骨骼子节点上")]
         [SerializeField] private AttackHitbox _attackHitbox;
@@ -168,10 +172,7 @@ namespace GamePlay.Player
 
         private void HandleLockEnemy()
         {
-            if (_cameraLockEnemy != null)
-            {
-                _cameraLockEnemy.ToggleLock();
-            }
+            _lockEnemyToggleChannel?.Raise();
         }
     }
 }

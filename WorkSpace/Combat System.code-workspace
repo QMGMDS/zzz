@@ -16,6 +16,7 @@
       "Mathf",
       "Cinemachine",
       "_evadeCooldown",
+      "ScriptableObject",
     ],
     "git.ignoreLimitWarning": true,
   }

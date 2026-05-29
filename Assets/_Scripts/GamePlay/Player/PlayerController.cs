@@ -1,4 +1,6 @@
 using Core.Input;
+using GamePlay.Combat;
+using CombatConfig = GamePlay.Combat.AttackComboConfigSO;
 using CustomCameras;
 using GamePlay.State;
 using GamePlay.StateMachine;
@@ -41,6 +43,12 @@ namespace GamePlay.Player
         [Tooltip("锁敌摄像机组件引用，挂载在 Cinemachine Virtual Camera 上")]
         [SerializeField] private CameraLockEnemy _cameraLockEnemy;
 
+        [Tooltip("攻击碰撞体组件引用，挂载在武器骨骼子节点上")]
+        [SerializeField] private AttackHitbox _attackHitbox;
+
+        [Tooltip("连击攻击配置 SO，定义每段伤害与判定窗口")]
+        [SerializeField] private CombatConfig _attackConfig;
+
         private PlayerStateMachine _playerStateMachine;
         private Camera _mainCamera;
         private Vector2 _moveDirection;
@@ -75,6 +83,10 @@ namespace GamePlay.Player
         public float ComboWindowDuration => _comboWindowDuration;
 
         public Transform LockTarget => _cameraLockEnemy != null ? _cameraLockEnemy.CurrentTarget : null;
+
+        public AttackHitbox AttackHitbox => _attackHitbox;
+
+        public CombatConfig AttackConfig => _attackConfig;
 
         #endregion
 

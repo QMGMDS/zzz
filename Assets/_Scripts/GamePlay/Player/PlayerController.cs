@@ -9,9 +9,7 @@ using UnityEngine;
 
 namespace GamePlay.Player
 {
-    /// <summary>
-    /// 玩家控制器，实现 IStateContext 为状态提供依赖，委托状态机驱动角色行为
-    /// </summary>
+    /// <summary>玩家控制器，为状态机提供依赖并驱动角色行为</summary>
     [RequireComponent(typeof(InputController))]
     [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(CharacterController))]
@@ -61,35 +59,61 @@ namespace GamePlay.Player
 
         #region IStateContext
 
+        /// <inheritdoc cref="IStateContext.Animator"/>
         public Animator Animator => _animator;
+
+        /// <inheritdoc cref="IStateContext.CharacterController"/>
         public CharacterController CharacterController => _characterController;
+
+        /// <inheritdoc cref="IStateContext.Transform"/>
         public Transform Transform => transform;
+
+        /// <inheritdoc cref="IStateContext.MoveDirection"/>
         public Vector2 MoveDirection => _moveDirection;
+
+        /// <inheritdoc cref="IStateContext.StateMachine"/>
         public StateMachineBase StateMachine => _playerStateMachine;
+
+        /// <inheritdoc cref="IStateContext.MainCamera"/>
         public Camera MainCamera => _mainCamera;
+
+        /// <inheritdoc cref="IStateContext.InputBufferTime"/>
         public float InputBufferTime => _inputBufferTime;
+
+        /// <inheritdoc cref="IStateContext.EvadeFrontCommitDuration"/>
         public float EvadeFrontCommitDuration => _evadeFrontCooldown;
+
+        /// <inheritdoc cref="IStateContext.EvadeBackCommitDuration"/>
         public float EvadeBackCommitDuration => _evadeBackCooldown;
+
+        /// <inheritdoc cref="IStateContext.IsEvadeTriggered"/>
         public bool IsEvadeTriggered => _evadeTriggered;
 
+        /// <inheritdoc cref="IStateContext.ConsumeEvade"/>
         public void ConsumeEvade()
         {
             _evadeTriggered = false;
         }
 
+        /// <inheritdoc cref="IStateContext.IsAttackTriggered"/>
         public bool IsAttackTriggered => _attackTriggered;
 
+        /// <inheritdoc cref="IStateContext.ConsumeAttack"/>
         public void ConsumeAttack()
         {
             _attackTriggered = false;
         }
 
+        /// <inheritdoc cref="IStateContext.ComboWindowDuration"/>
         public float ComboWindowDuration => _comboWindowDuration;
 
+        /// <inheritdoc cref="IStateContext.LockTarget"/>
         public Transform LockTarget => _cameraLockEnemy != null ? _cameraLockEnemy.CurrentTarget : null;
 
+        /// <inheritdoc cref="IStateContext.AttackHitbox"/>
         public AttackHitbox AttackHitbox => _attackHitbox;
 
+        /// <inheritdoc cref="IStateContext.AttackConfig"/>
         public CombatConfig AttackConfig => _attackConfig;
 
         #endregion

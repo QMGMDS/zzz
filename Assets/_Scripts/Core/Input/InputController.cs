@@ -4,9 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace Core.Input
 {
-    /// <summary>
-    /// 输入控制器，封装 Unity Input System，通过 IInputable 接口暴露输入事件供外部脚本订阅
-    /// </summary>
+    /// <summary>输入控制器，封装 Unity Input System 并暴露输入事件</summary>
     public class InputController : MonoBehaviour, IInputable, @InputSystem.ICombatMapActions
     {
         private @InputSystem _inputActions;
@@ -72,10 +70,14 @@ namespace Core.Input
             MoveDirectionChanged?.Invoke(_moveDirection);
         }
 
+        /// <summary>摄像机视角输入处理（由 Cinemachine POV 接管，无需额外逻辑）</summary>
+        /// <param name="context">输入回调上下文</param>
         public void OnCameraLook(InputAction.CallbackContext context)
         {
         }
 
+        /// <summary>闪避输入处理，performed 时触发闪避事件</summary>
+        /// <param name="context">输入回调上下文</param>
         public void OnEvade(InputAction.CallbackContext context)
         {
             if (context.performed)
@@ -84,6 +86,8 @@ namespace Core.Input
             }
         }
 
+        /// <summary>攻击输入处理，performed 时触发攻击事件</summary>
+        /// <param name="context">输入回调上下文</param>
         public void OnAttack(InputAction.CallbackContext context)
         {
             if (context.performed)
@@ -92,6 +96,8 @@ namespace Core.Input
             }
         }
 
+        /// <summary>锁敌输入处理，performed 时触发锁敌事件</summary>
+        /// <param name="context">输入回调上下文</param>
         public void OnLockEnemy(InputAction.CallbackContext context)
         {
             if (context.performed)

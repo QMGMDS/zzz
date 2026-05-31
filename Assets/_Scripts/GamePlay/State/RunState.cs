@@ -17,6 +17,7 @@ namespace GamePlay.State
         private float _noInputTimer;
         private bool _isStopping;
 
+        /// <inheritdoc/>
         public override void Enter(IStateContext context) 
         {
             Context = context;
@@ -26,10 +27,12 @@ namespace GamePlay.State
             _isStopping = false;
         }
 
+        /// <inheritdoc/>
         public override void Exit()
         {
         }
 
+        /// <inheritdoc/>
         public override void Update()
         {
             Vector2 direction = Context.MoveDirection;
@@ -65,7 +68,7 @@ namespace GamePlay.State
             }
         }
 
-        /// <summary>在 Animator 更新后执行旋转，确保覆盖骨架动画曲线</summary>
+        /// <inheritdoc/>
         public override void LateUpdate()
         {
             Vector2 direction = Context.MoveDirection;

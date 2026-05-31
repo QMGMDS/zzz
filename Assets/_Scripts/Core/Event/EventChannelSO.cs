@@ -2,9 +2,7 @@ using UnityEngine;
 
 namespace Core.Event
 {
-    /// <summary>
-    /// 事件通道抽象基类，自动向 EventChannelRegistry 注册/注销，维护触发统计
-    /// </summary>
+    /// <summary>事件通道抽象基类，自动完成注册/注销与触发统计维护</summary>
     public abstract class EventChannelSO : ScriptableObject, IEventChannel
     {
         /// <inheritdoc cref="IEventChannel.ChannelName"/>

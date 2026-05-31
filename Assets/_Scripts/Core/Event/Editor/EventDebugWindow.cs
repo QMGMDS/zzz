@@ -10,8 +10,11 @@ namespace Core.Event.Editor
     /// </summary>
     public class EventDebugWindow : EditorWindow
     {
+        /// <summary>滚动视图位置，记录用户拉到了哪</summary>
         private Vector2 _scrollPosition;
+        /// <summary>每帧刷新时暂存所有通道的快照，避免遍历时集合被修改</summary>
         private readonly List<EventChannelSO> _channelsCache = new List<EventChannelSO>();
+        /// <summary>记录上一次 Editor 的播放状态，用于检测进入/退出 Play Mode 的瞬间</summary>
         private bool _isPlaying;
 
         [MenuItem("Window/Event Debugger")]

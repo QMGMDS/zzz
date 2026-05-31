@@ -14,6 +14,7 @@ namespace GamePlay.State
         private float _animEnterTime;
         private bool _hasEnteredAnimState;
 
+        /// <inheritdoc/>
         public override void Enter(IStateContext context)
         {
             Context = context;
@@ -21,10 +22,12 @@ namespace GamePlay.State
             _hasEnteredAnimState = false;
         }
 
+        /// <inheritdoc/>
         public override void Exit()
         {
         }
 
+        /// <inheritdoc/>
         public override void Update()
         {
             AnimatorStateInfo stateInfo = Context.Animator.GetCurrentAnimatorStateInfo(0);

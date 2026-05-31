@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Core.Event
 {
     /// <summary>
-    /// 无参事件通道，最常用的通道类型，通过 [CreateAssetMenu] 在 Project 窗口右键创建
+    /// 无参事件通道
     /// </summary>
     [CreateAssetMenu(menuName = "Event/Channels/Void Channel", fileName = "New Void Event Channel")]
     public class VoidEventChannelSO : EventChannelSO

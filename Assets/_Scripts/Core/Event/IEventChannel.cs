@@ -1,6 +1,6 @@
 namespace Core.Event
 {
-    /// <summary>事件通道公共接口，暴露调试统计信息供 EventDebugPanel 统一查询</summary>
+    /// <summary>事件通道公共接口，暴露调试统计信息供 EventDebugWindow 统一查询</summary>
     public interface IEventChannel
     {
         /// <summary>通道名称（ScriptableObject 资产名）</summary>

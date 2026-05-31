@@ -22,7 +22,7 @@ import threading
 from typing import Any, Dict, List, Optional
 from urllib.parse import urlencode
 
-__version__ = "1.9.4"
+__version__ = "2.0.0"
 
 UNITY_URL = "http://localhost:8090"
 DEFAULT_PORT = 8090
@@ -364,6 +364,11 @@ class UnitySkills:
         return self.call('job_logs', jobId=job_id, limit=limit)
 
     def wait_for_job(self, job_id: str, timeout: float = 60.0) -> Dict[str, Any]:
+        """Block via the job_wait skill until the job ends or `timeout` elapses.
+
+        `timeout` (default 60s) is converted to ms and passed explicitly as job_wait's
+        `timeoutMs`, overriding job_wait's own REST default of 10000 (10s).
+        """
         timeout_ms = max(1000, int(timeout * 1000))
         result = self.call('job_wait', jobId=job_id, timeoutMs=timeout_ms)
         if isinstance(result, dict) and result.get('reportId'):
@@ -397,21 +402,24 @@ class UnitySkills:
             return {'status': 'error', 'error': str(exc)}
 
     def poll_job(self, job_id: str, interval: float = 0.5, timeout: float = 300.0,
-                 on_progress=None) -> Dict[str, Any]:
+                 on_progress=None, max_interval: float = 5.0) -> Dict[str, Any]:
         """
         Poll GET /jobs/{id} until the job reaches a terminal state or timeout elapses.
         Designed as the lightweight alternative to wait_for_job (which holds a worker slot).
 
         Args:
             job_id: Job identifier returned by an async skill (e.g. script_create).
-            interval: Seconds between polls. Default 0.5s — the server is local so cost is low.
+            interval: Initial seconds between polls. Default 0.5s; after each poll it grows by
+                1.5x up to max_interval, so a long-running job is not polled hundreds of times.
             timeout: Total wait budget in seconds. Default 5 min.
             on_progress: Optional callback (snapshot_dict) -> None invoked after each poll.
+            max_interval: Upper bound (seconds) for the backoff interval. Default 5s.
 
         Returns the final snapshot dict (with `terminal=True` on natural completion).
         """
         deadline = time.time() + max(0.0, timeout)
         last = None
+        cur = max(0.05, interval)
         while True:
             last = self.get_job(job_id)
             if isinstance(last, dict):
@@ -428,7 +436,8 @@ class UnitySkills:
                 if isinstance(last, dict):
                     last['_pollTimeout'] = True
                 return last or {'status': 'error', 'error': 'poll_job timed out'}
-            time.sleep(interval)
+            time.sleep(cur)
+            cur = min(max_interval, cur * 1.5)
 
 
 # Global Default Client (lazy initialization)
@@ -545,7 +554,11 @@ def get_job_logs(job_id: str, limit: int = 100) -> Dict[str, Any]:
 
 
 def wait_for_job(job_id: str, timeout: float = 60.0) -> Dict[str, Any]:
-    """Wait for a UnitySkills job and include the final batch report when available."""
+    """Wait for a UnitySkills job and include the final batch report when available.
+
+    `timeout` defaults to 60s and is passed to the server as job_wait's timeoutMs,
+    overriding job_wait's own REST default of 10s.
+    """
     return _get_default_client().wait_for_job(job_id, timeout=timeout)
 
 
@@ -680,28 +693,35 @@ def workflow_context(tag: str, description: str = '') -> WorkflowContext:
     return WorkflowContext(tag, description)
 
 def call_skill_with_retry(skill_name: str, max_retries: int = 3, retry_delay: float = 2.0, **kwargs) -> Dict[str, Any]:
-    """Call a Unity skill with automatic retry logic for Domain Reload scenarios.
+    """Call a Unity skill with single-layer retry tuned for Domain Reload scenarios.
+
+    Retry lives in ONE layer: the underlying client call runs with `_retries=0`, and this
+    function handles transient transport errors (compile-time TCP refusal / timeout) by polling
+    /health until the server recovers, then re-sending once. This avoids the old nested-retry
+    product (outer x inner) that could fire up to 16 requests and trip the rate limiter.
 
     Args:
         skill_name: Name of the Unity skill to call.
         max_retries: Maximum number of retry attempts after the initial call (default: 3, total attempts: 4).
-        retry_delay: Delay in seconds between retry attempts.
+        retry_delay: Base seconds budget per recovery wait (used as the /health poll window).
         **kwargs: Additional arguments passed to call_skill.
 
     Returns:
         The result from call_skill, or the last result if all retries are exhausted.
     """
     last_result = None
+    # 收敛为单层重试：底层 call 不再自重试（_retries=0），Domain Reload 容错统一在此处理。
+    kwargs.setdefault('_retries', 0)
     for attempt in range(1 + max_retries):
         result = call_skill(skill_name, **kwargs)
 
-        is_connection_error = _is_retryable_transport_error(result)
-        if not is_connection_error:
+        if not _is_retryable_transport_error(result):
             return result
 
         last_result = result
         if attempt < max_retries:
-            time.sleep(retry_delay)
+            # 编译期 TCP 被拒/超时：轮询 /health 等服务恢复后再单次重发，避免盲目重试撞限流（100 req/s）。
+            wait_for_unity(timeout=max(retry_delay, 1.0) * 3, check_interval=0.5)
     return last_result
 
 def get_skills(category: str = None, operation: str = None, tags: str = None,
@@ -730,17 +750,36 @@ def get_skills(category: str = None, operation: str = None, tags: str = None,
     except Exception as e:
         return {"status": "error", "error": str(e)}
 
-def get_skill_schema() -> Dict[str, Any]:
-    """Get the canonical machine-readable skill schema.
+# Process-wide schema cache: /skills/schema is ~578 KB; re-fetching it per call is the
+# single biggest client-side token sink. Cache a successful result per server URL for a
+# short TTL and reuse it within a session.
+_schema_cache: Dict[str, Dict[str, Any]] = {}
+_SCHEMA_CACHE_TTL = 300.0  # seconds
+
+
+def get_skill_schema(force_refresh: bool = False) -> Dict[str, Any]:
+    """Get the canonical machine-readable skill schema (process-cached).
 
     This is the preferred source for exact skill names, parameters, and metadata
     when prompt/token budget matters more than loading large SKILL.md files.
+
+    The full schema is large (~578 KB), so a successful result is cached per server URL
+    for `_SCHEMA_CACHE_TTL` seconds. Pass force_refresh=True to bypass the cache (e.g. after
+    adding/renaming skills and recompiling).
     """
     try:
         client = _get_default_client()
+        key = client.url or "default"
+        now = time.time()
+        cached = _schema_cache.get(key)
+        if not force_refresh and cached and (now - cached["ts"]) < _SCHEMA_CACHE_TTL:
+            return cached["data"]
         response = client._session.get(f"{client.url}/skills/schema", timeout=client.timeout)
         response.encoding = 'utf-8'
-        return response.json()
+        data = response.json()
+        if isinstance(data, dict) and data.get("totalSkills") is not None:
+            _schema_cache[key] = {"ts": now, "version": data.get("version"), "data": data}
+        return data
     except Exception as e:
         return {"status": "error", "error": str(e)}
 
@@ -899,7 +938,7 @@ def grant_permission(skill: str, token: str, args: Dict[str, Any]) -> Dict[str, 
 
 
 def approve_grant(token: str) -> Dict[str, Any]:
-    """Panel 渠道用：面板按钮触发，激活 token 并把 skill 加入 GrantedSkills。
+    """Panel 渠道用：面板按钮触发，仅标记本次 grant 已批准（单次有效，不写永久白名单）。
 
     主要给测试用；生产流程下应由 Unity 面板用户点 [Approve] 触发。
     """

@@ -3,10 +3,7 @@ using UnityEngine;
 
 namespace GamePlay.Combat
 {
-    /// <summary>
-    /// 攻击碰撞体，挂载在武器骨骼子节点上，配合 NormalAttackState 的 Enable/Disable 控制判定窗口。
-    /// 单次激活周期内对同一目标仅命中一次。
-    /// </summary>
+    /// <summary>攻击碰撞体，单次激活周期内对同一目标仅命中一次</summary>
     [RequireComponent(typeof(Collider))]
     public class AttackHitbox : MonoBehaviour
     {
@@ -28,7 +25,9 @@ namespace GamePlay.Combat
             _sourceRoot = transform.root;
         }
 
-        /// <summary>覆盖当前段伤害数据（由 NormalAttackState 从 SO 读取后调用）</summary>
+        /// <summary>覆盖当前段伤害数据</summary>
+        /// <param name="damage">伤害数值</param>
+        /// <param name="knockbackForce">击退力</param>
         public void SetDamage(float damage, float knockbackForce)
         {
             _damage = damage;

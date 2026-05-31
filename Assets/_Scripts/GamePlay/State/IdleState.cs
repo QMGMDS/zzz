@@ -11,6 +11,7 @@ namespace GamePlay.State
 
         private Quaternion _lockedRotation;
 
+        /// <inheritdoc/>
         public override void Enter(IStateContext context)
         {
             Context = context;
@@ -19,10 +20,12 @@ namespace GamePlay.State
             _lockedRotation = Context.Transform.rotation;
         }
 
+        /// <inheritdoc/>
         public override void Exit()
         {
         }
 
+        /// <inheritdoc/>
         public override void Update()
         {
             if (Context.MoveDirection.sqrMagnitude > 0.0001f)
@@ -31,6 +34,7 @@ namespace GamePlay.State
             }
         }
 
+        /// <inheritdoc/>
         public override void LateUpdate()
         {
             Context.Transform.rotation = _lockedRotation;

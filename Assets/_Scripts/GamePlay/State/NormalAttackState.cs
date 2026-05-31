@@ -46,6 +46,7 @@ namespace GamePlay.State
         private float _rotationVelocity;
         private bool _hitboxEnabled;
 
+        /// <inheritdoc/>
         public override void Enter(IStateContext context)
         {
             Context = context;
@@ -56,11 +57,13 @@ namespace GamePlay.State
             Context.Animator.CrossFadeInFixedTime(AttackHashes[0], CrossFadeDuration);
         }
 
+        /// <inheritdoc/>
         public override void Exit()
         {
             DisableHitbox();
         }
 
+        /// <inheritdoc/>
         public override void Update()
         {
             switch (_phase)
@@ -150,6 +153,7 @@ namespace GamePlay.State
                 Context.StateMachine.ChangeState<IdleState>();
         }
 
+        /// <inheritdoc/>
         public override void LateUpdate()
         {
             Transform lockTarget = Context.LockTarget;

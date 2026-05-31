@@ -4,9 +4,8 @@ using UnityEngine;
 namespace GamePlay.StateMachine
 {
     /// <summary>
-    /// 玩家状态机，管理全部玩家状态（移动 + 战斗）间的输入路由与切换。
-    /// EvadeFront 与 EvadeBack 各自独立 CD，同类型 CD 到期后走 ReenterState 重播动画，
-    /// 跨类型需来源 CD 与目标 CD 均到期才放行；战斗输入直接路由到 NormalAttackState。
+    /// 玩家状态机，管理全部玩家状态间的输入路由与切换。
+    /// 闪避各方向独立 CD，同类型 CD 到期后重播动画，跨类型需双方 CD 均到期才放行。
     /// </summary>
     public class PlayerStateMachine : StateMachineBase
     {
@@ -15,6 +14,9 @@ namespace GamePlay.StateMachine
         private float _lastEvadeFrontTime = float.MinValue;
         private float _lastEvadeBackTime = float.MinValue;
 
+        /// <summary>初始化玩家状态机并注册全部状态</summary>
+        /// <param name="evadeFrontCooldown">前闪避冷却时间</param>
+        /// <param name="evadeBackCooldown">后撤步冷却时间</param>
         public PlayerStateMachine(float evadeFrontCooldown = 0.7f, float evadeBackCooldown = 0.7f)
         {
             _evadeFrontCooldown = evadeFrontCooldown;
@@ -28,6 +30,7 @@ namespace GamePlay.StateMachine
             RegisterState<NormalAttackState>(new NormalAttackState());
         }
 
+        /// <summary>每帧检查输入并路由到对应状态，优先处理闪避再处理攻击</summary>
         public override void Update()
         {
             if (_context.IsEvadeTriggered)

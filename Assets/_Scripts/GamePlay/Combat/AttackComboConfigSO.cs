@@ -20,6 +20,25 @@ namespace GamePlay.Combat
         public Vector3 LocalRotation;
     }
 
+    /// <summary>单次判定窗口：对应动画中一次挥剑的伤害窗口</summary>
+    [Serializable]
+    public struct HitWindow
+    {
+        [Tooltip("判定窗口开始时间（归一化 0~1）")]
+        [Range(0f, 1f)]
+        public float StartNormalizedTime;
+
+        [Tooltip("判定窗口结束时间（归一化 0~1）")]
+        [Range(0f, 1f)]
+        public float EndNormalizedTime;
+
+        [Tooltip("本次挥剑的伤害值")]
+        public float Damage;
+
+        [Tooltip("本次挥剑的击退力")]
+        public float KnockbackForce;
+    }
+
     /// <summary>单段攻击的配置数据</summary>
     [Serializable]
     public struct AttackSegmentConfig
@@ -27,19 +46,8 @@ namespace GamePlay.Combat
         [Tooltip("本段攻击对应动画哈希值")]
         public int AnimationHash;
 
-        [Tooltip("伤害值")]
-        public float Damage;
-
-        [Tooltip("击退力")]
-        public float KnockbackForce;
-
-        [Tooltip("判定窗口开始时间（归一化 0~1）")]
-        [Range(0f, 1f)]
-        public float HitboxActiveStart;
-
-        [Tooltip("判定窗口结束时间（归一化 0~1）")]
-        [Range(0f, 1f)]
-        public float HitboxActiveEnd;
+        [Tooltip("判定窗口数组，每项对应一次挥剑")]
+        public HitWindow[] HitWindows;
 
         [Tooltip("特效触发配置数组，每项定义一次特效的触发时刻和旋转角度")]
         public EffectSpawnInfo[] EffectSpawns;

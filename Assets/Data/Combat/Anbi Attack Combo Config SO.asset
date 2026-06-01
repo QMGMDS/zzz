@@ -14,28 +14,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Segments:
   - AnimationHash: 0
-    Damage: 1
-    KnockbackForce: 1
-    HitboxActiveStart: 0.2
-    HitboxActiveEnd: 0.7
+    HitWindows:
+    - StartNormalizedTime: 0.2
+      EndNormalizedTime: 0.7
+      Damage: 1
+      KnockbackForce: 1
     EffectSpawns:
     - NormalizedTime: 0.35
       LocalPosition: {x: 0, y: 0, z: 0.7}
       LocalRotation: {x: 0, y: 160, z: 0}
   - AnimationHash: 0
-    Damage: 2
-    KnockbackForce: 2
-    HitboxActiveStart: 0.2
-    HitboxActiveEnd: 0.7
+    HitWindows:
+    - StartNormalizedTime: 0.2
+      EndNormalizedTime: 0.7
+      Damage: 2
+      KnockbackForce: 2
     EffectSpawns:
     - NormalizedTime: 0.28
       LocalPosition: {x: 0, y: 0, z: 1}
       LocalRotation: {x: 0, y: 160, z: 90}
   - AnimationHash: 0
-    Damage: 3
-    KnockbackForce: 3
-    HitboxActiveStart: 0.2
-    HitboxActiveEnd: 0.7
+    HitWindows:
+    - StartNormalizedTime: 0.2
+      EndNormalizedTime: 0.4
+      Damage: 3
+      KnockbackForce: 3
+    - StartNormalizedTime: 0.42
+      EndNormalizedTime: 0.7
+      Damage: 3
+      KnockbackForce: 3
     EffectSpawns:
     - NormalizedTime: 0.27
       LocalPosition: {x: 0, y: 0, z: 0.7}
@@ -44,10 +51,19 @@ MonoBehaviour:
       LocalPosition: {x: 0, y: 0, z: 0.7}
       LocalRotation: {x: 0, y: 160, z: 0}
   - AnimationHash: 0
-    Damage: 4
-    KnockbackForce: 4
-    HitboxActiveStart: 0.2
-    HitboxActiveEnd: 0.7
+    HitWindows:
+    - StartNormalizedTime: 0.1
+      EndNormalizedTime: 0.28
+      Damage: 4
+      KnockbackForce: 4
+    - StartNormalizedTime: 0.3
+      EndNormalizedTime: 0.48
+      Damage: 4
+      KnockbackForce: 4
+    - StartNormalizedTime: 0.5
+      EndNormalizedTime: 0.75
+      Damage: 4
+      KnockbackForce: 4
     EffectSpawns:
     - NormalizedTime: 0.15
       LocalPosition: {x: 0, y: 0, z: 1}

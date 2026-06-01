@@ -11,7 +11,7 @@ namespace GamePlay.State
     /// 四段普攻连击状态，内部通过三阶段（Playing / ComboWindow / Ending）管理全部连击逻辑。
     /// 动画结束后开启连击窗口：窗口内收到攻击输入则进入下一段，超时则播放对应 _End 动画。
     /// 四段连击后输入则回到第一段继续。
-    /// Hitbox 启用时机由 SO 的 HitboxActiveStart/End 控制（归一化时间）。
+    /// 每段动画支持多个 HitWindow（对应多次挥剑），各自的判定窗口由 SO 配置。
     /// </summary>
     public class NormalAttackState : StateBase
     {
@@ -47,6 +47,7 @@ namespace GamePlay.State
         private int _playingEndHash;
         private float _rotationVelocity;
         private bool _hitboxEnabled;
+        private int _hitWindowIndex;
         private int _effectSpawnIndex;
 
         /// <inheritdoc/>
@@ -56,8 +57,8 @@ namespace GamePlay.State
             _phase = Phase.Playing;
             _comboIndex = 0;
             _hitboxEnabled = false;
+            _hitWindowIndex = 0;
             _effectSpawnIndex = 0;
-            ApplySegmentConfig(0);
             Context.Animator.CrossFadeInFixedTime(AttackHashes[0], CrossFadeDuration);
         }
 
@@ -114,8 +115,8 @@ namespace GamePlay.State
                 _comboIndex++;
                 if (_comboIndex >= AttackHashes.Length) _comboIndex = 0;
                 _hitboxEnabled = false;
+                _hitWindowIndex = 0;
                 _effectSpawnIndex = 0;
-                ApplySegmentConfig(_comboIndex);
                 Context.Animator.CrossFadeInFixedTime(AttackHashes[_comboIndex], CrossFadeDuration);
                 _phase = Phase.Playing;
                 return;
@@ -141,8 +142,8 @@ namespace GamePlay.State
                 Context.ConsumeAttack();
                 _comboIndex = 0;
                 _hitboxEnabled = false;
+                _hitWindowIndex = 0;
                 _effectSpawnIndex = 0;
-                ApplySegmentConfig(0);
                 Context.Animator.CrossFadeInFixedTime(AttackHashes[0], CrossFadeDuration);
                 _phase = Phase.Playing;
                 return;
@@ -181,15 +182,6 @@ namespace GamePlay.State
             t.eulerAngles = new Vector3(0f, smoothedAngle, 0f);
         }
 
-        private void ApplySegmentConfig(int index)
-        {
-            CombatConfig config = Context.AttackConfig;
-            if (config == null || config.Segments == null || index >= config.Segments.Length) return;
-
-            AttackSegmentConfig seg = config.Segments[index];
-            Context.AttackHitbox?.SetDamage(seg.Damage, seg.KnockbackForce);
-        }
-
         private void UpdateHitboxForCurrentSegment(float normalizedTime)
         {
             CombatConfig config = Context.AttackConfig;
@@ -198,17 +190,25 @@ namespace GamePlay.State
             if (_comboIndex >= config.Segments.Length) return;
 
             AttackSegmentConfig seg = config.Segments[_comboIndex];
-            bool shouldEnable = normalizedTime >= seg.HitboxActiveStart
-                             && normalizedTime < seg.HitboxActiveEnd;
+            HitWindow[] windows = seg.HitWindows;
+            if (windows == null || windows.Length == 0) return;
 
-            if (shouldEnable && !_hitboxEnabled)
+            while (_hitWindowIndex < windows.Length && normalizedTime >= windows[_hitWindowIndex].StartNormalizedTime)
             {
+                HitWindow w = windows[_hitWindowIndex];
+                hitbox.SetDamage(w.Damage, w.KnockbackForce);
                 hitbox.Enable();
                 _hitboxEnabled = true;
+                _hitWindowIndex++;
             }
-            else if (!shouldEnable && _hitboxEnabled)
+
+            if (_hitboxEnabled)
             {
-                DisableHitbox();
+                int currentIndex = _hitWindowIndex - 1;
+                if (currentIndex < 0 || normalizedTime >= windows[currentIndex].EndNormalizedTime)
+                {
+                    DisableHitbox();
+                }
             }
         }
 

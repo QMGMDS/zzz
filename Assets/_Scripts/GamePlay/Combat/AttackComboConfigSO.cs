@@ -3,6 +3,23 @@ using UnityEngine;
 
 namespace GamePlay.Combat
 {
+    /// <summary>
+    /// 单次特效生成配置：定义在动画的哪个时间点触发，以及该次特效的局部旋转角度。
+    /// </summary>
+    [Serializable]
+    public struct EffectSpawnInfo
+    {
+        [Tooltip("特效触发时刻（归一化时间 0~1）")]
+        [Range(0f, 1f)]
+        public float NormalizedTime;
+
+        [Tooltip("该特效相对于挂点的局部偏移位置")]
+        public Vector3 LocalPosition;
+
+        [Tooltip("该特效相对于挂点的局部旋转角度")]
+        public Vector3 LocalRotation;
+    }
+
     /// <summary>单段攻击的配置数据</summary>
     [Serializable]
     public struct AttackSegmentConfig
@@ -23,6 +40,9 @@ namespace GamePlay.Combat
         [Tooltip("判定窗口结束时间（归一化 0~1）")]
         [Range(0f, 1f)]
         public float HitboxActiveEnd;
+
+        [Tooltip("特效触发配置数组，每项定义一次特效的触发时刻和旋转角度")]
+        public EffectSpawnInfo[] EffectSpawns;
     }
 
     /// <summary>

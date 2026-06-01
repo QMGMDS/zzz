@@ -18,18 +18,43 @@ MonoBehaviour:
     KnockbackForce: 1
     HitboxActiveStart: 0.2
     HitboxActiveEnd: 0.7
+    EffectSpawns:
+    - NormalizedTime: 0.35
+      LocalPosition: {x: 0, y: 0, z: 0.7}
+      LocalRotation: {x: 0, y: 160, z: 0}
   - AnimationHash: 0
     Damage: 2
     KnockbackForce: 2
     HitboxActiveStart: 0.2
     HitboxActiveEnd: 0.7
+    EffectSpawns:
+    - NormalizedTime: 0.28
+      LocalPosition: {x: 0, y: 0, z: 1}
+      LocalRotation: {x: 0, y: 160, z: 90}
   - AnimationHash: 0
     Damage: 3
     KnockbackForce: 3
     HitboxActiveStart: 0.2
     HitboxActiveEnd: 0.7
+    EffectSpawns:
+    - NormalizedTime: 0.27
+      LocalPosition: {x: 0, y: 0, z: 0.7}
+      LocalRotation: {x: 0, y: 160, z: 0}
+    - NormalizedTime: 0.47
+      LocalPosition: {x: 0, y: 0, z: 0.7}
+      LocalRotation: {x: 0, y: 160, z: 0}
   - AnimationHash: 0
     Damage: 4
     KnockbackForce: 4
     HitboxActiveStart: 0.2
     HitboxActiveEnd: 0.7
+    EffectSpawns:
+    - NormalizedTime: 0.15
+      LocalPosition: {x: 0, y: 0, z: 1}
+      LocalRotation: {x: 0, y: 160, z: 0}
+    - NormalizedTime: 0.3
+      LocalPosition: {x: 0, y: 0, z: 1}
+      LocalRotation: {x: 0, y: 160, z: 0}
+    - NormalizedTime: 0.57
+      LocalPosition: {x: 0, y: 0, z: 1.5}
+      LocalRotation: {x: 0, y: 160, z: 60}

@@ -51,6 +51,9 @@ namespace GamePlay.Player
         [Tooltip("连击攻击配置 SO，定义每段伤害与判定窗口")]
         [SerializeField] private CombatConfig _attackConfig;
 
+        [Tooltip("特效生成挂点 Transform，建议放在武器骨骼子节点，位置和方向决定挥砍特效的基准")]
+        [SerializeField] private Transform _effectSpawnPoint;
+
         private PlayerStateMachine _playerStateMachine;
         private Camera _mainCamera;
         private Vector2 _moveDirection;
@@ -115,6 +118,9 @@ namespace GamePlay.Player
 
         /// <inheritdoc cref="IStateContext.AttackConfig"/>
         public CombatConfig AttackConfig => _attackConfig;
+
+        /// <inheritdoc cref="IStateContext.EffectSpawnPoint"/>
+        public Transform EffectSpawnPoint => _effectSpawnPoint;
 
         #endregion
 

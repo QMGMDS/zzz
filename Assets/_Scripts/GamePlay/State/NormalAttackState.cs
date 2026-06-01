@@ -1,5 +1,7 @@
+using Core.Pool;
 using GamePlay.Common;
 using GamePlay.Combat;
+using GamePlay.Effects;
 using CombatConfig = GamePlay.Combat.AttackComboConfigSO;
 using UnityEngine;
 
@@ -45,6 +47,7 @@ namespace GamePlay.State
         private int _playingEndHash;
         private float _rotationVelocity;
         private bool _hitboxEnabled;
+        private int _effectSpawnIndex;
 
         /// <inheritdoc/>
         public override void Enter(IStateContext context)
@@ -53,6 +56,7 @@ namespace GamePlay.State
             _phase = Phase.Playing;
             _comboIndex = 0;
             _hitboxEnabled = false;
+            _effectSpawnIndex = 0;
             ApplySegmentConfig(0);
             Context.Animator.CrossFadeInFixedTime(AttackHashes[0], CrossFadeDuration);
         }
@@ -88,6 +92,7 @@ namespace GamePlay.State
 
             float normalizedTime = stateInfo.normalizedTime;
             UpdateHitboxForCurrentSegment(normalizedTime);
+            UpdateEffectForCurrentSegment(normalizedTime);
 
             if (normalizedTime >= 0.9f)
             {
@@ -109,6 +114,7 @@ namespace GamePlay.State
                 _comboIndex++;
                 if (_comboIndex >= AttackHashes.Length) _comboIndex = 0;
                 _hitboxEnabled = false;
+                _effectSpawnIndex = 0;
                 ApplySegmentConfig(_comboIndex);
                 Context.Animator.CrossFadeInFixedTime(AttackHashes[_comboIndex], CrossFadeDuration);
                 _phase = Phase.Playing;
@@ -135,6 +141,7 @@ namespace GamePlay.State
                 Context.ConsumeAttack();
                 _comboIndex = 0;
                 _hitboxEnabled = false;
+                _effectSpawnIndex = 0;
                 ApplySegmentConfig(0);
                 Context.Animator.CrossFadeInFixedTime(AttackHashes[0], CrossFadeDuration);
                 _phase = Phase.Playing;
@@ -209,6 +216,33 @@ namespace GamePlay.State
         {
             Context.AttackHitbox?.Disable();
             _hitboxEnabled = false;
+        }
+
+        private void UpdateEffectForCurrentSegment(float normalizedTime)
+        {
+            CombatConfig config = Context.AttackConfig;
+            if (config == null || config.Segments == null || _comboIndex >= config.Segments.Length) return;
+
+            AttackSegmentConfig seg = config.Segments[_comboIndex];
+            EffectSpawnInfo[] spawns = seg.EffectSpawns;
+            if (spawns == null || spawns.Length == 0) return;
+
+            Transform spawnPoint = Context.EffectSpawnPoint;
+            if (spawnPoint == null) return;
+
+            while (_effectSpawnIndex < spawns.Length && normalizedTime >= spawns[_effectSpawnIndex].NormalizedTime)
+            {
+                EffectSpawnInfo info = spawns[_effectSpawnIndex];
+                SlashEffect effect = PoolManager.Instance.Get<SlashEffect>("FX_Slash");
+                if (effect != null)
+                {
+                    effect.transform.SetPositionAndRotation(
+                        spawnPoint.TransformPoint(info.LocalPosition),
+                        spawnPoint.rotation * Quaternion.Euler(info.LocalRotation)
+                    );
+                }
+                _effectSpawnIndex++;
+            }
         }
     }
 }

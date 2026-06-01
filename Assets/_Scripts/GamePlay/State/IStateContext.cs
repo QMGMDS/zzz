@@ -60,5 +60,8 @@ namespace GamePlay.State
 
         /// <summary>连击攻击配置 SO，按段索引取参数</summary>
         CombatConfig AttackConfig { get; }
+
+        /// <summary>特效生成挂点 Transform，用于定位挥砍特效</summary>
+        Transform EffectSpawnPoint { get; }
     }
 }

@@ -82,3 +82,9 @@
 - 接口方法/属性：写单行 XML 注释，说明含义
 - 命名空间：_Scripts 目录开始算起，比如：Core.Input
 - 在 Inspector 窗口中可编辑的字段都需要有 [Tooltip]
+
+### 项目参考
+
+当用户输入 **"参考其他项目"** 指令时，则可以参考该项目：
+`D:\AAA_APPData\Unity\Unity Project\ZZZDemo\zzzdemo-source-code-master`
+中对应问题的解决方案。

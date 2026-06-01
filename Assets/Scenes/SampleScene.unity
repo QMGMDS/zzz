@@ -451,7 +451,48 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _maxHealth: 100
   _currentHealth: 100
-  _behaviourTree: {fileID: 0}
+--- !u!114 &727794152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 727794144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7b55c7ecdb49a4a89fa5e6f9022861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startWhenEnabled: 1
+  asynchronousLoad: 0
+  pauseWhenDisabled: 0
+  restartWhenComplete: 0
+  logTaskChanges: 0
+  group: 0
+  resetValuesOnRestart: 0
+  externalBehavior: {fileID: 0}
+  mBehaviorSource:
+    behaviorName: Behavior
+    behaviorDescription: 
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: '{"EntryTask":{"Type":"BehaviorDesigner.Runtime.Tasks.EntryTask","NodeData":{"Offset":"(535.3,30)"},"ID":0,"Name":"Entry","Instant":true},"RootTask":{"Type":"BehaviorDesigner.Runtime.Tasks.Selector","NodeData":{"Offset":"(-83.91626,128.57959)"},"ID":1,"Name":"Selector","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(-184.897583,103.779572)"},"ID":2,"Name":"Sequence","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"GamePlay.Enemy.BT.IsHitRequested","NodeData":{"Offset":"(-65.79755,151.7796)"},"ID":3,"Name":"Is
+        Hit Requested","Instant":true},{"Type":"GamePlay.Enemy.BT.PlayHitAnimation","NodeData":{"Offset":"(65.50244,148.57959)"},"ID":4,"Name":"Play
+        Hit Animation","Instant":true}]},{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(200,110)"},"ID":5,"Name":"Sequence","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Idle","NodeData":{"Offset":"(-1.29754639,140.979553)"},"ID":6,"Name":"Idle","Instant":true}]}]}}'
+      fieldSerializationData:
+        typeName: []
+        fieldNameHash: 
+        startIndex: 
+        dataPosition: 
+        unityObjects: []
+        byteData: 
+        byteDataArray: 
+      Version: 1.7.12
+  gizmoViewMode: 2
+  showBehaviorDesignerGizmo: 1
 --- !u!1 &840764338 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6894947217159541035, guid: 1cd74f4110f374c4e990dd320cb1ee15, type: 3}
@@ -1903,6 +1944,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 9140177995953688238, guid: b74199f0e541f844ba04cbd27072cdce, type: 3}
       insertIndex: -1
       addedObject: {fileID: 727794148}
+    - targetCorrespondingSourceObject: {fileID: 9140177995953688238, guid: b74199f0e541f844ba04cbd27072cdce, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 727794152}
   m_SourcePrefab: {fileID: 100100000, guid: b74199f0e541f844ba04cbd27072cdce, type: 3}
 --- !u!1001 &8895969578749094159
 PrefabInstance:

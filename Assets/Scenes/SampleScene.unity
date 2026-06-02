@@ -511,6 +511,7 @@ GameObject:
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
   - component: {fileID: 963194230}
+  - component: {fileID: 963194231}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -670,6 +671,28 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &963194231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c11265b855408d42af33d62691f5194, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ChannelMask: 1
+  m_Gain: 1
+  m_Use2DDistance: 0
+  m_UseLocalSpace: 1
+  m_ReactionSettings:
+    m_SecondaryNoise: {fileID: 0}
+    m_AmplitudeGain: 1
+    m_FrequencyGain: 1
+    m_Duration: 1
+    m_NoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1 &1030177198
 GameObject:
   m_ObjectHideFlags: 3
@@ -887,7 +910,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 3
-  m_Size: {x: 0.8, y: 0.05, z: 0.05}
+  m_Size: {x: 1.5, y: 1, z: 0.1}
   m_Center: {x: -0.43, y: 0, z: 0}
 --- !u!1 &1672637704
 GameObject:
@@ -995,7 +1018,8 @@ GameObject:
   - component: {fileID: 1735758583}
   - component: {fileID: 1735758584}
   - component: {fileID: 1735758585}
-  - component: {fileID: 1735758586}
+  - component: {fileID: 1735758588}
+  - component: {fileID: 1735758587}
   m_Layer: 0
   m_Name: Virtual Camera
   m_TagString: Untagged
@@ -1107,8 +1131,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _lockRange: 15
   _targetTag: Enemy
+  _lockToggleChannel: {fileID: 11400000, guid: 8d252007189da2d47b5e187806f2a3db, type: 2}
   _lockDamping: 8
---- !u!114 &1735758586
+--- !u!114 &1735758587
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1117,25 +1142,64 @@ MonoBehaviour:
   m_GameObject: {fileID: 1735758580}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 364189d81179dcc4682dc6a19d586d64, type: 3}
+  m_Script: {fileID: 11500000, guid: 55c6af73390bf8140904dd06e557c5d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _channel: {fileID: 11400000, guid: 8d252007189da2d47b5e187806f2a3db, type: 2}
-  _onEventRaised:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1735758585}
-        m_TargetAssemblyTypeName: CustomCameras.CameraLockEnemy, Assembly-CSharp
-        m_MethodName: ToggleLock
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  _channel: {fileID: 11400000, guid: d5aa118d684b3de41895d5ccb3c48df0, type: 2}
+  _impulseSource: {fileID: 1735758588}
+--- !u!114 &1735758588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1735758580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 180ecf9b41d478f468eb3e9083753217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ImpulseDefinition:
+    m_ImpulseChannel: 1
+    m_ImpulseShape: 2
+    m_CustomImpulseShape:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_ImpulseDuration: 0.2
+    m_ImpulseType: 0
+    m_DissipationRate: 0.25
+    m_RawSignal: {fileID: 0}
+    m_AmplitudeGain: 1
+    m_FrequencyGain: 1
+    m_RepeatMode: 0
+    m_Randomize: 1
+    m_TimeEnvelope:
+      m_AttackShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      m_DecayShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      m_AttackTime: 0
+      m_SustainTime: 0.2
+      m_DecayTime: 0.7
+      m_ScaleWithImpact: 1
+      m_HoldForever: 0
+    m_ImpactRadius: 100
+    m_DirectionMode: 0
+    m_DissipationMode: 2
+    m_DissipationDistance: 100
+    m_PropagationSpeed: 343
+  m_DefaultVelocity: {x: 0, y: -1, z: 0}
 --- !u!4 &1866810521 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6117037670660869009, guid: 1cd74f4110f374c4e990dd320cb1ee15, type: 3}
@@ -1627,7 +1691,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5438522430440169390, guid: b74199f0e541f844ba04cbd27072cdce, type: 3}
       propertyPath: m_Radius
-      value: 1
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 5500679979093789416, guid: b74199f0e541f844ba04cbd27072cdce, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1976,6 +2040,14 @@ PrefabInstance:
       propertyPath: _effectSpawnPoint
       value: 
       objectReference: {fileID: 274606032}
+    - target: {fileID: 605011714701202613, guid: 1cd74f4110f374c4e990dd320cb1ee15, type: 3}
+      propertyPath: _cameraShakeChannel
+      value: 
+      objectReference: {fileID: 11400000, guid: d5aa118d684b3de41895d5ccb3c48df0, type: 2}
+    - target: {fileID: 605011714701202613, guid: 1cd74f4110f374c4e990dd320cb1ee15, type: 3}
+      propertyPath: _cameraShakeHandler
+      value: 
+      objectReference: {fileID: 1735758587}
     - target: {fileID: 605011714701202613, guid: 1cd74f4110f374c4e990dd320cb1ee15, type: 3}
       propertyPath: _evadeFrontCooldown
       value: 0.3

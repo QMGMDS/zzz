@@ -54,6 +54,9 @@ namespace GamePlay.Player
         [Tooltip("特效生成挂点 Transform，建议放在武器骨骼子节点，位置和方向决定挥砍特效的基准")]
         [SerializeField] private Transform _effectSpawnPoint;
 
+        [Tooltip("震屏事件通道，NormalAttackState 发出抖动力度时 CameraShakeHandler 会自动响应")]
+        [SerializeField] private FloatEventChannelSO _cameraShakeChannel;
+
         private PlayerStateMachine _playerStateMachine;
         private Camera _mainCamera;
         private Vector2 _moveDirection;
@@ -121,6 +124,9 @@ namespace GamePlay.Player
 
         /// <inheritdoc cref="IStateContext.EffectSpawnPoint"/>
         public Transform EffectSpawnPoint => _effectSpawnPoint;
+
+        /// <inheritdoc cref="IStateContext.CameraShakeChannel"/>
+        public FloatEventChannelSO CameraShakeChannel => _cameraShakeChannel;
 
         #endregion
 

@@ -1,3 +1,4 @@
+using Core.Event;
 using GamePlay.Combat;
 using CombatConfig = GamePlay.Combat.AttackComboConfigSO;
 using GamePlay.StateMachine;
@@ -63,5 +64,8 @@ namespace GamePlay.State
 
         /// <summary>特效生成挂点 Transform，用于定位挥砍特效</summary>
         Transform EffectSpawnPoint { get; }
+
+        /// <summary>震屏事件通道，NormalAttackState 通过此通道广播抖动力度</summary>
+        FloatEventChannelSO CameraShakeChannel { get; }
     }
 }

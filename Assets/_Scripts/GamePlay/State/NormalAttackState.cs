@@ -200,6 +200,11 @@ namespace GamePlay.State
                 hitbox.Enable();
                 _hitboxEnabled = true;
                 _hitWindowIndex++;
+
+                if (w.ShakeForce > 0f)
+                {
+                    Context.CameraShakeChannel?.Raise(w.ShakeForce);
+                }
             }
 
             if (_hitboxEnabled)

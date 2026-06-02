@@ -1,4 +1,5 @@
 using Cinemachine;
+using Core.Event;
 using UnityEngine;
 
 namespace CustomCameras
@@ -18,6 +19,10 @@ namespace CustomCameras
         [Tooltip("目标标签")]
         [SerializeField] private string _targetTag = "Enemy";
 
+        [Header("事件通道")]
+        [Tooltip("锁敌切换事件通道，收到事件时执行 ToggleLock")]
+        [SerializeField] private VoidEventChannelSO _lockToggleChannel;
+
         [Header("阻尼")]
         [Tooltip("锁定时摄像机跟踪敌人的平滑速度")]
         [SerializeField] private float _lockDamping = 8f;
@@ -33,6 +38,22 @@ namespace CustomCameras
 
         /// <summary>当前锁定目标的 Transform，未锁定时为 null</summary>
         public Transform CurrentTarget => _currentTarget;
+
+        private void OnEnable()
+        {
+            if (_lockToggleChannel != null)
+            {
+                _lockToggleChannel.Subscribe(ToggleLock);
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (_lockToggleChannel != null)
+            {
+                _lockToggleChannel.Unsubscribe(ToggleLock);
+            }
+        }
 
         private void Awake()
         {

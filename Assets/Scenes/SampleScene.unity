@@ -1132,6 +1132,7 @@ MonoBehaviour:
   _lockRange: 15
   _targetTag: Enemy
   _lockToggleChannel: {fileID: 11400000, guid: 8d252007189da2d47b5e187806f2a3db, type: 2}
+  _lockTargetChangedChannel: {fileID: 11400000, guid: b35288a1af29b444aa85c8ea8b347e44, type: 2}
   _lockDamping: 8
 --- !u!114 &1735758587
 MonoBehaviour:
@@ -2060,6 +2061,10 @@ PrefabInstance:
       propertyPath: _lockEnemyToggleChannel
       value: 
       objectReference: {fileID: 11400000, guid: 8d252007189da2d47b5e187806f2a3db, type: 2}
+    - target: {fileID: 605011714701202613, guid: 1cd74f4110f374c4e990dd320cb1ee15, type: 3}
+      propertyPath: _lockTargetChangedChannel
+      value: 
+      objectReference: {fileID: 11400000, guid: b35288a1af29b444aa85c8ea8b347e44, type: 2}
     - target: {fileID: 2489951342010572183, guid: 1cd74f4110f374c4e990dd320cb1ee15, type: 3}
       propertyPath: m_IsActive
       value: 1

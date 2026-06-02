@@ -2,7 +2,6 @@ using Core.Event;
 using Core.Input;
 using GamePlay.Combat;
 using CombatConfig = GamePlay.Combat.AttackComboConfigSO;
-using CustomCameras;
 using GamePlay.State;
 using GamePlay.StateMachine;
 using UnityEngine;
@@ -39,11 +38,11 @@ namespace GamePlay.Player
         [Tooltip("连击窗口持续时间（秒），当前攻击动画结束后在该时间内再次按下攻击键可进入下一段连击")]
         [SerializeField] private float _comboWindowDuration = 0.6f;
 
-        [Tooltip("锁敌摄像机组件引用，挂载在 Cinemachine Virtual Camera 上")]
-        [SerializeField] private CameraLockEnemy _cameraLockEnemy;
-
         [Tooltip("锁敌切换事件通道，触发时通知 CameraLockEnemy 执行 ToggleLock")]
         [SerializeField] private VoidEventChannelSO _lockEnemyToggleChannel;
+
+        [Tooltip("锁目标变化事件通道，CameraLockEnemy 锁定/解锁时更新缓存")]
+        [SerializeField] private TransformEventChannelSO _lockTargetChangedChannel;
 
         [Tooltip("攻击碰撞体组件引用，挂载在武器骨骼子节点上")]
         [SerializeField] private AttackHitbox _attackHitbox;
@@ -62,6 +61,7 @@ namespace GamePlay.Player
         private Vector2 _moveDirection;
         private bool _evadeTriggered;
         private bool _attackTriggered;
+        private Transform _lockTarget;
 
         #region IStateContext
 
@@ -114,7 +114,7 @@ namespace GamePlay.Player
         public float ComboWindowDuration => _comboWindowDuration;
 
         /// <inheritdoc cref="IStateContext.LockTarget"/>
-        public Transform LockTarget => _cameraLockEnemy != null ? _cameraLockEnemy.CurrentTarget : null;
+        public Transform LockTarget => _lockTarget;
 
         /// <inheritdoc cref="IStateContext.AttackHitbox"/>
         public AttackHitbox AttackHitbox => _attackHitbox;
@@ -153,6 +153,11 @@ namespace GamePlay.Player
                 _inputController.AttackTriggered += HandleAttack;
                 _inputController.LockEnemyTriggered += HandleLockEnemy;
             }
+
+            if (_lockTargetChangedChannel != null)
+            {
+                _lockTargetChangedChannel.Subscribe(HandleLockTargetChanged);
+            }
         }
 
         private void OnDisable()
@@ -163,6 +168,11 @@ namespace GamePlay.Player
                 _inputController.EvadeTriggered -= HandleEvade;
                 _inputController.AttackTriggered -= HandleAttack;
                 _inputController.LockEnemyTriggered -= HandleLockEnemy;
+            }
+
+            if (_lockTargetChangedChannel != null)
+            {
+                _lockTargetChangedChannel.Unsubscribe(HandleLockTargetChanged);
             }
 
             if (_animator != null)
@@ -204,6 +214,11 @@ namespace GamePlay.Player
         private void HandleAttack()
         {
             _attackTriggered = true;
+        }
+
+        private void HandleLockTargetChanged(Transform target)
+        {
+            _lockTarget = target;
         }
 
         private void HandleLockEnemy()

@@ -23,6 +23,9 @@ namespace CustomCameras
         [Tooltip("锁敌切换事件通道，收到事件时执行 ToggleLock")]
         [SerializeField] private VoidEventChannelSO _lockToggleChannel;
 
+        [Tooltip("锁目标变化事件通道，锁定/解锁时 Broadcast 当前目标 Transform")]
+        [SerializeField] private TransformEventChannelSO _lockTargetChangedChannel;
+
         [Header("阻尼")]
         [Tooltip("锁定时摄像机跟踪敌人的平滑速度")]
         [SerializeField] private float _lockDamping = 8f;
@@ -126,6 +129,7 @@ namespace CustomCameras
             if (target == null) return;
 
             _currentTarget = target;
+            BroadcastTargetChanged(target);
 
             if (_pov != null)
             {
@@ -137,11 +141,20 @@ namespace CustomCameras
         private void Unlock()
         {
             _currentTarget = null;
+            BroadcastTargetChanged(null);
 
             if (_pov != null)
             {
                 _pov.m_HorizontalAxis.m_MaxSpeed = _originalHorizontalMaxSpeed;
                 _pov.m_VerticalAxis.m_MaxSpeed = _originalVerticalMaxSpeed;
+            }
+        }
+
+        private void BroadcastTargetChanged(Transform target)
+        {
+            if (_lockTargetChangedChannel != null)
+            {
+                _lockTargetChangedChannel.Raise(target);
             }
         }
 

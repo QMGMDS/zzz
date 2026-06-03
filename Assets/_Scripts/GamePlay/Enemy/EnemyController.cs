@@ -1,3 +1,4 @@
+using GamePlay.Attribute;
 using GamePlay.Combat;
 using UnityEngine;
 
@@ -10,20 +11,24 @@ namespace GamePlay.Enemy
     [RequireComponent(typeof(Animator))]
     public class EnemyController : MonoBehaviour, IDamageable
     {
-        [Tooltip("最大生命值")]
-        [SerializeField] private float _maxHealth = 100f;
+        [Tooltip("角色初始属性配置 SO")]
+        [SerializeField] private CharacterAttributeSO _attributeConfig;
 
-        [Tooltip("当前生命值")]
-        [SerializeField] private float _currentHealth = 100f;
-
+        private CharacterAttributes _attributes;
         private Animator _animator;
+        private float _currentHealth;
 
         /// <summary>供行为树读取的受击标记，TakeDamage 时设为 true，PlayHitAnimation 播完后清 false</summary>
         public bool isHitRequested { get; set; }
 
+        /// <summary>角色属性只读接口，供战斗系统等外部模块读取</summary>
+        public IAttributeProvider Attributes => _attributes;
+
         private void Awake()
         {
             _animator = GetComponent<Animator>();
+            _attributes = new CharacterAttributes(_attributeConfig);
+            _currentHealth = _attributes.GetAttribute(AttributeType.MaxHealth);
         }
 
         #region IDamageable
@@ -34,10 +39,11 @@ namespace GamePlay.Enemy
         /// <inheritdoc cref="IDamageable.TakeDamage"/>
         public void TakeDamage(DamageInfo damageInfo)
         {
+            float maxHealth = _attributes.GetAttribute(AttributeType.MaxHealth);
             _currentHealth -= damageInfo.Amount;
             _animator.SetTrigger("Hit");
             isHitRequested = true;
-            Debug.Log($"[{name}] 受到 {damageInfo.Amount} 点伤害，剩余 {_currentHealth}/{_maxHealth} HP");
+            Debug.Log($"[{name}] 受到 {damageInfo.Amount} 点伤害，剩余 {_currentHealth}/{maxHealth} HP");
 
             if (_currentHealth <= 0f)
             {
@@ -47,12 +53,6 @@ namespace GamePlay.Enemy
         }
 
         #endregion
-
-        private void OnValidate()
-        {
-            if (_currentHealth > _maxHealth)
-                _currentHealth = _maxHealth;
-        }
 
         private void Die()
         {

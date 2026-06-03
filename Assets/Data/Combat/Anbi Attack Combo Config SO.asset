@@ -17,7 +17,6 @@ MonoBehaviour:
     HitWindows:
     - StartNormalizedTime: 0.35
       EndNormalizedTime: 0.7
-      Damage: 1
       KnockbackForce: 1
       ShakeForce: 0.1
     EffectSpawns:
@@ -28,7 +27,6 @@ MonoBehaviour:
     HitWindows:
     - StartNormalizedTime: 0.28
       EndNormalizedTime: 0.7
-      Damage: 2
       KnockbackForce: 2
       ShakeForce: 0.1
     EffectSpawns:
@@ -39,12 +37,10 @@ MonoBehaviour:
     HitWindows:
     - StartNormalizedTime: 0.27
       EndNormalizedTime: 0.4
-      Damage: 3
       KnockbackForce: 3
       ShakeForce: 0
     - StartNormalizedTime: 0.47
       EndNormalizedTime: 0.7
-      Damage: 3
       KnockbackForce: 3
       ShakeForce: 0.1
     EffectSpawns:
@@ -58,17 +54,14 @@ MonoBehaviour:
     HitWindows:
     - StartNormalizedTime: 0.15
       EndNormalizedTime: 0.28
-      Damage: 4
       KnockbackForce: 4
       ShakeForce: 0
     - StartNormalizedTime: 0.3
       EndNormalizedTime: 0.48
-      Damage: 4
       KnockbackForce: 4
       ShakeForce: 0
     - StartNormalizedTime: 0.57
       EndNormalizedTime: 0.75
-      Damage: 4
       KnockbackForce: 4
       ShakeForce: 0.2
     EffectSpawns:

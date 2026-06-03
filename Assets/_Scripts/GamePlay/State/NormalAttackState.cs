@@ -1,4 +1,5 @@
 using Core.Pool;
+using GamePlay.Attribute;
 using GamePlay.Common;
 using GamePlay.Combat;
 using GamePlay.Effects;
@@ -196,7 +197,8 @@ namespace GamePlay.State
             while (_hitWindowIndex < windows.Length && normalizedTime >= windows[_hitWindowIndex].StartNormalizedTime)
             {
                 HitWindow w = windows[_hitWindowIndex];
-                hitbox.SetDamage(w.Damage, w.KnockbackForce);
+                float attackDamage = Context.Attributes.GetAttribute(AttributeType.Attack);
+                hitbox.SetDamage(attackDamage, w.KnockbackForce);
                 hitbox.Enable();
                 _hitboxEnabled = true;
                 _hitWindowIndex++;

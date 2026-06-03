@@ -1,5 +1,6 @@
 using Core.Event;
 using Core.Input;
+using GamePlay.Attribute;
 using GamePlay.Combat;
 using CombatConfig = GamePlay.Combat.AttackComboConfigSO;
 using GamePlay.State;
@@ -56,6 +57,10 @@ namespace GamePlay.Player
         [Tooltip("震屏事件通道，NormalAttackState 发出抖动力度时 CameraShakeHandler 会自动响应")]
         [SerializeField] private FloatEventChannelSO _cameraShakeChannel;
 
+        [Tooltip("角色初始属性配置 SO")]
+        [SerializeField] private CharacterAttributeSO _attributeConfig;
+
+        private CharacterAttributes _attributes;
         private PlayerStateMachine _playerStateMachine;
         private Camera _mainCamera;
         private Vector2 _moveDirection;
@@ -128,6 +133,9 @@ namespace GamePlay.Player
         /// <inheritdoc cref="IStateContext.CameraShakeChannel"/>
         public FloatEventChannelSO CameraShakeChannel => _cameraShakeChannel;
 
+        /// <summary>角色属性只读接口，供战斗系统、状态机等外部模块读取</summary>
+        public IAttributeProvider Attributes => _attributes;
+
         #endregion
 
         #region Life Cycle
@@ -135,6 +143,7 @@ namespace GamePlay.Player
         private void Awake()
         {
             _mainCamera = Camera.main;
+            _attributes = new CharacterAttributes(_attributeConfig);
             _playerStateMachine = new PlayerStateMachine(_evadeFrontCooldown, _evadeBackCooldown);
             _playerStateMachine.Initialize<IdleState>(this);
         }

@@ -10,9 +10,6 @@ namespace GamePlay.Combat
         [Tooltip("默认伤害值，运行时可由 SO 配置覆盖")]
         [SerializeField] private float _damage = 10f;
 
-        [Tooltip("默认击退力，运行时可由 SO 配置覆盖")]
-        [SerializeField] private float _knockbackForce = 5f;
-
         private Collider _collider;
         private readonly HashSet<IDamageable> _hitTargets = new();
         private Transform _sourceRoot;
@@ -27,11 +24,9 @@ namespace GamePlay.Combat
 
         /// <summary>覆盖当前段伤害数据</summary>
         /// <param name="damage">伤害数值</param>
-        /// <param name="knockbackForce">击退力</param>
-        public void SetDamage(float damage, float knockbackForce)
+        public void SetDamage(float damage)
         {
             _damage = damage;
-            _knockbackForce = knockbackForce;
         }
 
         /// <summary>启用碰撞体并清空去重集合，进入判定窗口时调用</summary>
@@ -51,15 +46,14 @@ namespace GamePlay.Combat
         {
             if (!other.TryGetComponent<IDamageable>(out var damageable)) return;
             if (!_hitTargets.Add(damageable)) return;
+            if (damageable.Transform.root == _sourceRoot) return;
 
             Vector3 hitPoint = _collider.ClosestPoint(other.transform.position);
-            Vector3 knockbackDir = (other.transform.position - _sourceRoot.position).normalized;
 
             var info = new DamageInfo
             {
                 Amount = _damage,
                 HitPoint = hitPoint,
-                KnockbackDirection = knockbackDir,
                 Source = _sourceRoot.gameObject
             };
 

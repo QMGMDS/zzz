@@ -198,7 +198,7 @@ namespace GamePlay.State
             {
                 HitWindow w = windows[_hitWindowIndex];
                 float attackDamage = Context.Attributes.GetAttribute(AttributeType.Attack);
-                hitbox.SetDamage(attackDamage, w.KnockbackForce);
+                hitbox.SetDamage(attackDamage);
                 hitbox.Enable();
                 _hitboxEnabled = true;
                 _hitWindowIndex++;

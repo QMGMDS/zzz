@@ -3,6 +3,9 @@ namespace GamePlay.State
     /// <summary>状态抽象基类，提供生命周期默认实现与通用工具方法</summary>
     public abstract class StateBase
     {
+        /// <summary>当前状态是否可被输入打断，不可打断时状态机跳过输入路由</summary>
+        public virtual bool IsInterruptible => true;
+
         protected IStateContext Context;
 
         /// <summary>进入状态时调用，初始化状态数据</summary>

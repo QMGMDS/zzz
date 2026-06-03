@@ -18,6 +18,9 @@ namespace GamePlay.StateMachine
         /// <summary>当前状态类型，用于外部查询</summary>
         public Type CurrentStateType => _currentState?.GetType();
 
+        /// <summary>当前状态是否可被输入打断，状态不可打断时 PlayerStateMachine 跳过输入路由</summary>
+        public bool IsCurrentStateInterruptible => _currentState?.IsInterruptible ?? true;
+
         /// <summary>注册一个状态实例，与泛型类型绑定</summary>
         /// <param name="state">状态实例</param>
         /// <typeparam name="T">状态类型，作为字典键</typeparam>

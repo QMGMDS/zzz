@@ -62,5 +62,12 @@ namespace GamePlay.Common
         public static readonly int NormalAttack4End = Animator.StringToHash("NormalAttack_4_End");
 
         #endregion
+
+        #region Hit Anim
+
+        /// <summary>Hit_Front 受击动画状态名</summary>
+        public static readonly int Hit_Front = Animator.StringToHash("Hit_Front");
+
+        #endregion
     }
 }

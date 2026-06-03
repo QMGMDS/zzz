@@ -28,11 +28,18 @@ namespace GamePlay.StateMachine
             RegisterState<EvadeBackState>(new EvadeBackState());
             RegisterState<RunState>(new RunState());
             RegisterState<NormalAttackState>(new NormalAttackState());
+            RegisterState<HitState>(new HitState());
         }
 
         /// <summary>每帧检查输入并路由到对应状态，优先处理闪避再处理攻击</summary>
         public override void Update()
         {
+            if (!IsCurrentStateInterruptible)
+            {
+                base.Update();
+                return;
+            }
+
             if (_context.IsEvadeTriggered)
             {
                 _context.ConsumeEvade();

@@ -14,6 +14,9 @@ namespace GamePlay.Combat
         /// <summary>击退方向（已归一化）</summary>
         public Vector3 KnockbackDirection;
 
+        /// <summary>击退力度</summary>
+        public float KnockbackForce;
+
         /// <summary>伤害来源 GameObject</summary>
         public GameObject Source;
     }

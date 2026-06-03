@@ -13,7 +13,7 @@ namespace GamePlay.Player
     [RequireComponent(typeof(InputController))]
     [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(CharacterController))]
-    public class PlayerController : MonoBehaviour, IStateContext
+    public class PlayerController : MonoBehaviour, IStateContext, IDamageable
     {
         [Tooltip("输入控制器引用，需挂载 InputController 组件")]
         [SerializeField] private InputController _inputController;
@@ -60,9 +60,16 @@ namespace GamePlay.Player
         [Tooltip("角色初始属性配置 SO")]
         [SerializeField] private CharacterAttributeSO _attributeConfig;
 
+        [Tooltip("受击无敌帧持续时间（秒），受击后该时间内免疫伤害")]
+        [SerializeField] private float _invincibleDuration = 0.5f;
+
         private CharacterAttributes _attributes;
         private PlayerStateMachine _playerStateMachine;
         private Camera _mainCamera;
+
+        private float _currentHealth;
+        private float _invincibleTimer;
+        private DamageInfo _pendingDamageInfo;
         private Vector2 _moveDirection;
         private bool _evadeTriggered;
         private bool _attackTriggered;
@@ -138,12 +145,42 @@ namespace GamePlay.Player
 
         #endregion
 
+        #region IDamageable
+
+        /// <inheritdoc cref="IDamageable.TakeDamage"/>
+        public void TakeDamage(DamageInfo damageInfo)
+        {
+            if (_invincibleTimer > 0f) return;
+
+            _currentHealth -= damageInfo.Amount;
+            _currentHealth = Mathf.Max(0f, _currentHealth);
+
+            _invincibleTimer = _invincibleDuration;
+            _pendingDamageInfo = damageInfo;
+
+            if (_playerStateMachine.CurrentStateType == typeof(HitState))
+                _playerStateMachine.ReenterState<HitState>();
+            else
+                _playerStateMachine.ChangeState<HitState>();
+        }
+
+        /// <summary>供 HitState.Enter 消费暂存的伤害信息</summary>
+        public DamageInfo GetPendingDamageInfo()
+        {
+            DamageInfo info = _pendingDamageInfo;
+            _pendingDamageInfo = default;
+            return info;
+        }
+
+        #endregion
+
         #region Life Cycle
 
         private void Awake()
         {
             _mainCamera = Camera.main;
             _attributes = new CharacterAttributes(_attributeConfig);
+            _currentHealth = _attributes.GetAttribute(AttributeType.MaxHealth);
             _playerStateMachine = new PlayerStateMachine(_evadeFrontCooldown, _evadeBackCooldown);
             _playerStateMachine.Initialize<IdleState>(this);
         }
@@ -192,6 +229,9 @@ namespace GamePlay.Player
 
         private void Update()
         {
+            if (_invincibleTimer > 0f)
+                _invincibleTimer -= Time.deltaTime;
+
             _playerStateMachine.Update();
         }
 

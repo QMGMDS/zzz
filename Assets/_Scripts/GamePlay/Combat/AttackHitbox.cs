@@ -51,6 +51,7 @@ namespace GamePlay.Combat
         {
             if (!other.TryGetComponent<IDamageable>(out var damageable)) return;
             if (!_hitTargets.Add(damageable)) return;
+            if (damageable.Transform.root == _sourceRoot) return;
 
             Vector3 hitPoint = _collider.ClosestPoint(other.transform.position);
             Vector3 knockbackDir = (other.transform.position - _sourceRoot.position).normalized;
@@ -60,6 +61,7 @@ namespace GamePlay.Combat
                 Amount = _damage,
                 HitPoint = hitPoint,
                 KnockbackDirection = knockbackDir,
+                KnockbackForce = _knockbackForce,
                 Source = _sourceRoot.gameObject
             };
 

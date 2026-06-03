@@ -10,9 +10,6 @@ namespace GamePlay.Player
         [Tooltip("每次伤害值")]
         [SerializeField] private float _damageAmount = 10f;
 
-        [Tooltip("击退力度")]
-        [SerializeField] private float _knockbackForce = 5f;
-
         private PlayerController _player;
 
         private void Awake()
@@ -33,8 +30,6 @@ namespace GamePlay.Player
             var info = new DamageInfo
             {
                 Amount = _damageAmount,
-                KnockbackDirection = -_player.transform.forward,
-                KnockbackForce = _knockbackForce,
             };
 
             _player.TakeDamage(info);

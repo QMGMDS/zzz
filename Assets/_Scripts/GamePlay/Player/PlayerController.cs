@@ -69,7 +69,6 @@ namespace GamePlay.Player
 
         private float _currentHealth;
         private float _invincibleTimer;
-        private DamageInfo _pendingDamageInfo;
         private Vector2 _moveDirection;
         private bool _evadeTriggered;
         private bool _attackTriggered;
@@ -156,20 +155,11 @@ namespace GamePlay.Player
             _currentHealth = Mathf.Max(0f, _currentHealth);
 
             _invincibleTimer = _invincibleDuration;
-            _pendingDamageInfo = damageInfo;
 
             if (_playerStateMachine.CurrentStateType == typeof(HitState))
                 _playerStateMachine.ReenterState<HitState>();
             else
                 _playerStateMachine.ChangeState<HitState>();
-        }
-
-        /// <summary>供 HitState.Enter 消费暂存的伤害信息</summary>
-        public DamageInfo GetPendingDamageInfo()
-        {
-            DamageInfo info = _pendingDamageInfo;
-            _pendingDamageInfo = default;
-            return info;
         }
 
         #endregion

@@ -32,9 +32,6 @@ namespace GamePlay.Combat
         [Range(0f, 1f)]
         public float EndNormalizedTime;
 
-        [Tooltip("本次挥剑的击退力")]
-        public float KnockbackForce;
-
         [Tooltip("本次判定触发时的震屏力度，0 为不震动")]
         [Range(0f, 5f)]
         public float ShakeForce;

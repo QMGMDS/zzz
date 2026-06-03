@@ -449,8 +449,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8299532c34ab434ab056a8c61951ec6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHealth: 100
-  _currentHealth: 100
+  _attributeConfig: {fileID: 11400000, guid: 70b169273bf51d54a81504c5e0d63936, type: 2}
 --- !u!114 &727794152
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2033,6 +2032,10 @@ PrefabInstance:
       propertyPath: _evadeCooldown
       value: 0.7
       objectReference: {fileID: 0}
+    - target: {fileID: 605011714701202613, guid: 1cd74f4110f374c4e990dd320cb1ee15, type: 3}
+      propertyPath: _attributeConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: f7bfda19b5600da428d5d14c9b6fee9c, type: 2}
     - target: {fileID: 605011714701202613, guid: 1cd74f4110f374c4e990dd320cb1ee15, type: 3}
       propertyPath: _cameraLockEnemy
       value: 

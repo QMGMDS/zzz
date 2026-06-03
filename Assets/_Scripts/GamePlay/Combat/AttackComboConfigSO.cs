@@ -32,9 +32,6 @@ namespace GamePlay.Combat
         [Range(0f, 1f)]
         public float EndNormalizedTime;
 
-        [Tooltip("本次挥剑的伤害值")]
-        public float Damage;
-
         [Tooltip("本次挥剑的击退力")]
         public float KnockbackForce;
 

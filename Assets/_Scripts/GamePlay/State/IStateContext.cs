@@ -1,4 +1,5 @@
 using Core.Event;
+using GamePlay.Attribute;
 using GamePlay.Combat;
 using CombatConfig = GamePlay.Combat.AttackComboConfigSO;
 using GamePlay.StateMachine;
@@ -67,5 +68,8 @@ namespace GamePlay.State
 
         /// <summary>震屏事件通道，NormalAttackState 通过此通道广播抖动力度</summary>
         FloatEventChannelSO CameraShakeChannel { get; }
+
+        /// <summary>角色属性只读接口，供状态读取攻击力等属性</summary>
+        IAttributeProvider Attributes { get; }
     }
 }

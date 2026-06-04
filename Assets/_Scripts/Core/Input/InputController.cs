@@ -5,24 +5,24 @@ using UnityEngine.InputSystem;
 namespace Core.Input
 {
     /// <summary>输入控制器，封装 Unity Input System 并暴露输入事件</summary>
-    public class InputController : MonoBehaviour, IInputable, @InputSystem.ICombatMapActions
+    public class InputController : MonoBehaviour, IInputSource, @InputSystem.ICombatMapActions
     {
         private @InputSystem _inputActions;
         private Vector2 _moveDirection;
 
-        /// <inheritdoc cref="IInputable.MoveDirectionChanged"/>
+        /// <inheritdoc cref="IInputSource.MoveDirectionChanged"/>
         public event Action<Vector2> MoveDirectionChanged;
 
-        /// <inheritdoc cref="IInputable.EvadeTriggered"/>
+        /// <inheritdoc cref="IInputSource.EvadeTriggered"/>
         public event Action EvadeTriggered;
 
-        /// <inheritdoc cref="IInputable.AttackTriggered"/>
+        /// <inheritdoc cref="IInputSource.AttackTriggered"/>
         public event Action AttackTriggered;
 
-        /// <inheritdoc cref="IInputable.LockEnemyTriggered"/>
+        /// <inheritdoc cref="IInputSource.LockEnemyTriggered"/>
         public event Action LockEnemyTriggered;
 
-        /// <inheritdoc cref="IInputable.MoveDirection"/>
+        /// <inheritdoc cref="IInputSource.MoveDirection"/>
         public Vector2 MoveDirection => _moveDirection;
 
         #region Life Cycle

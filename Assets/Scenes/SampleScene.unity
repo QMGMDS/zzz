@@ -492,11 +492,6 @@ MonoBehaviour:
       Version: 1.7.12
   gizmoViewMode: 2
   showBehaviorDesignerGizmo: 1
---- !u!1 &840764338 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6894947217159541035, guid: 1cd74f4110f374c4e990dd320cb1ee15, type: 3}
-  m_PrefabInstance: {fileID: 8895969578749094159}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -889,7 +884,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _damage: 10
-  _knockbackForce: 5
 --- !u!65 &1168588459
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1205,20 +1199,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6117037670660869009, guid: 1cd74f4110f374c4e990dd320cb1ee15, type: 3}
   m_PrefabInstance: {fileID: 8895969578749094159}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1866810526
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 840764338}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b63b589af2f5eda4c87bb33bca540126, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _showStateInfo: 1
-  _showInputInfo: 1
 --- !u!4 &2000002332 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2686143146265233400, guid: 1cd74f4110f374c4e990dd320cb1ee15, type: 3}
@@ -2136,10 +2116,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2686143146265233400, guid: 1cd74f4110f374c4e990dd320cb1ee15, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1168588457}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6894947217159541035, guid: 1cd74f4110f374c4e990dd320cb1ee15, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1866810526}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1cd74f4110f374c4e990dd320cb1ee15, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

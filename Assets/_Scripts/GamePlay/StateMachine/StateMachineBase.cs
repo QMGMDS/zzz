@@ -42,8 +42,21 @@ namespace GamePlay.StateMachine
         /// <typeparam name="T">目标状态类型</typeparam>
         public void ChangeState<T>() where T : StateBase
         {
-            Type targetType = typeof(T);
-            if (!_states.TryGetValue(targetType, out StateBase newState)) return;
+            ChangeState(typeof(T));
+        }
+
+        /// <summary>强制重入目标状态，即使已是该状态也会执行 Exit → Enter</summary>
+        /// <typeparam name="T">目标状态类型</typeparam>
+        public void ReenterState<T>() where T : StateBase
+        {
+            ReenterState(typeof(T));
+        }
+
+        /// <summary>非泛型版切换，供 Interceptor 等以 Type 参数驱动状态切换时使用</summary>
+        /// <param name="stateType">目标状态类型，必须是已注册的状态类型</param>
+        public void ChangeState(Type stateType)
+        {
+            if (!_states.TryGetValue(stateType, out StateBase newState)) return;
             if (newState == _currentState) return;
 
             _currentState?.Exit();
@@ -51,12 +64,11 @@ namespace GamePlay.StateMachine
             _currentState.Enter(_context);
         }
 
-        /// <summary>强制重入目标状态，即使已是该状态也会执行 Exit → Enter</summary>
-        /// <typeparam name="T">目标状态类型</typeparam>
-        public void ReenterState<T>() where T : StateBase
+        /// <summary>非泛型版强制重入，供 Interceptor 强制刷新同类型状态时使用</summary>
+        /// <param name="stateType">目标状态类型，必须是已注册的状态类型</param>
+        public void ReenterState(Type stateType)
         {
-            Type targetType = typeof(T);
-            if (!_states.TryGetValue(targetType, out StateBase newState)) return;
+            if (!_states.TryGetValue(stateType, out StateBase newState)) return;
 
             _currentState?.Exit();
             _currentState = newState;

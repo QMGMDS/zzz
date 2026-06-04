@@ -1,27 +1,25 @@
+using System.Collections.Generic;
 using GamePlay.State;
-using UnityEngine;
+using GamePlay.StateMachine.Interceptors;
 
 namespace GamePlay.StateMachine
 {
     /// <summary>
-    /// 玩家状态机，管理全部玩家状态间的输入路由与切换。
-    /// 闪避各方向独立 CD，同类型 CD 到期后重播动画，跨类型需双方 CD 均到期才放行。
+    /// 玩家状态机，负责状态注册、Interceptor 链驱动与生命周期派遣。
+    /// 闪避 CD 逻辑已迁移至 EvadeInterceptor，攻击路由已迁移至 AttackInterceptor。
+    /// 所有全局输入判定均通过 Interceptor 链表完成，状态内部仅处理自身专属逻辑。
     /// </summary>
     public class PlayerStateMachine : StateMachineBase
     {
-        private readonly float _evadeFrontCooldown;
-        private readonly float _evadeBackCooldown;
-        private float _lastEvadeFrontTime = float.MinValue;
-        private float _lastEvadeBackTime = float.MinValue;
+        private readonly List<StateInterceptorBase> _interceptors = new();
 
-        /// <summary>初始化玩家状态机并注册全部状态</summary>
-        /// <param name="evadeFrontCooldown">前闪避冷却时间</param>
-        /// <param name="evadeBackCooldown">后撤步冷却时间</param>
+        /// <summary>
+        /// 初始化玩家状态机，注册全部状态并构建 Interceptor 链表
+        /// </summary>
+        /// <param name="evadeFrontCooldown">前闪避冷却时间（秒），透传至 EvadeInterceptor</param>
+        /// <param name="evadeBackCooldown">后撤步冷却时间（秒），透传至 EvadeInterceptor</param>
         public PlayerStateMachine(float evadeFrontCooldown = 0.7f, float evadeBackCooldown = 0.7f)
         {
-            _evadeFrontCooldown = evadeFrontCooldown;
-            _evadeBackCooldown = evadeBackCooldown;
-
             RegisterState<IdleState>(new IdleState());
             RegisterState<WalkState>(new WalkState());
             RegisterState<EvadeFrontState>(new EvadeFrontState());
@@ -29,9 +27,16 @@ namespace GamePlay.StateMachine
             RegisterState<RunState>(new RunState());
             RegisterState<NormalAttackState>(new NormalAttackState());
             RegisterState<HitState>(new HitState());
+
+            _interceptors.Add(new OverrideInterceptor());
+            _interceptors.Add(new EvadeInterceptor(evadeFrontCooldown, evadeBackCooldown));
+            _interceptors.Add(new AttackInterceptor());
         }
 
-        /// <summary>每帧检查输入并路由到对应状态，优先处理闪避再处理攻击</summary>
+        /// <summary>
+        /// 每帧按优先级遍历 Interceptor 链表，首个返回 true 的拦截器执行状态切换并中断链。
+        /// 无论是否被拦截，均会驱动当前状态的 Update，保证状态切换首帧不丢失逻辑。
+        /// </summary>
         public override void Update()
         {
             if (!IsCurrentStateInterruptible)
@@ -40,52 +45,11 @@ namespace GamePlay.StateMachine
                 return;
             }
 
-            if (_context.IsEvadeTriggered)
+            var blackboard = _context.Blackboard;
+            foreach (var interceptor in _interceptors)
             {
-                _context.ConsumeEvade();
-                bool hasDirection = _context.MoveDirection.sqrMagnitude > 0.0001f;
-
-                if (hasDirection)
-                {
-                    // 跨类型：需等来源 EvadeBack 的 CD 到期
-                    if (CurrentStateType == typeof(EvadeBackState)
-                        && Time.time - _lastEvadeBackTime < _evadeBackCooldown)
-                        goto HandleAttack;
-
-                    if (Time.time - _lastEvadeFrontTime >= _evadeFrontCooldown)
-                    {
-                        _lastEvadeFrontTime = Time.time;
-
-                        if (CurrentStateType == typeof(EvadeFrontState))
-                            ReenterState<EvadeFrontState>();
-                        else
-                            ChangeState<EvadeFrontState>();
-                    }
-                }
-                else
-                {
-                    // 跨类型：需等来源 EvadeFront 的 CD 到期
-                    if (CurrentStateType == typeof(EvadeFrontState)
-                        && Time.time - _lastEvadeFrontTime < _evadeFrontCooldown)
-                        goto HandleAttack;
-
-                    if (Time.time - _lastEvadeBackTime >= _evadeBackCooldown)
-                    {
-                        _lastEvadeBackTime = Time.time;
-
-                        if (CurrentStateType == typeof(EvadeBackState))
-                            ReenterState<EvadeBackState>();
-                        else
-                            ChangeState<EvadeBackState>();
-                    }
-                }
-            }
-
-        HandleAttack:
-            if (_context.IsAttackTriggered && CurrentStateType != typeof(NormalAttackState))
-            {
-                _context.ConsumeAttack();
-                ChangeState<NormalAttackState>();
+                if (interceptor.TryIntercept(blackboard, CurrentStateType, this))
+                    break;
             }
 
             base.Update();

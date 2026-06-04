@@ -1,15 +1,12 @@
-using UnityEngine;
-
 namespace GamePlay.State
 {
     /// <summary>
-    /// 待机状态：检测到输入时切换至 WalkState，LateUpdate 中锁定旋转
+    /// 待机状态：检测到输入时切换至 WalkState。
+    /// 旋转锁定委托给 MotionDriver 管理。
     /// </summary>
     public class IdleState : StateBase
     {
         private const float CrossFadeDuration = 0.15f;
-
-        private Quaternion _lockedRotation;
 
         /// <inheritdoc/>
         public override void Enter(IStateContext context)
@@ -17,7 +14,7 @@ namespace GamePlay.State
             Context = context;
             if (!IsInAnimatorState(Common.AnimationHashes.Idle))
                 Context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.Idle, CrossFadeDuration);
-            _lockedRotation = Context.Transform.rotation;
+            // Context.MotionDriver.SnapCurrentRotation();
         }
 
         /// <inheritdoc/>
@@ -28,7 +25,7 @@ namespace GamePlay.State
         /// <inheritdoc/>
         public override void Update()
         {
-            if (Context.MoveDirection.sqrMagnitude > 0.0001f)
+            if (Context.Blackboard.MoveDirection.sqrMagnitude > 0.0001f)
             {
                 Context.StateMachine.ChangeState<WalkState>();
             }
@@ -37,7 +34,7 @@ namespace GamePlay.State
         /// <inheritdoc/>
         public override void LateUpdate()
         {
-            Context.Transform.rotation = _lockedRotation;
+            //Context.MotionDriver.ApplyLockedRotation();
         }
     }
 }

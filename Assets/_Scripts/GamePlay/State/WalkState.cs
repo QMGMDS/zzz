@@ -17,14 +17,11 @@ namespace GamePlay.State
             Stopping
         }
 
-        private const float RotationSmoothTime = 0.1f;
         private const float CrossFadeDuration = 0.10f;
         private const float StopCrossFadeDuration = 0.15f;
         /// <summary>长/短按判定阈值</summary>
         private const float ShortPressThreshold = 0.15f;
 
-        private Transform _cameraTransform;
-        private float _rotationVelocity;
         private float _noInputTimer;
         private float _holdTimer;
         private Phase _phase;
@@ -33,7 +30,6 @@ namespace GamePlay.State
         public override void Enter(IStateContext context) 
         {
             Context = context;
-            _cameraTransform = Context.MainCamera.transform;
             _noInputTimer = 0f;
             _holdTimer = 0f;
             _phase = Phase.Entering;
@@ -47,7 +43,7 @@ namespace GamePlay.State
         /// <inheritdoc/>
         public override void Update()
         {
-            Vector2 direction = Context.MoveDirection;
+            Vector2 direction = Context.Blackboard.MoveDirection;
             bool hasInput = direction.sqrMagnitude > 0.0001f;
 
             switch (_phase)
@@ -86,7 +82,7 @@ namespace GamePlay.State
             if (!hasInput)
             {
                 _noInputTimer += Time.deltaTime;
-                if (_noInputTimer >= Context.InputBufferTime)
+                if (_noInputTimer >= Context.Blackboard.InputBufferTime)
                 {
                     Context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.RunEnd, StopCrossFadeDuration, 0, 0f);
                     _phase = Phase.Stopping;
@@ -117,23 +113,7 @@ namespace GamePlay.State
         /// <inheritdoc/>
         public override void LateUpdate()
         {
-            Vector2 direction = Context.MoveDirection;
-            if (direction.sqrMagnitude < 0.0001f) return;
-
-            Vector3 cameraForward = _cameraTransform.forward;
-            Vector3 cameraRight = _cameraTransform.right;
-            cameraForward.y = 0f;
-            cameraRight.y = 0f;
-            Vector3 worldMoveDir = (cameraForward * direction.y + cameraRight * direction.x).normalized;
-            float targetAngle = Mathf.Atan2(worldMoveDir.x, worldMoveDir.z) * Mathf.Rad2Deg;
-            Transform t = Context.Transform;
-            float smoothedAngle = Mathf.SmoothDampAngle(
-                t.eulerAngles.y,
-                targetAngle,
-                ref _rotationVelocity,
-                RotationSmoothTime
-            );
-            t.eulerAngles = new Vector3(0f, smoothedAngle, 0f);
+            Context.MotionDriver.UpdateFreeLookRotation(Context.Blackboard.MoveDirection);
         }
 
     }

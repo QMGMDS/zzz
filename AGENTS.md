@@ -86,5 +86,5 @@
 ### 项目参考
 
 当用户输入 **"参考其他项目"** 指令时，则可以参考该项目：
-`D:\AAA_APPData\Unity\Unity Project\ZZZDemo\zzzdemo-source-code-master`
+`E:\GameDevelop\Project\Other\BBB-Nexus-main`
 中对应问题的解决方案。

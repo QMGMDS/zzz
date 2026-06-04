@@ -65,14 +65,12 @@ namespace GamePlay.Player
 
         private CharacterAttributes _attributes;
         private PlayerStateMachine _playerStateMachine;
+        private PlayerBlackboard _blackboard;
+        private MotionDriver _motionDriver;
         private Camera _mainCamera;
 
         private float _currentHealth;
         private float _invincibleTimer;
-        private Vector2 _moveDirection;
-        private bool _evadeTriggered;
-        private bool _attackTriggered;
-        private Transform _lockTarget;
 
         #region IStateContext
 
@@ -85,47 +83,17 @@ namespace GamePlay.Player
         /// <inheritdoc cref="IStateContext.Transform"/>
         public Transform Transform => transform;
 
-        /// <inheritdoc cref="IStateContext.MoveDirection"/>
-        public Vector2 MoveDirection => _moveDirection;
-
         /// <inheritdoc cref="IStateContext.StateMachine"/>
         public StateMachineBase StateMachine => _playerStateMachine;
 
         /// <inheritdoc cref="IStateContext.MainCamera"/>
         public Camera MainCamera => _mainCamera;
 
-        /// <inheritdoc cref="IStateContext.InputBufferTime"/>
-        public float InputBufferTime => _inputBufferTime;
-
         /// <inheritdoc cref="IStateContext.EvadeFrontCommitDuration"/>
         public float EvadeFrontCommitDuration => _evadeFrontCooldown;
 
         /// <inheritdoc cref="IStateContext.EvadeBackCommitDuration"/>
         public float EvadeBackCommitDuration => _evadeBackCooldown;
-
-        /// <inheritdoc cref="IStateContext.IsEvadeTriggered"/>
-        public bool IsEvadeTriggered => _evadeTriggered;
-
-        /// <inheritdoc cref="IStateContext.ConsumeEvade"/>
-        public void ConsumeEvade()
-        {
-            _evadeTriggered = false;
-        }
-
-        /// <inheritdoc cref="IStateContext.IsAttackTriggered"/>
-        public bool IsAttackTriggered => _attackTriggered;
-
-        /// <inheritdoc cref="IStateContext.ConsumeAttack"/>
-        public void ConsumeAttack()
-        {
-            _attackTriggered = false;
-        }
-
-        /// <inheritdoc cref="IStateContext.ComboWindowDuration"/>
-        public float ComboWindowDuration => _comboWindowDuration;
-
-        /// <inheritdoc cref="IStateContext.LockTarget"/>
-        public Transform LockTarget => _lockTarget;
 
         /// <inheritdoc cref="IStateContext.AttackHitbox"/>
         public AttackHitbox AttackHitbox => _attackHitbox;
@@ -141,6 +109,12 @@ namespace GamePlay.Player
 
         /// <summary>角色属性只读接口，供战斗系统、状态机等外部模块读取</summary>
         public IAttributeProvider Attributes => _attributes;
+
+        /// <inheritdoc cref="IStateContext.Blackboard"/>
+        public PlayerBlackboard Blackboard => _blackboard;
+
+        /// <inheritdoc cref="IStateContext.MotionDriver"/>
+        public MotionDriver MotionDriver => _motionDriver;
 
         #endregion
 
@@ -171,6 +145,12 @@ namespace GamePlay.Player
             _mainCamera = Camera.main;
             _attributes = new CharacterAttributes(_attributeConfig);
             _currentHealth = _attributes.GetAttribute(AttributeType.MaxHealth);
+
+            _blackboard = new PlayerBlackboard();
+            _blackboard.Initialize(_inputBufferTime, _comboWindowDuration);
+            _motionDriver = new MotionDriver();
+            _motionDriver.Initialize(transform, _mainCamera);
+
             _playerStateMachine = new PlayerStateMachine(_evadeFrontCooldown, _evadeBackCooldown);
             _playerStateMachine.Initialize<IdleState>(this);
         }
@@ -232,33 +212,34 @@ namespace GamePlay.Player
 
         private void OnAnimatorMove()
         {
-            if (_characterController == null || _animator == null) return;
-
-            Vector3 delta = _animator.deltaPosition * _rootMotionScale;
-            _characterController.Move(delta);
+            _motionDriver.ApplyRootMotion(_characterController, _animator, _rootMotionScale);
         }
 
         #endregion
 
+        #region Write Blackboard
+
         private void HandleMove(Vector2 direction)
         {
-            _moveDirection = direction;
+            _blackboard.MoveDirection = direction;
         }
 
         private void HandleEvade()
         {
-            _evadeTriggered = true;
+            _blackboard.SetEvadePressed();
         }
 
         private void HandleAttack()
         {
-            _attackTriggered = true;
+            _blackboard.SetAttackPressed();
         }
 
         private void HandleLockTargetChanged(Transform target)
         {
-            _lockTarget = target;
+            _blackboard.LockTarget = target;
         }
+
+        #endregion
 
         private void HandleLockEnemy()
         {

@@ -14,7 +14,6 @@ namespace GamePlay.State
             Context = context;
             if (!IsInAnimatorState(Common.AnimationHashes.Idle))
                 Context.Animator.CrossFadeInFixedTime(Common.AnimationHashes.Idle, CrossFadeDuration);
-            // Context.MotionDriver.SnapCurrentRotation();
         }
 
         /// <inheritdoc/>
@@ -29,12 +28,6 @@ namespace GamePlay.State
             {
                 Context.StateMachine.ChangeState<WalkState>();
             }
-        }
-
-        /// <inheritdoc/>
-        public override void LateUpdate()
-        {
-            //Context.MotionDriver.ApplyLockedRotation();
         }
     }
 }

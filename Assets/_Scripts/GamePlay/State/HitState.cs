@@ -1,5 +1,4 @@
 using GamePlay.Common;
-using UnityEngine;
 
 namespace GamePlay.State
 {
@@ -25,7 +24,6 @@ namespace GamePlay.State
 
         public override void Exit()
         {
-
         }
 
         public override void Update()

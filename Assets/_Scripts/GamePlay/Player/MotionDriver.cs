@@ -12,7 +12,6 @@ namespace GamePlay.Player
         private Transform _transform;
         private Camera _camera;
         private float _rotationVelocity;
-        private Quaternion _lockedRotation;
 
         /// <summary>
         /// 初始化运动驱动器，绑定角色 Transform 和主摄像机
@@ -75,28 +74,6 @@ namespace GamePlay.Player
             );
             _transform.eulerAngles = new Vector3(0f, smoothedAngle, 0f);
         }
-
-        #region 修复动画根运动错误的旋转（貌似不需要修复，动画旋转是正确的）
-
-        /// <summary>
-        /// 快照当前旋转为锁定值。由 IdleState.Enter 调用一次。
-        /// </summary>
-        public void SnapCurrentRotation()
-        {
-            if (_transform == null) return;
-            _lockedRotation = _transform.rotation;
-        }
-
-        /// <summary>
-        /// 强制覆盖为之前快照的锁定旋转。由 IdleState.LateUpdate 每帧调用。
-        /// </summary>
-        public void ApplyLockedRotation()
-        {
-            if (_transform == null) return;
-            _transform.rotation = _lockedRotation;
-        }
-
-        #endregion
 
         /// <summary>
         /// 应用 Root Motion 位移到 CharacterController。

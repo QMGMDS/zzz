@@ -1,5 +1,3 @@
-using Core.Event;
-using Core.Input;
 using GamePlay.Attribute;
 using GamePlay.Combat;
 using CombatConfig = GamePlay.Combat.AttackComboConfigSO;
@@ -10,14 +8,10 @@ using UnityEngine;
 namespace GamePlay.Player
 {
     /// <summary>玩家控制器，为状态机提供依赖并驱动角色行为</summary>
-    [RequireComponent(typeof(InputController))]
     [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(CharacterController))]
     public class PlayerController : MonoBehaviour, IStateContext, IDamageable
     {
-        [Tooltip("输入控制器引用，需挂载 InputController 组件")]
-        [SerializeField] private InputController _inputController;
-
         [Tooltip("角色 Animator 组件，挂载 Anbi AnimatorController")]
         [SerializeField] private Animator _animator;
 
@@ -27,9 +21,6 @@ namespace GamePlay.Player
         [Tooltip("Root Motion 位移缩放倍率，1 为原始动画速度")]
         [SerializeField] private float _rootMotionScale = 1f;
 
-        [Tooltip("输入缓冲时间（秒），防止方向快速切换时误判为停止")]
-        [SerializeField] private float _inputBufferTime = 0.05f;
-
         [Tooltip("前闪避冷却时间（秒），CD 期间无法再次触发前闪避")]
         [SerializeField] private float _evadeFrontCooldown = 0.3f;
 
@@ -38,12 +29,6 @@ namespace GamePlay.Player
 
         [Tooltip("连击窗口持续时间（秒），当前攻击动画结束后在该时间内再次按下攻击键可进入下一段连击")]
         [SerializeField] private float _comboWindowDuration = 0.6f;
-
-        [Tooltip("锁敌切换事件通道，触发时通知 CameraLockEnemy 执行 ToggleLock")]
-        [SerializeField] private VoidEventChannelSO _lockEnemyToggleChannel;
-
-        [Tooltip("锁目标变化事件通道，CameraLockEnemy 锁定/解锁时更新缓存")]
-        [SerializeField] private TransformEventChannelSO _lockTargetChangedChannel;
 
         [Tooltip("攻击碰撞体组件引用，挂载在武器骨骼子节点上")]
         [SerializeField] private AttackHitbox _attackHitbox;
@@ -65,7 +50,6 @@ namespace GamePlay.Player
 
         private CharacterAttributes _attributes;
         private PlayerStateMachine _playerStateMachine;
-        private PlayerBlackboard _blackboard;
         private MotionDriver _motionDriver;
         private Camera _mainCamera;
 
@@ -110,9 +94,6 @@ namespace GamePlay.Player
         /// <summary>角色属性只读接口，供战斗系统、状态机等外部模块读取</summary>
         public IAttributeProvider Attributes => _attributes;
 
-        /// <inheritdoc cref="IStateContext.Blackboard"/>
-        public PlayerBlackboard Blackboard => _blackboard;
-
         /// <inheritdoc cref="IStateContext.MotionDriver"/>
         public MotionDriver MotionDriver => _motionDriver;
 
@@ -146,8 +127,6 @@ namespace GamePlay.Player
             _attributes = new CharacterAttributes(_attributeConfig);
             _currentHealth = _attributes.GetAttribute(AttributeType.MaxHealth);
 
-            _blackboard = new PlayerBlackboard();
-            _blackboard.Initialize(_inputBufferTime, _comboWindowDuration);
             _motionDriver = new MotionDriver();
             _motionDriver.Initialize(transform, _mainCamera);
 
@@ -161,36 +140,10 @@ namespace GamePlay.Player
             {
                 _animator.applyRootMotion = true;
             }
-
-            if (_inputController != null)
-            {
-                _inputController.MoveDirectionChanged += HandleMove;
-                _inputController.EvadeTriggered += HandleEvade;
-                _inputController.AttackTriggered += HandleAttack;
-                _inputController.LockEnemyTriggered += HandleLockEnemy;
-            }
-
-            if (_lockTargetChangedChannel != null)
-            {
-                _lockTargetChangedChannel.Subscribe(HandleLockTargetChanged);
-            }
         }
 
         private void OnDisable()
         {
-            if (_inputController != null)
-            {
-                _inputController.MoveDirectionChanged -= HandleMove;
-                _inputController.EvadeTriggered -= HandleEvade;
-                _inputController.AttackTriggered -= HandleAttack;
-                _inputController.LockEnemyTriggered -= HandleLockEnemy;
-            }
-
-            if (_lockTargetChangedChannel != null)
-            {
-                _lockTargetChangedChannel.Unsubscribe(HandleLockTargetChanged);
-            }
-
             if (_animator != null)
             {
                 _animator.applyRootMotion = false;
@@ -216,34 +169,5 @@ namespace GamePlay.Player
         }
 
         #endregion
-
-        #region Write Blackboard
-
-        private void HandleMove(Vector2 direction)
-        {
-            _blackboard.MoveDirection = direction;
-        }
-
-        private void HandleEvade()
-        {
-            _blackboard.SetEvadePressed();
-        }
-
-        private void HandleAttack()
-        {
-            _blackboard.SetAttackPressed();
-        }
-
-        private void HandleLockTargetChanged(Transform target)
-        {
-            _blackboard.LockTarget = target;
-        }
-
-        #endregion
-
-        private void HandleLockEnemy()
-        {
-            _lockEnemyToggleChannel?.Raise();
-        }
     }
 }

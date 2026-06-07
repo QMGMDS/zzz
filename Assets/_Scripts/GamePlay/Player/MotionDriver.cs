@@ -81,7 +81,7 @@ namespace GamePlay.Player
         /// <param name="cc">角色 CharacterController</param>
         /// <param name="animator">角色 Animator</param>
         /// <param name="scale">Root Motion 缩放系数，1 为原始速度</param>
-        public void ApplyRootMotion(CharacterController cc, Animator animator, float scale = 1f)
+        public void ApplyRootMotion(UnityEngine.CharacterController cc, Animator animator, float scale = 1f)
         {
             if (cc == null || animator == null) return;
             Vector3 delta = animator.deltaPosition * scale;

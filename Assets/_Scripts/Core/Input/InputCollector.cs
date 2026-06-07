@@ -1,3 +1,4 @@
+using Core.Input.Config;
 using Core.Input.Data;
 using UnityEngine;
 
@@ -16,15 +17,13 @@ namespace Core.Input
         private readonly IInputSource _source;
         private readonly InputData _inputData;
 
-        // Move 防抖缓存
-        private readonly float _flickerBuffer;
+        // 记录 Move 防抖运行时状态
         private Vector2 _bufferedMove;
         private float _lastNonZeroMoveTime;
 
-
-        // 独立可配的 BufferTimer 时长
-        private readonly float _attackBufferTime;
-        private readonly float _evadeBufferTime;
+        // 按键缓存运行时状态
+        private float _attackBufferTimer;
+        private float _evadeBufferTimer;
 
         // 瞬时栈上数据
         private RawInputData _rawData;
@@ -34,18 +33,12 @@ namespace Core.Input
         public InputData Current => _inputData;
 
         /// <summary>
-        /// 创建输入采集员
+        /// 创建输入采集员；后处理参数从 <see cref="InputPostProcessConfig"/> 读取。
         /// </summary>
         /// <param name="source">输入源（PlayerInputReader / AI 适配器等）</param>
-        /// <param name="flickerBuffer">移动轴防抖窗口（秒）</param>
-        /// <param name="attackBufferTime">攻击缓存时间（秒）</param>
-        /// <param name="evadeBufferTime">闪避缓存时间（秒）</param>
-        public InputCollector(IInputSource source, float flickerBuffer, float attackBufferTime, float evadeBufferTime)
+        public InputCollector(IInputSource source)
         {
             _source = source;
-            _flickerBuffer = flickerBuffer;
-            _attackBufferTime = attackBufferTime;
-            _evadeBufferTime = evadeBufferTime;
 
             _inputData = new InputData
             {
@@ -92,7 +85,7 @@ namespace Core.Input
                 _lastNonZeroMoveTime = Time.time;
                 currentFrame.Processed.Move = _rawData.MoveAxis;
             }
-            else if (Time.time - _lastNonZeroMoveTime < _flickerBuffer)
+            else if (Time.time - _lastNonZeroMoveTime < InputPostProcessConfig.InputFlickerBuffer)
             {
                 // 处于防抖窗口内 使用缓存的最后一次有效值
                 currentFrame.Processed.Move = _bufferedMove;
@@ -104,10 +97,12 @@ namespace Core.Input
 
             // --- BufferTimer 衰减 + 充能 ---
             float dt = Time.deltaTime;
-            var lastProc = _inputData.LastFrameData.Processed;
 
-            currentFrame.Processed.AttackBufferTimer = UpdateBuffer(lastProc.AttackBufferTimer, _rawData.AttackJustPressed, _attackBufferTime, dt);
-            currentFrame.Processed.EvadeBufferTimer = UpdateBuffer(lastProc.EvadeBufferTimer, _rawData.EvadeJustPressed, _evadeBufferTime, dt);
+            _attackBufferTimer = UpdateBuffer(_attackBufferTimer, _rawData.AttackJustPressed, InputPostProcessConfig.AttackBufferTime, dt);
+            _evadeBufferTimer = UpdateBuffer(_evadeBufferTimer, _rawData.EvadeJustPressed, InputPostProcessConfig.EvadeBufferTime, dt);
+
+            currentFrame.Processed.AttackPressed = _attackBufferTimer > 0f;
+            currentFrame.Processed.EvadePressed = _evadeBufferTimer > 0f;
 
             _inputData.CurrentFrameData = currentFrame;
         }
@@ -124,16 +119,18 @@ namespace Core.Input
         /// <summary>消费攻击输入——将 BufferTimer 归零，防止同帧内被重复消费</summary>
         public void ConsumeAttackPressed()
         {
+            _attackBufferTimer = 0f;
             var f = _inputData.CurrentFrameData;
-            f.Processed.AttackBufferTimer = 0f;
+            f.Processed.AttackPressed = false;
             _inputData.CurrentFrameData = f;
         }
 
         /// <summary>消费闪避输入——将 BufferTimer 归零，防止同帧内被重复消费</summary>
         public void ConsumeEvadePressed()
         {
+            _evadeBufferTimer = 0f;
             var f = _inputData.CurrentFrameData;
-            f.Processed.EvadeBufferTimer = 0f;
+            f.Processed.EvadePressed = false;
             _inputData.CurrentFrameData = f;
         }
 

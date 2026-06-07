@@ -12,7 +12,7 @@ namespace GamePlay.Player
     [RequireComponent(typeof(Animator))]
     public class PlayerController : MonoBehaviour
     {
-        [Header("Input Module")]
+        [Header("输入阅读器配置")]
         [Tooltip("玩家输入阅读器，需挂载 PlayerInputReader 组件并拖拽引用")]
         [SerializeField] private PlayerInputReader _playerInputReader;
 
@@ -20,32 +20,32 @@ namespace GamePlay.Player
         [Tooltip("角色 CharacterController 组件，用于驱动移动与碰撞")]
         [SerializeField] private CharacterController _characterController;
 
-        [Tooltip("角色 Animator 组件，挂载 Anbi AnimatorController")]
+        [Tooltip("角色 Animator 组件")]
         [SerializeField] private Animator _animator;
 
         #region 输入依赖
 
         private InputCollector _collector;
-        private IntentionBlackboard _blackboard;
         private MainProcessorPipeline _pipeline;
 
         #endregion
 
+        #region 意图黑板
+
+        private IntentionBlackboard _blackboard;
         /// <summary>
         /// 意图黑板——下游系统从此读取角色意图，无需接触原始输入数据。
         /// </summary>
         public IntentionBlackboard IntentionBlackboard => _blackboard;
+
+        #endregion
 
         #region Life Cycle
 
         private void Awake()
         {
             _blackboard = new IntentionBlackboard();
-            _collector = new InputCollector(
-                _playerInputReader,
-                _playerInputReader.InputFlickerBuffer,
-                _playerInputReader.AttackBufferTime,
-                _playerInputReader.EvadeBufferTime);
+            _collector = new InputCollector(_playerInputReader);
             _pipeline = new MainProcessorPipeline(_collector, _blackboard);
         }
 

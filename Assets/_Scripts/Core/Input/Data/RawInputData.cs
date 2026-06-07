@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Core.Input
+namespace Core.Input.Data
 {
     /// <summary>
     /// 原始输入数据——纯硬件事实汇报，不包含任何手感处理。

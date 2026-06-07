@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Core.Input
+namespace Core.Input.Data
 {
     /// <summary>
     /// 处理后的输入数据——游戏逻辑真正使用的意愿快照。

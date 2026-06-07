@@ -1,3 +1,5 @@
+using Core.Input.Data;
+
 namespace Core.Input
 {
     /// <summary>

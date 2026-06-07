@@ -1,4 +1,4 @@
-namespace Core.Input
+namespace Core.Input.Data
 {
     /// <summary>
     /// 堆内存输入数据容器——由 InputCollector 写入，外部系统通过只读引用读取。

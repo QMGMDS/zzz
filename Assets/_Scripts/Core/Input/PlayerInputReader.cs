@@ -1,3 +1,4 @@
+using Core.Input.Data;
 using UnityEngine;
 using UnityEngine.InputSystem;
 

@@ -15,17 +15,15 @@ namespace Core.Input
         private readonly IntentionBlackboard _blackboard;
         private readonly List<IIntentProcessor> _processors;
 
-        /// <summary>意图黑板，供下游消费者只读访问</summary>
-        public IntentionBlackboard Blackboard => _blackboard;
-
         /// <summary>
         /// 创建主处理器管线
         /// </summary>
         /// <param name="collector">输入采集员引用</param>
-        public MainProcessorPipeline(InputCollector collector)
+        /// <param name="blackboard">意图黑板（由外部传入，归属 PlayerController）</param>
+        public MainProcessorPipeline(InputCollector collector, IntentionBlackboard blackboard)
         {
             _collector = collector;
-            _blackboard = new IntentionBlackboard();
+            _blackboard = blackboard;
             _processors = new List<IIntentProcessor>
             {
                 new MoveIntentProcessor(),
@@ -35,12 +33,11 @@ namespace Core.Input
         }
 
         /// <summary>
-        /// 遍历所有意图处理器，将处理后输入翻译为意图写入黑板。
+        /// 遍历所有意图处理器，将处理后输入翻译为离散意图写入黑板。
         /// 每帧由外部驱动（通常在 InputCollector.Update 之后）。
         /// </summary>
         public void UpdateIntentProcessors()
         {
-            // ref readonly + in 保证 ProcessedInputData 在整条管线中零拷贝、只读共享
             ref readonly var input = ref _collector.Current.CurrentFrameData.Processed;
 
             foreach (var processor in _processors)

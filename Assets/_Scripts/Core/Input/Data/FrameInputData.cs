@@ -1,4 +1,4 @@
-namespace Core.Input
+namespace Core.Input.Data
 {
     /// <summary>
     /// 单帧输入快照——持有原始数据与处理后数据的完整副本。

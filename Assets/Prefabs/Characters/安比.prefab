@@ -1883,6 +1883,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: dde6900bd931c3142a6e49505c92f125, type: 3}
       insertIndex: -1
       addedObject: {fileID: 605011714701202613}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: dde6900bd931c3142a6e49505c92f125, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2898879229887918792}
   m_SourcePrefab: {fileID: 100100000, guid: dde6900bd931c3142a6e49505c92f125, type: 3}
 --- !u!4 &2686143146265233400 stripped
 Transform:
@@ -1909,7 +1912,7 @@ Animator:
   m_GameObject: {fileID: 6894947217159541035}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: b084e535d646a5b43a43bd417fb7c814, type: 3}
-  m_Controller: {fileID: 9100000, guid: a8dec21141ca69a40b4f08f7974ba6e1, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -1961,3 +1964,18 @@ MonoBehaviour:
   _playerInputReader: {fileID: 0}
   _characterController: {fileID: 7876256640559662145}
   _animator: {fileID: 7321502326613187097}
+--- !u!114 &2898879229887918792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6894947217159541035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e0c004619b1b014ab03d7b49cd3059b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _moveAction: {fileID: -2396146652731416428, guid: 19233add5a256844fad4c8b6fed6339a, type: 3}
+  _attackAction: {fileID: 1211467669973809243, guid: 19233add5a256844fad4c8b6fed6339a, type: 3}
+  _evadeAction: {fileID: -1338146725540236266, guid: 19233add5a256844fad4c8b6fed6339a, type: 3}

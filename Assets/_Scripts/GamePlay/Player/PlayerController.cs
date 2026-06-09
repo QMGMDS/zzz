@@ -5,7 +5,6 @@ namespace GamePlay.Player
 {
     /// <summary>
     /// 玩家角色控制器——负责输入模块的装配与驱动。
-    /// 持有 PlayerInputReader、InputCollector、MainProcessorPipeline、IntentionBlackboard，
     /// 在 Awake 中完成依赖注入，每帧驱动采集→翻译管线。
     /// </summary>
     [RequireComponent(typeof(CharacterController))]
@@ -25,8 +24,8 @@ namespace GamePlay.Player
 
         #region 输入依赖
 
-        private InputCollector _collector;
-        private MainProcessorPipeline _pipeline;
+        private InputCollector _inputCollector;
+        private MainProcessorPipeline _mainProcessorPipeline;
 
         #endregion
 
@@ -45,14 +44,17 @@ namespace GamePlay.Player
         private void Awake()
         {
             _blackboard = new IntentionBlackboard();
-            _collector = new InputCollector(_playerInputReader);
-            _pipeline = new MainProcessorPipeline(_collector, _blackboard);
+            _inputCollector = new InputCollector(_playerInputReader);
+            _mainProcessorPipeline = new MainProcessorPipeline(_inputCollector, _blackboard);
         }
 
         private void Update()
         {
-            _collector.Update();
-            _pipeline.UpdateIntentProcessors();
+            // 原始数据采集+后处理
+            _inputCollector.Update();
+
+            // 后处理数据进行意图翻译
+            _mainProcessorPipeline.UpdateIntentProcessors();
         }
 
         #endregion

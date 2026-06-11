@@ -10,8 +10,6 @@ namespace SPPlayer
     /// <summary>
     /// 玩家角色控制器——整个角色系统的 Root Monobehaviour 驱动源。
     /// 不包含任何具体游戏逻辑，仅负责子系统装配和严格的时序指令分发。
-    /// Update 顺序：输入采集→意图翻译→状态逻辑
-    /// LateUpdate 顺序：动画驱动→PhysicsUpdate 位移驱动→意图清除
     /// </summary>
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(Animator))]
@@ -94,7 +92,7 @@ namespace SPPlayer
             // 动画源
             _animationSource = new AnimationSource(_animancer);
 
-            // 状态→动画适配器（内部自行构建映射表）
+            // 状态→动画适配器
             _adapter = new StateToAnimationAdapter(_animationConfig);
 
             // 动画驱动器
@@ -118,6 +116,11 @@ namespace SPPlayer
 
         private void OnAnimatorMove()
         {
+            /* OnAnimatorMove 中应用角色移动原因说明 DA☆ZE
+                驱动器调用动画指令切换动画只是下达命令
+                实际 Animator 在 Update 之后 OnAnimatorMove 之前刷骨骼
+                此时才拥有最新鲜的动画根骨骼 Transform 数据
+            */
             // 角色移动更新
             StateMachine.CurrentState.PhysicsUpdate();
         }

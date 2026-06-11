@@ -2,7 +2,7 @@ namespace SPPlayer
 {
     /// <summary>
     /// 动画驱动器——监听黑板的 CurrentPlayerState，通过适配器获取动画配置并播放。
-    /// 每帧将当前动画进度回写黑板（CurrentNormalizedTime + AnimationCompleted）。
+    /// 每帧将当前动画进度回写黑板。
     /// </summary>
     public class AnimationDriver
     {

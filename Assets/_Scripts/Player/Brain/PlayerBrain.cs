@@ -6,7 +6,7 @@ namespace SPPlayer
     /// </summary>
     public class PlayerBrain
     {
-        #region 输入意图 脑区
+        #region 输入意图 区
 
         /// <summary>攻击意图标记</summary>
         public bool WantToAttack { get; set; }
@@ -16,7 +16,7 @@ namespace SPPlayer
 
         #endregion
 
-        #region 逻辑-动画 脑区
+        #region 逻辑-动画 区
 
         /// <summary>当前逻辑状态类型——状态逻辑层在状态切换时写入，动画表现层据此自行选择并播放动画</summary>
         public PlayerStateType CurrentPlayerState { get; set; }

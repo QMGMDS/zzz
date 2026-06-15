@@ -22,9 +22,6 @@ namespace SPPlayer
         [Tooltip("CharacterController 组件")]
         [SerializeField] private CharacterController _characterController;
 
-        [Tooltip("Animator 组件")]
-        [SerializeField] private Animator _animator;
-
         [Tooltip("Animancer 组件")]
         [SerializeField] private Animancer.AnimancerComponent _animancer;
 
@@ -32,7 +29,7 @@ namespace SPPlayer
 
         [Header("玩家输入源")]
         [Tooltip("玩家输入源，采集员的工作区")]
-        [SerializeField] private InputSource _playerInputReader;
+        [SerializeField] private InputSource _playerInputSource;
 
         [Header("全局拦截器")]
         [Tooltip("按优先级从上到下排列的拦截器列表——谁排前面谁先抢")]
@@ -70,15 +67,14 @@ namespace SPPlayer
 
             // 确保组件引用
             if (_characterController == null) _characterController = GetComponent<CharacterController>();
-            if (_animator == null) _animator = GetComponent<Animator>();
             if (_animancer == null) _animancer = GetComponent<Animancer.AnimancerComponent>();
-            if (_playerInputReader == null) Debug.LogError($"{name} 的 {nameof(PlayerController)} 缺少 {nameof(InputSource)} 引用，输入系统将无法工作。");
+            if (_playerInputSource == null) Debug.LogError($"{name} 的 {nameof(PlayerController)} 缺少 {nameof(InputSource)} 引用，输入系统将无法工作。");
 
             // 角色大脑黑板
             PlayerBrainBlackboard = new PlayerBrain();
 
             // 输入采集员
-            _inputCollector = new InputCollector(_playerInputReader);
+            _inputCollector = new InputCollector(_playerInputSource);
 
             // 主输入翻译处理器
             _inputMainProcessor = new InputMainProcessor(_inputCollector, PlayerBrainBlackboard);

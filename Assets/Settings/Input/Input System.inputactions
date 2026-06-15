@@ -16,15 +16,6 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "CameraLook",
-                    "type": "Value",
-                    "id": "191e4d98-276a-4bdb-8768-c4d2bbe09041",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
                     "name": "Evade",
                     "type": "Button",
                     "id": "d5d452c3-46d1-4d78-a180-5aa355f288df",
@@ -37,15 +28,6 @@
                     "name": "Attack",
                     "type": "Button",
                     "id": "22001f77-6a79-4358-ba21-7150e831ab90",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "LockEnemy",
-                    "type": "Button",
-                    "id": "49940557-4d8c-4b3b-9e8c-6d98a7acd916",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -110,17 +92,6 @@
                 },
                 {
                     "name": "",
-                    "id": "d3957703-7b2d-42f5-8a8e-2559667cfa68",
-                    "path": "<Pointer>/delta",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "CameraLook",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "45d221da-b153-4e7b-899f-9cf67d967b0a",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
@@ -149,17 +120,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "Attack",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "6282a2c1-52d1-4d41-a55d-3015b6938240",
-                    "path": "<Mouse>/middleButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "LockEnemy",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

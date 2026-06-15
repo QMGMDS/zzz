@@ -30,7 +30,6 @@ namespace SPPlayer
         public void Enter()
         {
             PlayerBrainBlackboard.CurrentPlayerState = StateType;
-            PlayerBrainBlackboard.AnimationCompleted = false;
             OnEnter();
         }
 

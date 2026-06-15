@@ -17,6 +17,7 @@
       "Cinemachine",
       "_evadeCooldown",
       "ScriptableObject",
+      "Animancer",
     ],
     "git.ignoreLimitWarning": true,
   }

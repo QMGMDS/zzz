@@ -10,6 +10,14 @@
       },
       "hash": "b27c1d60f4811da7be2752176285ffd2bea4a510"
     },
+    "com.kybernetik.animancer": {
+      "version": "file:com.kybernetik.animancer",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.modules.animation": "1.0.0"
+      }
+    },
     "com.unity.burst": {
       "version": "1.8.21",
       "depth": 1,

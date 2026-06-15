@@ -692,7 +692,7 @@ MonoBehaviour:
   _characterController: {fileID: 2001369392414316984}
   _animancer: {fileID: 2001369392414316983}
   _playerInputSource: {fileID: 2001369392414316982}
-  _globalInterceptors: []
+  _interceptorConfig: {fileID: 11400000, guid: 523cf4a312b1d24408e54ff451f04a0e, type: 2}
   _animationConfig: {fileID: 11400000, guid: 6fde5bd7531ce6343b4d7eb4940d8aa5, type: 2}
 --- !u!114 &2001369392414316982
 MonoBehaviour:

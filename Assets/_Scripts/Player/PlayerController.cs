@@ -31,9 +31,9 @@ namespace SPPlayer
         [Tooltip("玩家输入源，采集员的工作区")]
         [SerializeField] private InputSource _playerInputSource;
 
-        [Header("全局拦截器")]
-        [Tooltip("按优先级从上到下排列的拦截器列表——谁排前面谁先抢")]
-        [SerializeField] private StateInterceptorSO[] _globalInterceptors;
+        [Header("拦截器配置")]
+        [Tooltip("玩家拦截器配置 SO——定义全局状态拦截器的优先级列表")]
+        [SerializeField] private PlayerInterceptorConfigSO _interceptorConfig;
 
         [Header("动画配置")]
         [Tooltip("玩家动画配置 SO——定义状态到动画的映射")]
@@ -83,7 +83,7 @@ namespace SPPlayer
             StateMachine = new StateMachine();
 
             // 主拦截处理器
-            MainInterceptor = new MainInterceptor(this, _globalInterceptors);
+            MainInterceptor = new MainInterceptor(this, _interceptorConfig?.GlobalInterceptors);
 
             // 动画源
             _animationSource = new AnimationSource(_animancer);

@@ -15,7 +15,7 @@ MonoBehaviour:
   _bindings:
   - StateType: 0
     Config:
-      Clip: {fileID: 0}
+      Clip: {fileID: 8406963695831445294, guid: dde6900bd931c3142a6e49505c92f125, type: 3}
       FadeDuration: 0.25
       Speed: 1
       IsLooping: 1

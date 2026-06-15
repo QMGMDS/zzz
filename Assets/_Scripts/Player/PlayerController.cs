@@ -93,6 +93,9 @@ namespace SPPlayer
 
             // 动画驱动器
             _animationDriver = new AnimationDriver(PlayerBrainBlackboard, _animationSource, _adapter);
+
+            // 初始化状态机——默认从 Idle 开始
+            StateMachine.Initialize(new IdleState(this));
         }
 
         private void Update()

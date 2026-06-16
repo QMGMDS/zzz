@@ -7,7 +7,7 @@ namespace SPPlayer
     public class AnimationDriver
     {
         private readonly PlayerBrain _blackboard;
-        private readonly AnimationSource _animFacade;
+        private readonly AnimationSource _animSource;
         private readonly StateToAnimationAdapter _adapter;
 
         private PlayerStateType _lastState;
@@ -23,7 +23,7 @@ namespace SPPlayer
         public AnimationDriver(PlayerBrain blackboard, AnimationSource animFacade, StateToAnimationAdapter adapter)
         {
             _blackboard = blackboard;
-            _animFacade = animFacade;
+            _animSource = animFacade;
             _adapter = adapter;
         }
 
@@ -33,7 +33,7 @@ namespace SPPlayer
         /// </summary>
         public void Update()
         {
-            if (_blackboard == null || _animFacade == null || _adapter == null) return;
+            if (_blackboard == null || _animSource == null || _adapter == null) return;
 
             var currentState = _blackboard.CurrentPlayerState;
 
@@ -43,13 +43,15 @@ namespace SPPlayer
                 _initialized = true;
 
                 if (_adapter.TryTranslate(currentState, out _lastConfig))
-                    _animFacade.Play(_lastConfig.Clip, _lastConfig.FadeDuration, _lastConfig.Speed);
+                    _animSource.Play(_lastConfig.Clip, _lastConfig.FadeDuration, _lastConfig.Speed);
             }
 
-            _blackboard.CurrentNormalizedTime = _animFacade.CurrentNormalizedTime;
+            _blackboard.CurrentNormalizedTime = _animSource.CurrentNormalizedTime;
 
             if (!_lastConfig.IsLooping)
-                _blackboard.AnimationCompleted = _animFacade.CurrentNormalizedTime >= 1f;
+                _blackboard.AnimationCompleted = _animSource.CurrentNormalizedTime >= 1f;
+            else
+                _blackboard.AnimationCompleted = false;
         }
     }
 }

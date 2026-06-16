@@ -8,9 +8,13 @@ namespace SPPlayer
     {
         Idle,
         IdleAFK,
-        MoveStart,
-        MoveLoop,
+
+        WalkStart,
+        WalkLoop,
+        RunStart,
+        RunLoop,
         Stop,
+
         Evade,
         Attack,
     }

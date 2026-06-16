@@ -6,7 +6,7 @@ namespace SPPlayer
     /// </summary>
     public abstract class BaseState
     {
-        private readonly PlayerController _player;
+        protected readonly PlayerController _player;
         protected readonly PlayerBrain PlayerBrainBlackboard;
 
         /// <summary>

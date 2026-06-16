@@ -25,6 +25,7 @@ namespace SPPlayer
             _blackboard = blackboard;
             _processors = new List<IInputProcessor>
             {
+                new MoveInputProcessor(),
             };
         }
 

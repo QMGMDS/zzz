@@ -5,20 +5,5 @@
 		}
   ],
   "settings": {
-    "dotnet.defaultSolution": "Combat System.sln",
-    "cSpell.words": [
-      "lerp",
-      "Rigidbody",
-      "slerp",
-      "Booom",
-      "MonoBehaviour",
-      "IInputable",
-      "Mathf",
-      "Cinemachine",
-      "_evadeCooldown",
-      "ScriptableObject",
-      "Animancer",
-    ],
-    "git.ignoreLimitWarning": true,
   }
 }

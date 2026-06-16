@@ -19,3 +19,21 @@ MonoBehaviour:
       FadeDuration: 0.25
       Speed: 1
       IsLooping: 1
+  - StateType: 2
+    Config:
+      Clip: {fileID: -8346512432481799754, guid: ad5cf7cada62eae4dbe100f799207aad, type: 3}
+      FadeDuration: 0.25
+      Speed: 1
+      IsLooping: 0
+  - StateType: 3
+    Config:
+      Clip: {fileID: 1537088672141427755, guid: dde6900bd931c3142a6e49505c92f125, type: 3}
+      FadeDuration: 0.25
+      Speed: 1
+      IsLooping: 1
+  - StateType: 6
+    Config:
+      Clip: {fileID: 6032505460816376181, guid: dde6900bd931c3142a6e49505c92f125, type: 3}
+      FadeDuration: 0.25
+      Speed: 1
+      IsLooping: 0

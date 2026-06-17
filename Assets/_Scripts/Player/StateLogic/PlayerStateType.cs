@@ -6,16 +6,24 @@ namespace SPPlayer
     /// </summary>
     public enum PlayerStateType
     {
+        // 静止族状态
         Idle,
         IdleAFK,
-
-        WalkStart,
-        WalkLoop,
-        RunStart,
-        RunLoop,
         Stop,
 
+        // 行走族状态
+        WalkStart,
+        WalkLoop,
+
+        // 奔跑族状态
+        RunStart,
+        RunLoop,
+        RunTurn,
+
+        // 闪避族状态
         Evade,
+
+        // 攻击族状态
         Attack,
     }
 }

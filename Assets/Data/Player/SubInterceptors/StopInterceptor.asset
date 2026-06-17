@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72309370bf438ae42a9df0703c6dabb3, type: 3}
   m_Name: StopInterceptor
   m_EditorClassIdentifier: 
-  _exemptStates: 0000000006000000
+  _exemptStates: 000000000100000002000000

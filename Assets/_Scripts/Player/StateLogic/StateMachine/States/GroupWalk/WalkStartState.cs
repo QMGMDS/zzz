@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace SPPlayer
 {
     /// <summary>
@@ -25,6 +27,8 @@ namespace SPPlayer
         /// </summary>
         protected override void UpdateStateLogic()
         {
+            Debug.Log(PlayerBrainBlackboard.AnimationCompleted);
+
             // 族内过渡：起步动画播完 + 仍想移动 → 行走循环
             if (PlayerBrainBlackboard.AnimationCompleted && PlayerBrainBlackboard.WantToMove)
             {

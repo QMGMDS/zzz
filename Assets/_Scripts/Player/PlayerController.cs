@@ -80,7 +80,10 @@ namespace SPPlayer
             _inputMainProcessor = new InputMainProcessor(_inputCollector, PlayerBrainBlackboard);
 
             // 角色状态机
-            StateMachine = new StateMachine();
+            StateMachine = new StateMachine(this);
+
+            // 初始化状态机: 从 Idle 开始
+            StateMachine.Initialize(PlayerStateType.Idle);
 
             // 主拦截处理器
             MainInterceptor = new MainInterceptor(this, _interceptorConfig?.GlobalInterceptors);
@@ -93,9 +96,6 @@ namespace SPPlayer
 
             // 动画驱动器
             _animationDriver = new AnimationDriver(PlayerBrainBlackboard, _animationSource, _adapter);
-
-            // 初始化状态机——默认从 Idle 开始
-            StateMachine.Initialize(new IdleState(this));
         }
 
         private void Update()

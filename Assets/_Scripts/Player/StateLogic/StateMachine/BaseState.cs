@@ -2,11 +2,11 @@ namespace SPPlayer
 {
     /// <summary>
     /// 状态抽象基类——统一执行顺序：先强制拦截转移，再执行状态自身逻辑。
-    /// 动画层通过 IntentionBlackboard 感知状态变化并自行播放对应动画。
+    /// 动画层通过数据黑板感知状态变化并自行播放对应动画。
     /// </summary>
     public abstract class BaseState
     {
-        private readonly PlayerController _player;
+        protected readonly PlayerController _player;
         protected readonly PlayerBrain PlayerBrainBlackboard;
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace SPPlayer
         }
 
         /// <summary>
-        /// 全局强制转移检测——通过拦截器管线解耦状态之间的硬依赖。
+        /// 全局强制转移检测
         /// </summary>
         private bool CheckInterrupts()
         {
@@ -57,11 +57,18 @@ namespace SPPlayer
         }
 
         /// <summary>
-        /// 状态自身的正常逻辑——子类在此实现核心行为。
+        /// 状态自身的正常逻辑，子类在此实现核心行为
         /// </summary>
         protected abstract void UpdateStateLogic();
 
+        /// <summary>
+        /// 角色物理移动层更新逻辑
+        /// </summary>
         public abstract void PhysicsUpdate();
+
+        /// <summary>
+        /// 退出本状态时的清理逻辑
+        /// </summary>
         public abstract void Exit();
     }
 }

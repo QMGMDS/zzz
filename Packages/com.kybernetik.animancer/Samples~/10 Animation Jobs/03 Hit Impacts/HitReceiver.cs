@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2026 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2024 Kybernetik //
 
 #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value.
 
@@ -11,7 +11,7 @@ using UnityEngine.Animations;
 namespace Animancer.Samples.Jobs
 {
     /// <summary>
-    /// A sample component that demonstrates how <see cref="SimpleLean"/>
+    /// An sample component that demonstrates how <see cref="SimpleLean"/>
     /// can be used as a dynamic response to getting hit.
     /// </summary>
     /// 

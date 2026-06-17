@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2026 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2024 Kybernetik //
 
 using UnityEngine;
 
@@ -70,7 +70,7 @@ namespace Animancer.Samples.InverseKinematics
 
         protected virtual void Awake()
         {
-            SampleModules.LogMissingPhysics3DModuleError(this);
+            SampleReadMe.LogMissingPhysics3DModuleError(this);
         }
 
         /************************************************************************************************************************/

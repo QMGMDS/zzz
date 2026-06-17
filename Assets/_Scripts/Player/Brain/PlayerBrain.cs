@@ -14,6 +14,9 @@ namespace SPPlayer
         /// <summary>闪避意图标记</summary>
         public bool WantToEvade { get; set; }
 
+        /// <summary>移动意图标记</summary>
+        public bool WantToMove { get; set; }
+
         #endregion
 
         #region 逻辑-动画 区
@@ -36,6 +39,7 @@ namespace SPPlayer
         {
             WantToAttack = false;
             WantToEvade = false;
+            WantToMove = false;
         }
     }
 }

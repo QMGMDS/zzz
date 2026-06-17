@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2026 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2024 Kybernetik //
 
 #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value.
 
@@ -41,21 +41,12 @@ namespace Animancer.Samples.Jobs
             AnimancerGraph animancer,
             Vector3 axis,
             NativeArray<TransformStreamHandle> leanBones)
-            : this(animancer, animancer.Component.Animator.transform, axis, leanBones)
-        {
-        }
-
-        public SimpleLean(
-            AnimancerGraph animancer,
-            Transform root,
-            Vector3 axis,
-            NativeArray<TransformStreamHandle> leanBones)
         {
             Animator animator = animancer.Component.Animator;
 
             _Job = new()
             {
-                root = animator.BindStreamTransform(root),
+                root = animator.BindStreamTransform(animator.transform),
                 bones = leanBones,
                 axis = axis,
                 angle = AnimancerUtilities.CreateNativeReference<float>(),
@@ -65,14 +56,6 @@ namespace Animancer.Samples.Jobs
 
             animancer.Disposables.Add(this);
         }
-
-        /************************************************************************************************************************/
-
-        public void Connect(AnimancerGraph animancer)
-            => animancer.InsertOutputPlayable(_Playable);
-
-        public void Disconnect()
-            => AnimancerUtilities.RemovePlayable(_Playable);
 
         /************************************************************************************************************************/
         #endregion
@@ -165,12 +148,9 @@ namespace Animancer.Samples.Jobs
 
             public void ProcessAnimation(AnimationStream stream)
             {
-                float angle = this.angle[0];
-                if (angle == 0)
-                    return;
-
+                float angle = this.angle[0] / bones.Length;
                 Vector3 worldAxis = root.GetRotation(stream) * axis;
-                Quaternion offset = Quaternion.AngleAxis(angle / bones.Length, worldAxis);
+                Quaternion offset = Quaternion.AngleAxis(angle, worldAxis);
 
                 for (int i = bones.Length - 1; i >= 0; i--)
                 {

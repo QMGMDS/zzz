@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2026 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2024 Kybernetik //
 
 #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value.
 
@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Animancer.Samples.Jobs
 {
     /// <summary>
-    /// A sample component that calls <see cref="HitReceiver.Hit"/>
+    /// An sample component that calls <see cref="HitReceiver.Hit"/>
     /// when the user clicks on the ground.
     /// </summary>
     /// 
@@ -62,7 +62,7 @@ namespace Animancer.Samples.Jobs
 
         protected virtual void Awake()
         {
-            SampleModules.LogMissingPhysics3DModuleError(this);
+            SampleReadMe.LogMissingPhysics3DModuleError(this);
         }
 
         /************************************************************************************************************************/

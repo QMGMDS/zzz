@@ -1,8 +1,5 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2026 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2024 Kybernetik //
 
-#if ! UNITY_EDITOR
-#pragma warning disable CS0618 // Type or member is obsolete (for TransitionLibraries in Animancer Lite).
-#endif
 #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value.
 
 using Animancer.TransitionLibraries;
@@ -91,52 +88,38 @@ namespace Animancer.Samples.Mixers
 
         public void ApplyTo(AnimancerComponent animancer, StringReference speedParameter)
         {
-            float weightlessThreshold = AnimancerLayer.WeightlessThreshold;
-            try
+            AnimancerLayer layer = animancer.Layers[0];
+            layer.Stop();
+            layer.Weight = 1;
+
+            AnimancerState firstState = null;
+
+            for (int i = _States.Count - 1; i >= 0; i--)
             {
-                AnimancerLayer.WeightlessThreshold = 0;
-
-                AnimancerLayer layer = animancer.Layers[0];
-                layer.Stop();
-                layer.Weight = 1;
-
-                AnimancerState firstState = null;
-
-                for (int i = _States.Count - 1; i >= 0; i--)
+                StateData stateData = _States[i];
+                if (!animancer.Graph.Transitions.TryGetTransition(
+                    stateData.index,
+                    out TransitionModifierGroup transition))
                 {
-                    StateData stateData = _States[i];
-                    if (!animancer.Graph.Transitions.TryGetTransition(
-                        stateData.index,
-                        out TransitionModifierGroup transition))
-                    {
-                        Debug.LogError(
-                            $"Transition Library '{animancer.Transitions}'" +
-                            $" doesn't contain transition index {stateData.index}.",
-                            animancer);
-                        continue;
-                    }
-
-                    AnimancerState state = layer.GetOrCreateState(transition.Transition);
-
-                    if (state.Weight != 0)
-                        state = layer.GetOrCreateWeightlessState(state);
-
-                    state.IsPlaying = true;
-                    state.Time = stateData.time;
-                    state.SetWeight(stateData.weight);
-
-                    if (i == 0)
-                        firstState = state;
+                    Debug.LogError(
+                        $"Transition Library '{animancer.Transitions}'" +
+                        $" doesn't contain transition index {stateData.index}.",
+                        animancer);
+                    continue;
                 }
 
-                layer.Play(firstState, _RemainingFadeDuration);
+                AnimancerState state = layer.GetOrCreateState(transition.Transition);
+                state.IsPlaying = true;
+                state.Time = stateData.time;
+                state.SetWeight(stateData.weight);
 
-                animancer.Parameters.SetValue(speedParameter, _SpeedParameter);
+                if (i == 0)
+                    firstState = state;
             }
-            finally
-            {
-                AnimancerLayer.WeightlessThreshold = weightlessThreshold;
-            }
+
+            layer.Play(firstState, _RemainingFadeDuration);
+
+            animancer.Parameters.SetValue(speedParameter, _SpeedParameter);
         }
 
         /************************************************************************************************************************/

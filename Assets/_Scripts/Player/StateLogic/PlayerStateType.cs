@@ -1,17 +1,32 @@
 namespace SPPlayer
 {
     /// <summary>
-    /// 玩家状态类型枚举——定义了所有可用的逻辑状态。
+    /// 玩家状态类型枚举，定义了所有可用的逻辑状态。
     /// 新增状态时在此枚举添加值。
     /// </summary>
     public enum PlayerStateType
     {
+        // 静止族成员
         Idle,
         IdleAFK,
-        MoveStart,
-        MoveLoop,
         Stop,
-        Evade,
+
+        // 行走族成员
+        WalkStart,
+        WalkLoop,
+
+        // 奔跑族成员
+        RunStart,
+        RunLoop,
+        RunTurn,
+
+        // 闪避族成员
+        EvadeFront,
+        EvadeFrontEnd,
+        EvadeBack,
+        EvadeBackEnd,
+
+        // 攻击族成员
         Attack,
     }
 }

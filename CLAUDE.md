@@ -13,11 +13,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **AI**: Behavior Designer（第三方插件，编辑器内使用，代码仓库未包含源码）
 - **动画状态机**: Animancer（第三方插件）
 - **解决方案文件**: `Combat System.sln`
-- **版本控制模式**: Visible Meta Files（已生成 `.meta`）
 
 ## 当前工作范围
 
-项目当前只在做**玩家角色控制器**，所有代码都应为它服务。分支 `refactor/animator` 正在进行输入/动画/状态的结构重构，现有实现大部分是临时骨架，直接理解即可，新增代码必须严格遵循用户的最新指令。
+项目当前只在做**玩家角色控制器**，所有代码都应为它服务。
 
 ## 项目架构
 
@@ -67,8 +66,8 @@ PlayerBrain.ResetInputBrain()（LateUpdate 清除输入意图）
 
 ### ScriptableObject 配置约定
 
-- 动画配置：`PlayerAnimationConfigSO`，位于 `Assets/_Scripts/Player/Animation/Config/`，菜单路径 `Player/PlayerAnimationConfig`。
-- 拦截器：继承 `StateInterceptorSO`，通过 `PlayerController` 的 `_globalInterceptors` 数组配置优先级。
+- 动画配置：`PlayerAnimationConfigSO`，位于 `Assets/_Scripts/Player/Animation/Config/`。
+- 拦截器：`PlayerInterceptorConfigSO`，位于 `Assets\_Scripts\Player\StateLogic\Interceptor\Config`。
 
 ## 编码规范
 
@@ -80,9 +79,13 @@ PlayerBrain.ResetInputBrain()（LateUpdate 清除输入意图）
 
 ### 注释
 
-- **类**：提供 `<summary>` 说明职责。
+注释要求简明扼要，不引用脚本名
+
+- **类**：提供 `<summary>`，说明职责。
 - **公有/保护方法**：三行 XML 注释（`<summary>` + 每个参数的 `<param>` + `<returns>`）。
 - **接口方法/属性**：单行 XML 注释。
+
+- **继承过来的 接口方法/父类方法**：`/// <inheritdoc />` 指明该方法是从父类或者接口继承而来的即可。
 
 ### 其它
 
@@ -93,4 +96,4 @@ PlayerBrain.ResetInputBrain()（LateUpdate 清除输入意图）
 
 - 向用户输出的内容必须是中文。
 - 除非用户说明，否则不要直接恢复已删除文件。
-- Plan 模式下只有读取权限，无写入权限；Build 模式下仅 `Assets/_Scripts` 下的代码可写。
+- 你只允许在 `_Script/` 文件夹下对 .cs 文件进行编写或文件夹的添加修改，`.meta` 由 Unity 自行编译，AI 无需改动。

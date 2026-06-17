@@ -1,4 +1,4 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2026 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2024 Kybernetik //
 
 #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value.
 
@@ -74,7 +74,7 @@ namespace Animancer.Samples.Events
         
         protected virtual void Awake()
         {
-            SampleModules.LogMissingPhysics3DModuleError(this);
+            SampleReadMe.LogMissingPhysics3DModuleError(this);
         }
 
         public bool ReadyToHit

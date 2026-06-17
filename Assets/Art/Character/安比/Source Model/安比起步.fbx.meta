@@ -33,7 +33,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Avatar_Female_Size02_Anbi_Ani_Run_Start
+      name: Avatar_Female_Size02_Anbi_Ani_RunStart
       takeName: Avatar_Female_Size02_Anbi_Ani_Run_Start
       internalID: -2123373851565751571
       firstFrame: 0
@@ -62,7 +62,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Avatar_Female_Size02_Anbi_Ani_Walk_Start
+      name: Avatar_Female_Size02_Anbi_Ani_WalkStart
       takeName: Avatar_Female_Size02_Anbi_Ani_Walk_Start
       internalID: -8346512432481799754
       firstFrame: 0
@@ -74,7 +74,7 @@ ModelImporter:
       loop: 0
       hasAdditiveReferencePose: 0
       loopTime: 0
-      loopBlend: 1
+      loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1
       loopBlendPositionXZ: 0

@@ -1,6 +1,5 @@
-// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2026 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2018-2024 Kybernetik //
 
-#pragma warning disable CS0618 // Type or member is obsolete.
 #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value.
 
 using UnityEngine;
@@ -49,7 +48,7 @@ namespace Animancer.Samples.AnimatorControllers
 
             // This sample's documentation explains why these warnings exist so we don't need them enabled.
             OptionalWarning.NativeControllerHumanoid.Disable();
-            OptionalWarning.NativeControllerState.Disable();
+            OptionalWarning.NativeControllerHybrid.Disable();
         }
 
         /************************************************************************************************************************/
@@ -78,24 +77,9 @@ namespace Animancer.Samples.AnimatorControllers
             float forward = SampleInput.WASD.y;
             bool isMoving = forward > 0;
 
-            // This sample script demonstrates both the Native and Hybrid approaches.
-            // In a real project you would only use one system or the other, not both.
-
             // Native - Animator Controller assigned to the Animator.
-            // In this case, the HybridAnimancerComponent is unnecessary and you should use a base AnimancerComponent.
             if (_Animancer.Animator.runtimeAnimatorController != null)
             {
-                if (_Animancer.Controller.Controller != null)
-                {
-                    _Animancer.Controller.Controller = null;
-                    Debug.LogWarning(
-                        $"A Native Animator Controller is assigned to the Animator component" +
-                        $" and a Hybrid Animator Controller is also assigned to the {nameof(HybridAnimancerComponent)}." +
-                        $" That's not necessarily a problem, but using both systems at the same time is very unusual" +
-                        $" and likely a waste of performance if you don't need to play both Animator Controllers at once.",
-                        this);
-                }
-
                 // Return to the Animator Controller by fading out Animancer's layers.
                 AnimancerLayer layer = _Animancer.Layers[0];
                 if (layer.TargetWeight > 0)
@@ -105,7 +89,6 @@ namespace Animancer.Samples.AnimatorControllers
                 _Animancer.Animator.SetBool(IsMovingParameter, isMoving);
             }
             // Hybrid - Animator Controller assigned to the HybridAnimancerComponent.
-            // In this case, the Animator component doesn't have a reference to the Animator Controller.
             else if (_Animancer.Controller.Controller != null)
             {
                 // Return to the Animator Controller by playing the ControllerTransition.

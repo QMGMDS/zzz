@@ -1,18 +1,18 @@
 namespace SPPlayer
 {
     /// <summary>
-    /// WalkLoop 状态
+    /// EvadeBackEnd 状态
     /// </summary>
-    public class WalkLoopState : BaseState
+    public class EvadeBackEndState : BaseState
     {
         /// <summary>
-        /// 创建 WalkLoop 状态实例
+        /// 创建 EvadeBackEnd 状态实例
         /// </summary>
         /// <param name="player">角色控制器引用</param>
-        public WalkLoopState(PlayerController player) : base(player) { }
+        public EvadeBackEndState(PlayerController player) : base(player) { }
 
         /// <inheritdoc />
-        protected override PlayerStateType StateType => PlayerStateType.WalkLoop;
+        protected override PlayerStateType StateType => PlayerStateType.EvadeBackEnd;
 
         /// <inheritdoc />
         protected override void OnEnter() { }

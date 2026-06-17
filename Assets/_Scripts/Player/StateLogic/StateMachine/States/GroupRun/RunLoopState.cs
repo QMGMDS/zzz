@@ -1,18 +1,18 @@
 namespace SPPlayer
 {
     /// <summary>
-    /// WalkLoop 状态
+    /// RunLoop 状态
     /// </summary>
-    public class WalkLoopState : BaseState
+    public class RunLoopState : BaseState
     {
         /// <summary>
-        /// 创建 WalkLoop 状态实例
+        /// 创建 RunLoop 状态实例
         /// </summary>
         /// <param name="player">角色控制器引用</param>
-        public WalkLoopState(PlayerController player) : base(player) { }
+        public RunLoopState(PlayerController player) : base(player) { }
 
         /// <inheritdoc />
-        protected override PlayerStateType StateType => PlayerStateType.WalkLoop;
+        protected override PlayerStateType StateType => PlayerStateType.RunLoop;
 
         /// <inheritdoc />
         protected override void OnEnter() { }

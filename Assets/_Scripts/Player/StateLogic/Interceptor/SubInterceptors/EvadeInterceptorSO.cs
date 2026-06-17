@@ -3,10 +3,10 @@ using UnityEngine;
 namespace SPPlayer
 {
     /// <summary>
-    /// 停止拦截器
+    /// 闪避拦截器
     /// </summary>
-    [CreateAssetMenu(fileName = "StopInterceptor", menuName = "Player/Interceptors/StopInterceptor")]
-    public class StopInterceptorSO : StateInterceptorSO
+    [CreateAssetMenu(fileName = "EvadeInterceptor", menuName = "Player/Interceptors/EvadeInterceptor")]
+    public class EvadeInterceptorSO : StateInterceptorSO
     {
         /// <inheritdoc />
         public override bool TryIntercept(PlayerController player, BaseState currentState, out BaseState nextState)
@@ -22,29 +22,33 @@ namespace SPPlayer
             if (IsExempt(stateType)) return false;
 
             // 拦截器检查
-            if (blackboard.WantToMove) return false;
+            if (!blackboard.WantToEvade) return false;
 
             switch (stateType)
             {
+                case PlayerStateType.Idle:
+                    nextState = player.StateMachine.GetState(PlayerStateType.EvadeBack);
+                    break;
+                case PlayerStateType.Stop:
+                    nextState = player.StateMachine.GetState(PlayerStateType.EvadeBack);
+                    break;
                 case PlayerStateType.WalkStart:
-                    nextState = player.StateMachine.GetState(PlayerStateType.Stop);
+                    nextState = player.StateMachine.GetState(PlayerStateType.EvadeFront);
                     break;
                 case PlayerStateType.WalkLoop:
-                    nextState = player.StateMachine.GetState(PlayerStateType.Stop);
+                    nextState = player.StateMachine.GetState(PlayerStateType.EvadeFront);
                     break;
                 case PlayerStateType.RunStart:
-                    nextState = player.StateMachine.GetState(PlayerStateType.Stop);
+                    nextState = player.StateMachine.GetState(PlayerStateType.EvadeFront);
                     break;
                 case PlayerStateType.RunLoop:
-                    nextState = player.StateMachine.GetState(PlayerStateType.Stop);
+                    nextState = player.StateMachine.GetState(PlayerStateType.EvadeFront);
                     break;
                 case PlayerStateType.EvadeFrontEnd:
-                    if (blackboard.AnimationCompleted)
-                        nextState = player.StateMachine.GetState(PlayerStateType.Idle);
+                    nextState = player.StateMachine.GetState(PlayerStateType.EvadeFront);
                     break;
                 case PlayerStateType.EvadeBackEnd:
-                    if (blackboard.AnimationCompleted)
-                        nextState = player.StateMachine.GetState(PlayerStateType.Idle);
+                    nextState = player.StateMachine.GetState(PlayerStateType.EvadeBack);
                     break;
                 default:
                     break;

@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a194c3262af56ba4fa9e84c5090966c0, type: 3}
   m_Name: WalkStartInterceptor
   m_EditorClassIdentifier: 
-  _exemptStates: 0300000004000000
+  _exemptStates: 

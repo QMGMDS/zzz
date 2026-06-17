@@ -1,7 +1,7 @@
 namespace SPPlayer
 {
     /// <summary>
-    /// Idle 状态——玩家无输入时的默认静止状态。
+    /// Idle 状态
     /// </summary>
     public class IdleState : BaseState
     {
@@ -11,27 +11,19 @@ namespace SPPlayer
         /// <param name="player">角色控制器引用</param>
         public IdleState(PlayerController player) : base(player) { }
 
-        /// <summary>当前状态的枚举类型</summary>
+        /// <inheritdoc />
         protected override PlayerStateType StateType => PlayerStateType.Idle;
 
-        /// <summary>
-        /// 进入 Idle 状态时的初始化逻辑
-        /// </summary>
+        /// <inheritdoc />
         protected override void OnEnter() { }
 
-        /// <summary>
-        /// 每帧状态逻辑更新
-        /// </summary>
+        /// <inheritdoc />
         protected override void UpdateStateLogic() { }
 
-        /// <summary>
-        /// 物理更新
-        /// </summary>
+        /// <inheritdoc />
         public override void PhysicsUpdate() { }
 
-        /// <summary>
-        /// 退出 Idle 状态时的清理逻辑
-        /// </summary>
+        /// <inheritdoc />
         public override void Exit() { }
     }
 }

@@ -1,20 +1,18 @@
-using UnityEngine;
-
 namespace SPPlayer
 {
     /// <summary>
-    /// WalkStart 状态
+    /// EvadeBack 状态
     /// </summary>
-    public class WalkStartState : BaseState
+    public class EvadeBackState : BaseState
     {
         /// <summary>
-        /// 创建 WalkStart 状态实例
+        /// 创建 EvadeBack 状态实例
         /// </summary>
         /// <param name="player">角色控制器引用</param>
-        public WalkStartState(PlayerController player) : base(player) { }
+        public EvadeBackState(PlayerController player) : base(player) { }
 
         /// <inheritdoc />
-        protected override PlayerStateType StateType => PlayerStateType.WalkStart;
+        protected override PlayerStateType StateType => PlayerStateType.EvadeBack;
 
         /// <inheritdoc />
         protected override void OnEnter() { }
@@ -22,10 +20,10 @@ namespace SPPlayer
         /// <inheritdoc />
         protected override void UpdateStateLogic()
         {
-            // 族内过渡：WalkStart -> WalkLoop
-            if (PlayerBrainBlackboard.AnimationCompleted && PlayerBrainBlackboard.WantToMove)
+            // 族内过渡：EvadeBack -> EvadeBackEnd
+            if (PlayerBrainBlackboard.AnimationCompleted)
             {
-                _player.StateMachine.ChangeState(_player.StateMachine.GetState(PlayerStateType.WalkLoop));
+                _player.StateMachine.ChangeState(_player.StateMachine.GetState(PlayerStateType.EvadeBackEnd));
             }
         }
 

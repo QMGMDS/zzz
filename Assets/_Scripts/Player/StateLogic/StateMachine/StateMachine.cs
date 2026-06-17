@@ -28,6 +28,12 @@ namespace SPPlayer
                 { PlayerStateType.WalkStart, new WalkStartState(_player) },
                 { PlayerStateType.WalkLoop, new WalkLoopState(_player) },
                 { PlayerStateType.Stop, new StopState(_player) },
+                { PlayerStateType.EvadeFront, new EvadeFrontState(_player) },
+                { PlayerStateType.EvadeFrontEnd, new EvadeFrontEndState(_player) },
+                { PlayerStateType.EvadeBack, new EvadeBackState(_player) },
+                { PlayerStateType.EvadeBackEnd, new EvadeBackEndState(_player) },
+                { PlayerStateType.RunStart, new RunStartState(_player) },
+                { PlayerStateType.RunLoop, new RunLoopState(_player) },
             };
         }
 

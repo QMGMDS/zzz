@@ -43,7 +43,7 @@ namespace SPPlayer
                 _initialized = true;
 
                 if (_adapter.TryTranslate(currentState, out _lastConfig))
-                    _animSource.Play(_lastConfig.Clip, _lastConfig.FadeDuration, _lastConfig.Speed);
+                    _animSource.Play(_lastConfig.Transition);
             }
 
             _blackboard.CurrentNormalizedTime = _animSource.CurrentNormalizedTime;

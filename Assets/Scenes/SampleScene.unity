@@ -722,7 +722,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _Animator: {fileID: 2001369392414316980}
-  _Transitions: {fileID: 0}
+  _Transitions: {fileID: 11400000, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
   _ActionOnDisable: 0
 --- !u!143 &2001369392414316984
 CharacterController:

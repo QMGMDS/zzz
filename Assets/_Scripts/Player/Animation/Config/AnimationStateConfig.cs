@@ -1,4 +1,5 @@
 using System;
+using Animancer;
 using UnityEngine;
 
 namespace SPPlayer
@@ -9,18 +10,10 @@ namespace SPPlayer
     [Serializable]
     public struct AnimationStateConfig
     {
-        [Tooltip("待播放的 AnimationClip")]
-        public AnimationClip Clip;
+        [Tooltip("待播放的 Animancer 过渡资产")]
+        public TransitionAssetBase Transition;
 
-        [Tooltip("淡入过渡时长（秒），0 为瞬间切换")]
-        [Min(0f)]
-        public float FadeDuration;
-
-        [Tooltip("动画播放速度倍率，1 为正常速度")]
-        [Min(0f)]
-        public float Speed;
-
-        [Tooltip("是否为循环动画（Idle/MoveLoop 等）")]
+        [Tooltip("是否为循环动画")]
         public bool IsLooping;
     }
 

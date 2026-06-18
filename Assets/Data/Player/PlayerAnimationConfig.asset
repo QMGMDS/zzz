@@ -15,61 +15,17 @@ MonoBehaviour:
   _bindings:
   - StateType: 0
     Config:
-      Clip: {fileID: 8406963695831445294, guid: dde6900bd931c3142a6e49505c92f125, type: 3}
-      FadeDuration: 0
-      Speed: 1
+      Transition: {fileID: -8000220454170439355, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
       IsLooping: 1
   - StateType: 2
     Config:
-      Clip: {fileID: 6032505460816376181, guid: dde6900bd931c3142a6e49505c92f125, type: 3}
-      FadeDuration: 0
-      Speed: 1
+      Transition: {fileID: 5620977714021293255, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
       IsLooping: 0
   - StateType: 3
     Config:
-      Clip: {fileID: -8346512432481799754, guid: ad5cf7cada62eae4dbe100f799207aad, type: 3}
-      FadeDuration: 0
-      Speed: 1
+      Transition: {fileID: 2712891228141345348, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
       IsLooping: 0
   - StateType: 4
     Config:
-      Clip: {fileID: 1537088672141427755, guid: dde6900bd931c3142a6e49505c92f125, type: 3}
-      FadeDuration: 0
-      Speed: 1
+      Transition: {fileID: -6753691415061833933, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
       IsLooping: 1
-  - StateType: 5
-    Config:
-      Clip: {fileID: -2123373851565751571, guid: ad5cf7cada62eae4dbe100f799207aad, type: 3}
-      FadeDuration: 0
-      Speed: 1
-      IsLooping: 0
-  - StateType: 6
-    Config:
-      Clip: {fileID: 7293334997736931064, guid: dde6900bd931c3142a6e49505c92f125, type: 3}
-      FadeDuration: 0
-      Speed: 1
-      IsLooping: 1
-  - StateType: 8
-    Config:
-      Clip: {fileID: -3608637088553180379, guid: dde6900bd931c3142a6e49505c92f125, type: 3}
-      FadeDuration: 0
-      Speed: 1
-      IsLooping: 0
-  - StateType: 9
-    Config:
-      Clip: {fileID: -9222700511158821990, guid: dde6900bd931c3142a6e49505c92f125, type: 3}
-      FadeDuration: 0
-      Speed: 1
-      IsLooping: 0
-  - StateType: 10
-    Config:
-      Clip: {fileID: -6736933456385858215, guid: dde6900bd931c3142a6e49505c92f125, type: 3}
-      FadeDuration: 0
-      Speed: 1
-      IsLooping: 0
-  - StateType: 11
-    Config:
-      Clip: {fileID: 1137091154780106168, guid: dde6900bd931c3142a6e49505c92f125, type: 3}
-      FadeDuration: 0
-      Speed: 1
-      IsLooping: 0

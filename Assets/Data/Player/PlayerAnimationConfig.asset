@@ -29,3 +29,27 @@ MonoBehaviour:
     Config:
       Transition: {fileID: -6753691415061833933, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
       IsLooping: 1
+  - StateType: 5
+    Config:
+      Transition: {fileID: -6810285111288871216, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
+      IsLooping: 0
+  - StateType: 6
+    Config:
+      Transition: {fileID: -1148050500282410231, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
+      IsLooping: 1
+  - StateType: 8
+    Config:
+      Transition: {fileID: 6893289660320910757, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
+      IsLooping: 0
+  - StateType: 9
+    Config:
+      Transition: {fileID: -7093065126396164137, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
+      IsLooping: 0
+  - StateType: 10
+    Config:
+      Transition: {fileID: 4276356703283683381, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
+      IsLooping: 0
+  - StateType: 11
+    Config:
+      Transition: {fileID: 5085566255742107200, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
+      IsLooping: 0

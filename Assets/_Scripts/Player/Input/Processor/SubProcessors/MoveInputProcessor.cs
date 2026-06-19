@@ -13,7 +13,8 @@ namespace SPPlayer
         /// <param name="blackboard">玩家大脑黑板</param>
         public void UpdateIntentionTranslation(in ProcessedInputData current, in ProcessedInputData last, PlayerBrain blackboard)
         {
-            blackboard.WantToMove = current.Move.sqrMagnitude > 0.01f;
+            blackboard.WantToMove = current.Move != UnityEngine.Vector2.zero;
+            blackboard.MoveInput = current.Move;
         }
     }
 }

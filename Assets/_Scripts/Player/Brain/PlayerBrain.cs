@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace SPPlayer
 {
     /// <summary>
@@ -16,6 +18,9 @@ namespace SPPlayer
 
         /// <summary>移动意图标记</summary>
         public bool WantToMove { get; set; }
+
+        /// <summary>移动输入轴</summary>
+        public Vector2 MoveInput { get; set; }
 
         #endregion
 
@@ -40,6 +45,7 @@ namespace SPPlayer
             WantToAttack = false;
             WantToEvade = false;
             WantToMove = false;
+            MoveInput = Vector2.zero;
         }
     }
 }

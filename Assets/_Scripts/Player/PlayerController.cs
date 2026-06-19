@@ -22,6 +22,9 @@ namespace SPPlayer
         [Tooltip("CharacterController 组件")]
         [SerializeField] private CharacterController _characterController;
 
+        [Header("Animator 组件")]
+        [SerializeField] private Animator _animator;
+
         [Tooltip("Animancer 组件")]
         [SerializeField] private Animancer.AnimancerComponent _animancer;
 
@@ -38,6 +41,10 @@ namespace SPPlayer
         [Header("动画配置")]
         [Tooltip("玩家动画配置 SO——定义状态到动画的映射")]
         [SerializeField] private PlayerAnimationConfigSO _animationConfig;
+
+        [Header("移动配置")]
+        [Tooltip("玩家移动配置 SO——定义代码驱动位移时的速度、转向和重力参数")]
+        [SerializeField] private PlayerMotorConfigSO _motorConfig;
 
         #endregion
 
@@ -56,6 +63,7 @@ namespace SPPlayer
         private AnimationDriver _animationDriver;
         private AnimationSource _animationSource;
         private StateToAnimationAdapter _adapter;
+        private PlayerMotor _playerMotor;
 
         #endregion
 
@@ -67,11 +75,20 @@ namespace SPPlayer
 
             // 确保组件引用
             if (_characterController == null) _characterController = GetComponent<CharacterController>();
+            if (_animator == null) _animator = GetComponent<Animator>();
             if (_animancer == null) _animancer = GetComponent<Animancer.AnimancerComponent>();
+            if (_animancer.Animator == null) _animancer.Animator = _animator;
             if (_playerInputSource == null) Debug.LogError($"{name} 的 {nameof(PlayerController)} 缺少 {nameof(InputSource)} 引用，输入系统将无法工作。");
+            if (_motorConfig == null) Debug.LogError($"{name} 的 {nameof(PlayerController)} 缺少 {nameof(PlayerMotorConfigSO)} 引用，移动系统将无法工作。");
+
+            // 实现代码接管根运动的前提
+            if (_animator != null) _animator.applyRootMotion = true;
 
             // 角色大脑黑板
             PlayerBrainBlackboard = new PlayerBrain();
+
+            // 玩家移动器
+            _playerMotor = new PlayerMotor(_characterController, _animator, PlayerBrainBlackboard, _motorConfig);
 
             // 输入采集员
             _inputCollector = new InputCollector(_playerInputSource);
@@ -121,6 +138,7 @@ namespace SPPlayer
                 此时才拥有最新鲜的动画根骨骼 Transform 数据
             */
             // 角色移动更新
+            _playerMotor?.ApplyMove();
             StateMachine.CurrentState.PhysicsUpdate();
         }
 

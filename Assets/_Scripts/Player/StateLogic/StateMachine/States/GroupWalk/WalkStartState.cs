@@ -22,7 +22,6 @@ namespace SPPlayer
         /// <inheritdoc />
         protected override void UpdateStateLogic()
         {
-            // 族内过渡：WalkStart -> WalkLoop
             if (PlayerBrainBlackboard.AnimationCompleted && PlayerBrainBlackboard.WantToMove)
             {
                 _player.StateMachine.ChangeState(_player.StateMachine.GetState(PlayerStateType.WalkLoop));

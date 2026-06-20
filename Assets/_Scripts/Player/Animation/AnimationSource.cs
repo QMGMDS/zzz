@@ -42,18 +42,14 @@ namespace SPPlayer
         }
 
         /// <summary>
-        /// 播放动画片段
+        /// 播放动画过渡
         /// </summary>
-        /// <param name="clip">AnimationClip 资源</param>
-        /// <param name="fadeDuration">淡入过渡时长（秒），默认 0.25</param>
-        /// <param name="speed">播放速度倍率，默认 1</param>
-        public void Play(AnimationClip clip, float fadeDuration = 0.25f, float speed = 1f)
+        /// <param name="transition">Animancer 过渡数据</param>
+        public void Play(ITransition transition)
         {
-            if (_animancer == null || clip == null) return;
+            if (_animancer == null || transition == null || !transition.IsValid()) return;
 
-            var state = _animancer.Play(clip, fadeDuration);
-            if (state != null && speed > 0f)
-                state.Speed = speed;
+            _animancer.Play(transition);
         }
     }
 }

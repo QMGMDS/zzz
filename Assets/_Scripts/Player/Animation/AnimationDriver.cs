@@ -28,8 +28,7 @@ namespace SPPlayer
         }
 
         /// <summary>
-        /// 每帧主驱动——由 PlayerController.Update 显式调用。
-        /// 顺序：检测状态变化并播放动画 → 回写动画进度到黑板。
+        /// 检测状态变化，状态变化便播放对应动画
         /// </summary>
         public void Update()
         {
@@ -43,8 +42,16 @@ namespace SPPlayer
                 _initialized = true;
 
                 if (_adapter.TryTranslate(currentState, out _lastConfig))
-                    _animSource.Play(_lastConfig.Clip, _lastConfig.FadeDuration, _lastConfig.Speed);
+                    _animSource.Play(_lastConfig.Transition);
             }
+        }
+
+        /// <summary>
+        /// 将 Animancer 最新动画进度回写黑板
+        /// </summary>
+        public void SyncAnimProgress()
+        {
+            if (_blackboard == null || _animSource == null || !_initialized) return;
 
             _blackboard.CurrentNormalizedTime = _animSource.CurrentNormalizedTime;
 

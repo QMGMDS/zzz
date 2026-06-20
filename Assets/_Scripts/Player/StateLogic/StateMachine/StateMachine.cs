@@ -34,6 +34,7 @@ namespace SPPlayer
                 { PlayerStateType.EvadeBackEnd, new EvadeBackEndState(_player) },
                 { PlayerStateType.RunStart, new RunStartState(_player) },
                 { PlayerStateType.RunLoop, new RunLoopState(_player) },
+                { PlayerStateType.RunTurn, new RunTurnState(_player) },
             };
         }
 

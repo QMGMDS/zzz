@@ -27,14 +27,8 @@ namespace SPPlayer
             switch (stateType)
             {
                 case PlayerStateType.Idle:
-                    nextState = player.StateMachine.GetState(PlayerStateType.WalkStart);
-                    break;
                 case PlayerStateType.Stop:
-                    nextState = player.StateMachine.GetState(PlayerStateType.WalkStart);
-                    break;
                 case PlayerStateType.EvadeFrontEnd:
-                    nextState = player.StateMachine.GetState(PlayerStateType.WalkStart);
-                    break;
                 case PlayerStateType.EvadeBackEnd:
                     nextState = player.StateMachine.GetState(PlayerStateType.WalkStart);
                     break;

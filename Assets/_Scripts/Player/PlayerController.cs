@@ -22,6 +22,9 @@ namespace SPPlayer
         [Tooltip("CharacterController 组件")]
         [SerializeField] private CharacterController _characterController;
 
+        [Header("Animator 组件")]
+        [SerializeField] private Animator _animator;
+
         [Tooltip("Animancer 组件")]
         [SerializeField] private Animancer.AnimancerComponent _animancer;
 
@@ -38,6 +41,10 @@ namespace SPPlayer
         [Header("动画配置")]
         [Tooltip("玩家动画配置 SO——定义状态到动画的映射")]
         [SerializeField] private PlayerAnimationConfigSO _animationConfig;
+
+        [Header("移动配置")]
+        [Tooltip("玩家移动配置 SO——定义移动时的速度、转向和重力参数")]
+        [SerializeField] private PlayerMotorConfigSO _motorConfig;
 
         #endregion
 
@@ -56,6 +63,7 @@ namespace SPPlayer
         private AnimationDriver _animationDriver;
         private AnimationSource _animationSource;
         private StateToAnimationAdapter _adapter;
+        private PlayerMotor _playerMotor;
 
         #endregion
 
@@ -67,35 +75,48 @@ namespace SPPlayer
 
             // 确保组件引用
             if (_characterController == null) _characterController = GetComponent<CharacterController>();
+            if (_animator == null) _animator = GetComponent<Animator>();
             if (_animancer == null) _animancer = GetComponent<Animancer.AnimancerComponent>();
-            if (_playerInputSource == null) Debug.LogError($"{name} 的 {nameof(PlayerController)} 缺少 {nameof(InputSource)} 引用，输入系统将无法工作。");
+            if (_animancer.Animator == null) _animancer.Animator = _animator;
+
+            if (_playerInputSource == null) Debug.LogError($"{name} 的 {nameof(PlayerController)} 缺少 {nameof(InputSource)} 引用，输入模块将无法工作。");
+            if (_interceptorConfig == null) Debug.LogError($"{name} 的 {nameof(PlayerController)} 缺少 {nameof(PlayerInterceptorConfigSO)} 引用，拦截器将无法工作。");
+            if (_animationConfig == null) Debug.LogError($"{name} 的 {nameof(PlayerController)} 缺少 {nameof(PlayerAnimationConfigSO)} 引用，动画层将无法工作。");
+            if (_motorConfig == null) Debug.LogError($"{name} 的 {nameof(PlayerController)} 缺少 {nameof(PlayerMotorConfigSO)} 引用，移动层将无法工作。");
+
+            // 实现代码接管根运动的前提
+            if (_animator != null) _animator.applyRootMotion = true;
+
+            // --- 数据中枢模块 ---
 
             // 角色大脑黑板
             PlayerBrainBlackboard = new PlayerBrain();
 
+            // --- 玩家输入模块 ---
+
             // 输入采集员
             _inputCollector = new InputCollector(_playerInputSource);
-
             // 主输入翻译处理器
             _inputMainProcessor = new InputMainProcessor(_inputCollector, PlayerBrainBlackboard);
 
+            // --- 角色状态模块 ---
+
             // 角色状态机
             StateMachine = new StateMachine(this);
-
             // 初始化状态机: 从 Idle 开始
             StateMachine.Initialize(PlayerStateType.Idle);
-
             // 主拦截处理器
             MainInterceptor = new MainInterceptor(this, _interceptorConfig?.GlobalInterceptors);
 
             // 动画源
             _animationSource = new AnimationSource(_animancer);
-
             // 状态→动画适配器
             _adapter = new StateToAnimationAdapter(_animationConfig);
-
             // 动画驱动器
             _animationDriver = new AnimationDriver(PlayerBrainBlackboard, _animationSource, _adapter);
+
+            // 玩家移动器
+            _playerMotor = new PlayerMotor(_characterController, _animator, PlayerBrainBlackboard, _motorConfig);
         }
 
         private void Update()
@@ -109,9 +130,11 @@ namespace SPPlayer
             // 3. 当前状态的逻辑更新 (含全局拦截器检查)
             StateMachine.CurrentState.LogicUpdate();
 
-            // 4. 动画驱动器更新动画
-            _animationDriver?.Update();
+            // 4. 动画驱动器更新动画，仅发出指令
+            _animationDriver.Update();
         }
+
+        // **Animator 此时更新动画，并更新该逻辑帧的最新动画进度**
 
         private void OnAnimatorMove()
         {
@@ -120,12 +143,16 @@ namespace SPPlayer
                 实际 Animator 在 Update 之后 OnAnimatorMove 之前刷骨骼
                 此时才拥有最新鲜的动画根骨骼 Transform 数据
             */
-            // 角色移动更新
-            StateMachine.CurrentState.PhysicsUpdate();
+            // 角色移动层更新
+            _playerMotor?.ApplyMove();
+            // StateMachine.CurrentState.PhysicsUpdate(); // 旧移动更新方法 (已废弃)
         }
 
         private void LateUpdate()
         {
+            // 动画驱动器同步最新动画进度到黑板
+            _animationDriver.SyncAnimProgress();
+
             // 清除输入意图标记，为下一帧做准备
             PlayerBrainBlackboard.ResetInputBrain();
         }

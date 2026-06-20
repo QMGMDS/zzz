@@ -18,7 +18,19 @@ namespace SPPlayer
         protected override void OnEnter() { }
 
         /// <inheritdoc />
-        protected override void UpdateStateLogic() { }
+        protected override void UpdateStateLogic()
+        {
+            if (!PlayerBrainBlackboard.WantToMove) return;
+
+            var LastDirection = PlayerBrainBlackboard.LastMoveDirection;
+            var CurrentDirection = PlayerBrainBlackboard.CurrentMoveDirection;
+            if (LastDirection.sqrMagnitude <= 0.0001f || CurrentDirection.sqrMagnitude <= 0.0001f) return;
+
+            if (UnityEngine.Vector3.Dot(LastDirection, CurrentDirection) <= -0.75f)
+            {
+                _player.StateMachine.ChangeState(_player.StateMachine.GetState(PlayerStateType.RunTurn));
+            }
+        }
 
         /// <inheritdoc />
         public override void PhysicsUpdate() { }

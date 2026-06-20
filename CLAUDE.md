@@ -22,35 +22,42 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### 代码目录
 
-- `Assets/_Scripts/Player` — 玩家角色控制器核心代码。
+```
+Assets/_Scripts/Player
+├── Brain/             — 数据黑板
+├── Input/             — 输入采集与意图翻译
+├── StateLogic/        — 状态机 + 全局拦截器
+├── Animation/         — 动画映射与播放
+└── Motion/            — 角色移动
+```
 - `Assets/_Scripts/UI` — UI 相关脚本（目前暂无核心逻辑）。
 - `Assets/Settings/Input` — New Input System 的 `.inputactions` 资产。
 - `Assets/Scenes/SampleScene.unity` — 主要场景。
+- 所有代码位于 `SPPlayer` 命名空间。
 
 ### 玩家角色控制器的数据流
 
 `PlayerController`（MonoBehaviour）是入口，使用 `[DefaultExecutionOrder(-300)]` 保证在大多数系统之前执行，每帧按固定管线推进：
 
 ```
-InputSource（采样原始输入）
+Update:
+  InputCollector.Update()  ── 采样 + 后处理（防抖 + BufferTimer）
     ↓
-InputCollector（后处理：防抖 + BufferTimer）
+  InputMainProcessor.UpdateInputProcessors()  ── 意图翻译 → 黑板
     ↓
-InputMainProcessor（驱动 IInputProcessor 子处理器翻译意图）
+  StateMachine.CurrentState.LogicUpdate()  ── 全局拦截 → 状态逻辑
     ↓
-PlayerBrain（运行时数据黑板）
+  AnimationDriver.Update()  ── 下达动画指令
+
+  [Animator 自动更新骨骼，产出本帧根位移]
+
+OnAnimatorMove:
+  PlayerMotor.ApplyMove()  ── 根运动缩放 + 旋转 + 重力
+
+LateUpdate:
+  AnimationDriver.SyncAnimProgress()  ── 动画进度回写黑板
     ↓
-StateMachine.CurrentState.LogicUpdate()
-    ↓
-BaseState.CheckInterrupts() → MainInterceptor（全局拦截器管线）
-    ↓
-BaseState.UpdateStateLogic()
-    ↓
-AnimationDriver.Update()（监听黑板状态变化 -> 播放动画）
-    ↓
-BaseState.PhysicsUpdate()（OnAnimatorMove 中执行，应用动画根运动）
-    ↓
-PlayerBrain.ResetInputBrain()（LateUpdate 清除输入意图）
+  PlayerBrain.ResetInputBrain()  ── 清除意图标记
 ```
 
 关键子系统职责：
@@ -63,11 +70,13 @@ PlayerBrain.ResetInputBrain()（LateUpdate 清除输入意图）
 - **`StateMachine` / `BaseState`**：纯状态生命周期管理。`BaseState.LogicUpdate()` 先执行全局拦截，再执行状态逻辑。`BaseState` 不写动画播放代码。
 - **`MainInterceptor` / `StateInterceptorSO`**：全局可配置的状态转移拦截管线，按数组顺序决定优先级。每个拦截器可维护豁免清单。
 - **`AnimationDriver` / `StateToAnimationAdapter` / `AnimationSource`**：动画表现层。`AnimationDriver` 监听黑板中的 `CurrentPlayerState`，通过 SO 配置映射到 `AnimationStateConfig`，再经 `AnimationSource` 调用 Animancer 播放，并把归一化时间与完成标记回写黑板。
+- **`PlayerMotor`**：角色移动器。在 `OnAnimatorMove` 中根据当前状态选择根运动倍率、平滑旋转朝向、施加重力，最终调用 `CharacterController.Move()` 移动角色。
 
 ### ScriptableObject 配置约定
 
 - 动画配置：`PlayerAnimationConfigSO`，位于 `Assets/_Scripts/Player/Animation/Config/`。
-- 拦截器：`PlayerInterceptorConfigSO`，位于 `Assets\_Scripts\Player\StateLogic\Interceptor\Config`。
+- 拦截器：`PlayerInterceptorConfigSO`，位于 `Assets/_Scripts/Player/StateLogic/Interceptor/Config`。
+- 移动配置：`PlayerMotorConfigSO`，位于 `Assets/_Scripts/Player/Motion/`。
 
 ## 编码规范
 

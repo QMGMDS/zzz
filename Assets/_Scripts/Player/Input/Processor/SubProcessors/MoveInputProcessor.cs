@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace SPPlayer
 {
     /// <summary>
@@ -13,7 +15,20 @@ namespace SPPlayer
         /// <param name="blackboard">玩家大脑黑板</param>
         public void UpdateIntentionTranslation(in ProcessedInputData current, in ProcessedInputData last, PlayerBrain blackboard)
         {
-            blackboard.WantToMove = current.Move.sqrMagnitude > 0.01f;
+            blackboard.WantToMove = current.Move != Vector2.zero;
+            blackboard.MoveInput = current.Move;
+
+            blackboard.LastMoveDirection = ToWorldDirection(last.Move);
+            blackboard.CurrentMoveDirection = ToWorldDirection(current.Move);
+        }
+
+        private static Vector3 ToWorldDirection(Vector2 moveInput)
+        {
+            var Direction = new Vector3(moveInput.x, 0f, moveInput.y);
+            if (Direction.sqrMagnitude > 1f)
+                Direction.Normalize();
+
+            return Direction.sqrMagnitude > 0.0001f ? Direction.normalized : Vector3.zero;
         }
     }
 }

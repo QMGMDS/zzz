@@ -1,12 +1,14 @@
+using UnityEngine;
+
 namespace SPPlayer
 {
     /// <summary>
     /// 玩家角色大脑黑板——统一存放运行时的数据中枢
-    /// 玩家角色各个模块 (玩家输入/逻辑状态机/动画表示层) 统一通过该数据中枢进行交流
+    /// 玩家角色各个模块统一通过该数据中枢进行交流
     /// </summary>
     public class PlayerBrain
     {
-        #region 输入意图 区
+        #region 输入板块 (输入处理器负责写入)
 
         /// <summary>攻击意图标记</summary>
         public bool WantToAttack { get; set; }
@@ -17,20 +19,14 @@ namespace SPPlayer
         /// <summary>移动意图标记</summary>
         public bool WantToMove { get; set; }
 
-        #endregion
+        /// <summary>移动输入轴</summary>
+        public Vector2 MoveInput { get; set; }
 
-        #region 逻辑-动画 区
+        /// <summary>当前移动方向</summary>
+        public Vector3 CurrentMoveDirection { get; set; }
 
-        /// <summary>当前逻辑状态类型——状态逻辑层在状态切换时写入，动画表现层据此自行选择并播放动画</summary>
-        public PlayerStateType CurrentPlayerState { get; set; }
-
-        /// <summary>当前动画归一化时间 0~1——动画层每帧回写</summary>
-        public float CurrentNormalizedTime { get; set; }
-
-        /// <summary>当前状态动画已播放完毕——动画层写入，状态逻辑读取以决定退出时机</summary>
-        public bool AnimationCompleted { get; set; }
-
-        #endregion
+        /// <summary>上一帧移动方向</summary>
+        public Vector3 LastMoveDirection { get; set; }
 
         /// <summary>
         /// 每帧 LateUpdate 末尾调用——清除输入意图脑区的所有标记，防止跨帧残留。
@@ -40,6 +36,26 @@ namespace SPPlayer
             WantToAttack = false;
             WantToEvade = false;
             WantToMove = false;
+            MoveInput = Vector2.zero;
         }
+
+        #endregion
+
+        #region 逻辑状态板块 (状态逻辑层负责写入)
+
+        /// <summary>当前逻辑状态类型</summary>
+        public PlayerStateType CurrentPlayerState { get; set; }
+
+        #endregion
+
+        #region 动画信息板块 (动画表现层负责写入)
+
+        /// <summary>当前动画归一化时间 0~1</summary>
+        public float CurrentNormalizedTime { get; set; }
+
+        /// <summary>当前状态动画是否播放完毕</summary>
+        public bool AnimationCompleted { get; set; }
+
+        #endregion
     }
 }

@@ -3,7 +3,7 @@ using UnityEngine;
 namespace SPPlayer
 {
     /// <summary>
-    /// 玩家移动器——使用代码控制最终位移，同时采样动画 Root Delta 作为运动节奏倍率。
+    /// 玩家移动器——按状态选择代码位移或动画根位移，并统一通过 CharacterController 应用。
     /// </summary>
     public class PlayerMotor
     {
@@ -13,9 +13,7 @@ namespace SPPlayer
         private readonly Transform _transform;
         private readonly PlayerMotorConfigSO _config;
 
-        private Vector3 _lastMoveDirection;
         private float _verticalVelocity;
-        private float _motionScale = 1f;
 
         /// <summary>
         /// 创建玩家移动器
@@ -43,75 +41,62 @@ namespace SPPlayer
             var DeltaTime = Time.deltaTime;
             if (DeltaTime <= 0f) return;
 
-            var Direction = ResolveInputMoveDirection();
-            var BaseSpeed = ResolveBaseSpeed();
-            UpdateMotionScale(DeltaTime);
-            UpdateRotation(Direction, DeltaTime);
+            UpdateRotation(DeltaTime);
             UpdateVerticalVelocity(DeltaTime);
 
-            var HorizontalMove = Direction * BaseSpeed * _motionScale * DeltaTime;
+            var HorizontalMove = ResolveHorizontalMove();
             var VerticalMove = Vector3.up * _verticalVelocity * DeltaTime;
 
             _characterController.Move(HorizontalMove + VerticalMove);
         }
 
-        private Vector3 ResolveInputMoveDirection()
+        private Vector3 ResolveHorizontalMove()
         {
-            var MoveInput = _blackboard.MoveInput;
-            var Direction = new Vector3(MoveInput.x, 0f, MoveInput.y);
-
-            if (Direction.sqrMagnitude > 1f) // 斜向速度限制
-                Direction.Normalize();
-
-            if (Direction.sqrMagnitude > 0.0001f)
-            {
-                _lastMoveDirection = Direction.normalized;
-                return _lastMoveDirection;
-            }
-
-            return _blackboard.CurrentPlayerState == PlayerStateType.Stop ? _lastMoveDirection : Vector3.zero;
+            var RootDelta = _animator.deltaPosition;
+            RootDelta.y = 0f;
+            return RootDelta * ResolveRootMotionScale();
         }
 
-        private float ResolveBaseSpeed()
+        private float ResolveRootMotionScale()
         {
             switch (_blackboard.CurrentPlayerState)
             {
-                case PlayerStateType.RunStart:
-                case PlayerStateType.RunLoop:
-                    return _config.RunSpeed;
-
-                case PlayerStateType.Stop:
-                    return _config.StopSpeed;
-
                 case PlayerStateType.WalkStart:
                 case PlayerStateType.WalkLoop:
-                    return _config.WalkSpeed;
+                    return _config.WalkRootMotionScale;
+
+                case PlayerStateType.RunStart:
+                case PlayerStateType.RunLoop:
+                case PlayerStateType.RunTurn:
+                    return _config.RunRootMotionScale;
+
+                case PlayerStateType.Stop:
+                    return _config.StopRootMotionScale;
+
+                case PlayerStateType.EvadeFront:
+                    return _config.EvadeFrontRootMotionScale;
+
+                case PlayerStateType.EvadeBack:
+                    return _config.EvadeBackRootMotionScale;
+
+                case PlayerStateType.Attack:
+                    return _config.AttackRootMotionScale;
 
                 default:
-                    return 0f;
+                    return _config.DefaultRootMotionScale;
             }
         }
 
-        private void UpdateMotionScale(float deltaTime)
+        private void UpdateRotation(float deltaTime)
         {
-            var HorizontalRootDelta = _animator.deltaPosition;
-            HorizontalRootDelta.y = 0f;
+            if (_blackboard.CurrentPlayerState == PlayerStateType.RunTurn) return;
+            if (_blackboard.CurrentPlayerState == PlayerStateType.EvadeFront) return;
+            if (_blackboard.CurrentPlayerState == PlayerStateType.EvadeBack) return;
 
-            var RootSpeed = HorizontalRootDelta.magnitude / deltaTime; // 动画根运动速度 XZ
-            var ReferenceSpeed = Mathf.Max(0.01f, _config.ReferenceRootSpeed); // 参照配置速度
-            var TargetScale = RootSpeed > 0.0001f ? RootSpeed / ReferenceSpeed : 1f; // 动画运动倍率
+            var Direction = _blackboard.CurrentMoveDirection;
+            if (Direction.sqrMagnitude <= 0.0001f || _config.RotationSpeed <= 0f) return;
 
-            TargetScale = Mathf.Clamp(TargetScale, _config.MinMotionScale, _config.MaxMotionScale);
-
-            var Smooth = 1f - Mathf.Exp(-_config.MotionScaleSmoothSpeed * deltaTime);
-            _motionScale = Mathf.Lerp(_motionScale, TargetScale, Smooth);
-        }
-
-        private void UpdateRotation(Vector3 direction, float deltaTime)
-        {
-            if (direction.sqrMagnitude <= 0.0001f || _config.RotationSpeed <= 0f) return;
-
-            var TargetRotation = Quaternion.LookRotation(direction, Vector3.up);
+            var TargetRotation = Quaternion.LookRotation(Direction, Vector3.up);
             _transform.rotation = Quaternion.RotateTowards(
                 _transform.rotation,
                 TargetRotation,

@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 489a043cace4d2c4486d7de447329f82, type: 3}
   m_Name: PlayerMotorConfig
   m_EditorClassIdentifier: 
-  _walkSpeed: 3.5
-  _runSpeed: 4.8
-  _stopSpeed: 0.3
-  _referenceRootSpeed: 1.5
-  _minMotionScale: 0.35
-  _maxMotionScale: 1.4
-  _motionScaleSmoothSpeed: 18
-  _rotationSpeed: 720
+  _defaultRootMotionScale: 1
+  _walkRootMotionScale: 1
+  _runRootMotionScale: 1
+  _stopRootMotionScale: 1
+  _evadeFrontRootMotionScale: 1
+  _evadeBackRootMotionScale: 1
+  _attackRootMotionScale: 1
+  _rotationSpeed: 1000
   _gravity: -20
-  _groundStickVelocity: 2
+  _groundStickVelocity: 1

@@ -3,42 +3,42 @@ using UnityEngine;
 namespace SPPlayer
 {
     /// <summary>
-    /// 玩家移动配置——定义代码驱动位移时的基础速度、转向和重力参数。
+    /// 玩家移动配置——定义动画根位移倍率和重力参数。
     /// </summary>
     [CreateAssetMenu(fileName = "PlayerMotorConfig", menuName = "Player/PlayerMotorConfig")]
     public class PlayerMotorConfigSO : ScriptableObject
     {
-        [Tooltip("行走基础速度（米/秒）")]
+        [Tooltip("默认动画根位移倍率")]
         [Min(0f)]
-        [SerializeField] private float _walkSpeed = 2.2f;
+        [SerializeField] private float _defaultRootMotionScale = 1f;
 
-        [Tooltip("奔跑基础速度（米/秒）")]
+        [Tooltip("行走动画根位移倍率")]
         [Min(0f)]
-        [SerializeField] private float _runSpeed = 4.8f;
+        [SerializeField] private float _walkRootMotionScale = 1f;
 
-        [Tooltip("停止动画保留的滑行速度（米/秒）")]
+        [Tooltip("奔跑动画根位移倍率")]
         [Min(0f)]
-        [SerializeField] private float _stopSpeed = 1.2f;
+        [SerializeField] private float _runRootMotionScale = 1f;
 
-        [Tooltip("根据动画水平 Root Delta 计算速度倍率时使用的参考速度")]
-        [Min(0.01f)]
-        [SerializeField] private float _referenceRootSpeed = 1.5f;
-
-        [Tooltip("动画运动倍率下限，防止 Root Delta 过小导致角色完全不动")]
+        [Tooltip("停止动画根位移倍率")]
         [Min(0f)]
-        [SerializeField] private float _minMotionScale = 0.35f;
+        [SerializeField] private float _stopRootMotionScale = 1f;
 
-        [Tooltip("动画运动倍率上限，防止 Root Delta 尖峰导致角色瞬移")]
+        [Tooltip("前闪动画根位移倍率")]
         [Min(0f)]
-        [SerializeField] private float _maxMotionScale = 1.4f;
+        [SerializeField] private float _evadeFrontRootMotionScale = 1f;
 
-        [Tooltip("动画运动倍率平滑速度")]
+        [Tooltip("后闪动画根位移倍率")]
         [Min(0f)]
-        [SerializeField] private float _motionScaleSmoothSpeed = 18f;
+        [SerializeField] private float _evadeBackRootMotionScale = 1f;
+
+        [Tooltip("攻击动画根位移倍率")]
+        [Min(0f)]
+        [SerializeField] private float _attackRootMotionScale = 1f;
 
         [Tooltip("角色转向速度（度/秒）")]
         [Min(0f)]
-        [SerializeField] private float _rotationSpeed = 720f;
+        [SerializeField] private float _rotationSpeed = 1000f;
 
         [Tooltip("重力加速度")]
         [SerializeField] private float _gravity = -20f;
@@ -47,26 +47,26 @@ namespace SPPlayer
         [Min(0f)]
         [SerializeField] private float _groundStickVelocity = 2f;
 
-        /// <summary>行走基础速度（米/秒）。</summary>
-        public float WalkSpeed => _walkSpeed;
+        /// <summary>默认动画根位移倍率。</summary>
+        public float DefaultRootMotionScale => _defaultRootMotionScale;
 
-        /// <summary>奔跑基础速度（米/秒）。</summary>
-        public float RunSpeed => _runSpeed;
+        /// <summary>行走动画根位移倍率。</summary>
+        public float WalkRootMotionScale => _walkRootMotionScale;
 
-        /// <summary>停止动画保留的滑行速度（米/秒）。</summary>
-        public float StopSpeed => _stopSpeed;
+        /// <summary>奔跑动画根位移倍率。</summary>
+        public float RunRootMotionScale => _runRootMotionScale;
 
-        /// <summary>根据动画水平 Root Delta 计算速度倍率时使用的参考速度。</summary>
-        public float ReferenceRootSpeed => _referenceRootSpeed;
+        /// <summary>停止动画根位移倍率。</summary>
+        public float StopRootMotionScale => _stopRootMotionScale;
 
-        /// <summary>动画运动倍率下限，防止 Root Delta 过小导致角色完全不动。</summary>
-        public float MinMotionScale => _minMotionScale;
+        /// <summary>前闪动画根位移倍率。</summary>
+        public float EvadeFrontRootMotionScale => _evadeFrontRootMotionScale;
 
-        /// <summary>动画运动倍率上限，防止 Root Delta 尖峰导致角色瞬移。</summary>
-        public float MaxMotionScale => _maxMotionScale;
+        /// <summary>后闪动画根位移倍率。</summary>
+        public float EvadeBackRootMotionScale => _evadeBackRootMotionScale;
 
-        /// <summary>动画运动倍率平滑速度。</summary>
-        public float MotionScaleSmoothSpeed => _motionScaleSmoothSpeed;
+        /// <summary>攻击动画根位移倍率。</summary>
+        public float AttackRootMotionScale => _attackRootMotionScale;
 
         /// <summary>角色转向速度（度/秒）。</summary>
         public float RotationSpeed => _rotationSpeed;

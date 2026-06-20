@@ -53,3 +53,7 @@ MonoBehaviour:
     Config:
       Transition: {fileID: 5085566255742107200, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
       IsLooping: 0
+  - StateType: 7
+    Config:
+      Transition: {fileID: -4102543315347955523, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
+      IsLooping: 0

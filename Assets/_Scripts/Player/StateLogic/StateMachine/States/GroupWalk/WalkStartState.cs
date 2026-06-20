@@ -19,13 +19,10 @@ namespace SPPlayer
         /// <inheritdoc />
         protected override void OnEnter() { }
 
-        private const float TransitionThreshold = 0.9f;
-
         /// <inheritdoc />
         protected override void UpdateStateLogic()
         {
-            if (PlayerBrainBlackboard.CurrentNormalizedTime >= TransitionThreshold
-                && PlayerBrainBlackboard.WantToMove)
+            if (PlayerBrainBlackboard.AnimationCompleted && PlayerBrainBlackboard.WantToMove)
             {
                 _player.StateMachine.ChangeState(_player.StateMachine.GetState(PlayerStateType.WalkLoop));
             }

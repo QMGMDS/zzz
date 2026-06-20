@@ -211,7 +211,7 @@ MonoBehaviour:
     _Modifiers:
     - _From: 2
       _To: 3
-      _Fade: 0
+      _Fade: 0.1
     - _From: 3
       _To: 1
       _Fade: 0.25

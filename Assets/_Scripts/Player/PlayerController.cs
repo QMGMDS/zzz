@@ -127,7 +127,7 @@ namespace SPPlayer
             StateMachine.CurrentState.LogicUpdate();
 
             // 4. 动画驱动器更新动画
-            _animationDriver?.Update();
+            _animationDriver.Update();
         }
 
         private void OnAnimatorMove()
@@ -139,11 +139,14 @@ namespace SPPlayer
             */
             // 角色移动更新
             _playerMotor?.ApplyMove();
-            StateMachine.CurrentState.PhysicsUpdate();
+            // StateMachine.CurrentState.PhysicsUpdate(); // 旧移动更新方法
         }
 
         private void LateUpdate()
         {
+            // 动画驱动器同步最新动画进度到黑板
+            _animationDriver.SyncAnimProgress();
+
             // 清除输入意图标记，为下一帧做准备
             PlayerBrainBlackboard.ResetInputBrain();
         }

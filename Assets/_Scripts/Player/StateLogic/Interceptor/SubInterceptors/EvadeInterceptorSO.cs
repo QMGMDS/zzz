@@ -29,13 +29,13 @@ namespace SPPlayer
                 case PlayerStateType.Idle:
                 case PlayerStateType.Stop:
                 case PlayerStateType.EvadeBackEnd:
+                case PlayerStateType.EvadeFrontEnd:
                     nextState = player.StateMachine.GetState(PlayerStateType.EvadeBack);
                     break;
                 case PlayerStateType.WalkStart:
                 case PlayerStateType.WalkLoop:
                 case PlayerStateType.RunStart:
                 case PlayerStateType.RunLoop:
-                case PlayerStateType.EvadeFrontEnd:
                     nextState = player.StateMachine.GetState(PlayerStateType.EvadeFront);
                     break;
                 default:

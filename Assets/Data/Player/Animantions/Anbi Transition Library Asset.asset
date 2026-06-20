@@ -211,7 +211,7 @@ MonoBehaviour:
     _Modifiers:
     - _From: 2
       _To: 3
-      _Fade: 0.1
+      _Fade: 0.05
     - _From: 3
       _To: 1
       _Fade: 0.25
@@ -241,6 +241,9 @@ MonoBehaviour:
       _Fade: 0
     - _From: 10
       _To: 5
+      _Fade: 0
+    - _From: 10
+      _To: 1
       _Fade: 0
     _Aliases: []
     _AliasAllTransitions: 0

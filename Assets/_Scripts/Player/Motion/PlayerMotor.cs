@@ -3,15 +3,16 @@ using UnityEngine;
 namespace SPPlayer
 {
     /// <summary>
-    /// 玩家移动器——按状态选择代码位移或动画根位移，并统一通过 CharacterController 应用。
+    /// 玩家移动器
     /// </summary>
     public class PlayerMotor
     {
         private readonly CharacterController _characterController;
         private readonly Animator _animator;
         private readonly PlayerBrain _blackboard;
-        private readonly Transform _transform;
         private readonly PlayerMotorConfigSO _config;
+
+        private readonly Transform _transform;
 
         private float _verticalVelocity;
 
@@ -27,8 +28,9 @@ namespace SPPlayer
             _characterController = characterController;
             _animator = animator;
             _blackboard = blackboard;
-            _transform = characterController != null ? characterController.transform : null;
             _config = config;
+
+            _transform = characterController.transform;
         }
 
         /// <summary>
@@ -36,7 +38,7 @@ namespace SPPlayer
         /// </summary>
         public void ApplyMove()
         {
-            if (_characterController == null || _animator == null || _blackboard == null || _transform == null || _config == null) return;
+            if (_characterController == null || _animator == null || _blackboard == null || _config == null || _transform == null) return;
 
             var DeltaTime = Time.deltaTime;
             if (DeltaTime <= 0f) return;
@@ -89,18 +91,20 @@ namespace SPPlayer
 
         private void UpdateRotation(float deltaTime)
         {
-            if (_blackboard.CurrentPlayerState == PlayerStateType.RunTurn) return;
-            if (_blackboard.CurrentPlayerState == PlayerStateType.EvadeFront) return;
-            if (_blackboard.CurrentPlayerState == PlayerStateType.EvadeBack) return;
+            var currentState = _blackboard.CurrentPlayerState;
+            switch (currentState)
+            {
+                case PlayerStateType.RunTurn:
+                case PlayerStateType.EvadeFront:
+                case PlayerStateType.EvadeBack:
+                    return;
+            }
 
             var Direction = _blackboard.CurrentMoveDirection;
             if (Direction.sqrMagnitude <= 0.0001f || _config.RotationSpeed <= 0f) return;
 
             var TargetRotation = Quaternion.LookRotation(Direction, Vector3.up);
-            _transform.rotation = Quaternion.RotateTowards(
-                _transform.rotation,
-                TargetRotation,
-                _config.RotationSpeed * deltaTime);
+            _transform.rotation = Quaternion.RotateTowards(_transform.rotation, TargetRotation, _config.RotationSpeed * deltaTime);
         }
 
         private void UpdateVerticalVelocity(float deltaTime)

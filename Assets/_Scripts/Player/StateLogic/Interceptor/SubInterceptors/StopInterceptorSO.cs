@@ -32,10 +32,6 @@ namespace SPPlayer
                 case PlayerStateType.RunLoop:
                     nextState = player.StateMachine.GetState(PlayerStateType.Stop);
                     break;
-                case PlayerStateType.RunTurn:
-                    if (blackboard.AnimationCompleted)
-                        nextState = player.StateMachine.GetState(PlayerStateType.Stop);
-                    break;
                 case PlayerStateType.EvadeFrontEnd:
                 case PlayerStateType.EvadeBackEnd:
                     if (blackboard.AnimationCompleted)

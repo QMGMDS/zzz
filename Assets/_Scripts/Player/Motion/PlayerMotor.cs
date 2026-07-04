@@ -46,8 +46,8 @@ namespace SPPlayer
             UpdateRotation(DeltaTime);
             UpdateVerticalVelocity(DeltaTime);
 
-            var HorizontalMove = ResolveHorizontalMove();
-            var VerticalMove = Vector3.up * _verticalVelocity * DeltaTime;
+            var HorizontalMove = ResolveHorizontalMove(); // XZ 平面上的移动
+            var VerticalMove = Vector3.up * _verticalVelocity * DeltaTime; // Y轴上的移动 
 
             _characterController.Move(HorizontalMove + VerticalMove);
         }

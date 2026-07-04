@@ -1,10 +1,11 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to OpenCode when working with code in this repository.
 
 ## 项目概述
 
-复刻《绝区零》（Zenless Zone Zero）战斗系统的 Unity 3D 项目。项目使用 URP 渲染管线、New Input System、Cinemachine、Behavior Designer 与 Animancer。
+复刻《绝区零》（Zenless Zone Zero）战斗系统的 Unity 3D 项目。
+项目使用 URP 渲染管线、New Input System、Cinemachine、Behavior Designer 与 Animancer。
 
 - **Unity**: 2022.3.62f3
 - **渲染管线**: URP 14.0.12
@@ -20,22 +21,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 项目架构
 
-### 代码目录
+### 角色控制器方案
+
+#### 代码目录
 
 ```
 Assets/_Scripts/Player
-├── Brain/             — 数据黑板
-├── Input/             — 输入采集与意图翻译
-├── StateLogic/        — 状态机 + 全局拦截器
-├── Animation/         — 动画映射与播放
-└── Motion/            — 角色移动
+├── Brain/             — 数据中枢模块
+├── Input/             — 玩家输入模块
+├── StateLogic/        — 角色状态模块-状态逻辑层
+├── Animation/         — 角色状态模块-动画表现层
+└── Motion/            — 角色状态模块-物理移动层
 ```
-- `Assets/_Scripts/UI` — UI 相关脚本（目前暂无核心逻辑）。
-- `Assets/Settings/Input` — New Input System 的 `.inputactions` 资产。
-- `Assets/Scenes/SampleScene.unity` — 主要场景。
-- 所有代码位于 `SPPlayer` 命名空间。
+- 所有角色控制器相关代码位于 `SPPlayer` 命名空间。
 
-### 玩家角色控制器的数据流
+#### 角色控制器的数据流
 
 `PlayerController`（MonoBehaviour）是入口，使用 `[DefaultExecutionOrder(-300)]` 保证在大多数系统之前执行，每帧按固定管线推进：
 
@@ -72,7 +72,7 @@ LateUpdate:
 - **`AnimationDriver` / `StateToAnimationAdapter` / `AnimationSource`**：动画表现层。`AnimationDriver` 监听黑板中的 `CurrentPlayerState`，通过 SO 配置映射到 `AnimationStateConfig`，再经 `AnimationSource` 调用 Animancer 播放，并把归一化时间与完成标记回写黑板。
 - **`PlayerMotor`**：角色移动器。在 `OnAnimatorMove` 中根据当前状态选择根运动倍率、平滑旋转朝向、施加重力，最终调用 `CharacterController.Move()` 移动角色。
 
-### ScriptableObject 配置约定
+#### ScriptableObject 配置约定
 
 - 动画配置：`PlayerAnimationConfigSO`，位于 `Assets/_Scripts/Player/Animation/Config/`。
 - 拦截器：`PlayerInterceptorConfigSO`，位于 `Assets/_Scripts/Player/StateLogic/Interceptor/Config`。
@@ -82,9 +82,11 @@ LateUpdate:
 
 ### 命名
 
-- **私有字段**：`_camelCase`（下划线前缀），例如 `_currentState`。
-- **其它所有**：`PascalCase`（局部变量、类名、方法、属性、常量、枚举、事件）。
-- **接口**：`I` 前缀；泛型：`T` 前缀；异步方法：`Async` 后缀。
+- **私有成员**：`_camelCase`（下划线前缀），例如 `_currentState`。
+- **局部变量**：`camelCase`，例如 `temp`。
+- **其它所有**：`PascalCase`（类名、方法名、常量名、属性、枚举、事件）。
+
+- **接口**：`I` 前缀；泛型：`T` 前缀。
 
 ### 注释
 
@@ -99,10 +101,9 @@ LateUpdate:
 ### 其它
 
 - Inspector 字段必须带 `[Tooltip]`。
-- 新增状态枚举时，先在 `PlayerStateType` 中添加值。
 
 ## 交互约定
 
 - 向用户输出的内容必须是中文。
 - 除非用户说明，否则不要直接恢复已删除文件。
-- 你只允许在 `_Script/` 文件夹下对 .cs 文件进行编写或文件夹的添加修改，`.meta` 由 Unity 自行编译，AI 无需改动。
+- 你只允许在 `_Script/` 文件夹下对代码文件和文件夹进行添加或修改，`.meta` 由 Unity 自行编译即可，AI 无需手动改动。

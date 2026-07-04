@@ -1,9 +1,17 @@
 {
 	"folders": [
 		{
-			"path": ".."
-		}
+            "name": "SPPlayer",
+            "path": "../Assets/_Scripts/Player"
+        },
+		{
+            "name": "ALL PROJECT",
+            "path": ".."
+        },
   ],
   "settings": {
-  }
+	"files.exclude": {
+            "**/*.meta": true  // 隐藏所有 .meta 文件
+        }
+    }
 }

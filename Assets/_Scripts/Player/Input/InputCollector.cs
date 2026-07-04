@@ -83,7 +83,7 @@ namespace SPPlayer
                 _lastNonZeroMoveTime = Time.time;
                 currentFrame.Processed.Move = _rawData.MoveAxis;
             }
-            else if (Time.time - _lastNonZeroMoveTime < InputPostProcessConfig.InputFlickerBuffer)
+            else if (Time.time - _lastNonZeroMoveTime < InputPostProcessConfig.MoveAxisBufferTime)
             {
                 // 处于防抖窗口内 使用缓存的最后一次有效值
                 currentFrame.Processed.Move = _bufferedMove;

@@ -92,6 +92,11 @@ namespace SPPlayer
             // 角色大脑黑板
             PlayerBrainBlackboard = new PlayerBrain();
 
+            // 写入玩家相机
+            PlayerBrainBlackboard.CameraTransform = Camera.main != null ? Camera.main.transform : null;
+            if (PlayerBrainBlackboard.CameraTransform == null)
+                Debug.LogError($"{name} 的 {nameof(PlayerController)}: 找不到 MainCamera，摄像机相对移动将失效。");
+
             // --- 玩家输入模块 ---
 
             // 输入采集员
@@ -132,6 +137,9 @@ namespace SPPlayer
 
             // 4. 动画驱动器更新动画，仅发出指令
             _animationDriver.Update();
+
+            // 5. 旋转更新，使 Animator 计算根运动时基于新朝向
+            _playerMotor?.ApplyRotation();
         }
 
         // **Animator 此时更新动画，并更新该逻辑帧的最新动画进度**
@@ -143,9 +151,9 @@ namespace SPPlayer
                 实际 Animator 在 Update 之后 OnAnimatorMove 之前刷骨骼
                 此时才拥有最新鲜的动画根骨骼 Transform 数据
             */
-            // 角色移动层更新
-            _playerMotor?.ApplyMove();
             // StateMachine.CurrentState.PhysicsUpdate(); // 旧移动更新方法 (已废弃)
+            // 位移更新
+            _playerMotor?.ApplyPosition();
         }
 
         private void LateUpdate()

@@ -8,6 +8,13 @@ namespace SPPlayer
     /// </summary>
     public class PlayerBrain
     {
+        #region 摄像机板块 (PlayerController 负责写入)
+
+        /// <summary>玩家摄像机 Transform 引用</summary>
+        public Transform CameraTransform { get; set; }
+
+        #endregion
+
         #region 输入板块 (输入处理器负责写入)
 
         /// <summary>攻击意图标记</summary>
@@ -22,10 +29,10 @@ namespace SPPlayer
         /// <summary>移动输入轴</summary>
         public Vector2 MoveInput { get; set; }
 
-        /// <summary>当前移动方向</summary>
+        /// <summary>本帧移动方向 (默认联系摄像机)</summary>
         public Vector3 CurrentMoveDirection { get; set; }
 
-        /// <summary>上一帧移动方向</summary>
+        /// <summary>上一帧移动方向 (默认联系摄像机)</summary>
         public Vector3 LastMoveDirection { get; set; }
 
         /// <summary>

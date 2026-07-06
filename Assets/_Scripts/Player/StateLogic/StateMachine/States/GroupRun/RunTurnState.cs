@@ -47,16 +47,7 @@ namespace SPPlayer
         public override void Exit()
         {
             // 旋转补偿
-            var direction = PlayerBrainBlackboard.CurrentMoveDirection;
-
-            if (direction.sqrMagnitude > 0.0001f)
-            {
-                _player.transform.rotation = Quaternion.LookRotation(direction, Vector3.up);
-            }
-            else
-            {
-                _player.transform.rotation = Quaternion.LookRotation(_enteredMoveDirection, Vector3.up);
-            }
+            _player.transform.rotation = Quaternion.LookRotation(_enteredMoveDirection, Vector3.up);
         }
     }
 }

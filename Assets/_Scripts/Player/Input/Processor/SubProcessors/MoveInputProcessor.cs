@@ -18,17 +18,24 @@ namespace SPPlayer
             blackboard.WantToMove = current.Move != Vector2.zero;
             blackboard.MoveInput = current.Move;
 
-            blackboard.LastMoveDirection = ToWorldDirection(last.Move);
-            blackboard.CurrentMoveDirection = ToWorldDirection(current.Move);
+            blackboard.LastMoveDirection = ToCameraRelativeDirection(last.Move, blackboard.CameraTransform);
+            blackboard.CurrentMoveDirection = ToCameraRelativeDirection(current.Move, blackboard.CameraTransform);
         }
 
-        private static Vector3 ToWorldDirection(Vector2 moveInput)
+        private static Vector3 ToCameraRelativeDirection(Vector2 moveInput, Transform cameraTransform)
         {
-            var Direction = new Vector3(moveInput.x, 0f, moveInput.y);
-            if (Direction.sqrMagnitude > 1f)
-                Direction.Normalize();
+            if (cameraTransform == null)
+                return Vector3.zero;
 
-            return Direction.sqrMagnitude > 0.0001f ? Direction.normalized : Vector3.zero;
+            var forward = cameraTransform.forward;
+            var right = cameraTransform.right;
+            forward.y = 0f;
+            right.y = 0f;
+            forward.Normalize();
+            right.Normalize();
+
+            var direction = forward * moveInput.y + right * moveInput.x;
+            return direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector3.zero;
         }
     }
 }

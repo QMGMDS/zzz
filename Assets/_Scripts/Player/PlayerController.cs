@@ -92,6 +92,11 @@ namespace SPPlayer
             // 角色大脑黑板
             PlayerBrainBlackboard = new PlayerBrain();
 
+            // 写入玩家相机
+            PlayerBrainBlackboard.CameraTransform = Camera.main != null ? Camera.main.transform : null;
+            if (PlayerBrainBlackboard.CameraTransform == null)
+                Debug.LogError($"{name} 的 {nameof(PlayerController)}: 找不到 MainCamera，摄像机相对移动将失效。");
+
             // --- 玩家输入模块 ---
 
             // 输入采集员

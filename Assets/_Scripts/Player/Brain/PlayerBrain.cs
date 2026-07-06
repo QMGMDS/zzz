@@ -22,7 +22,7 @@ namespace SPPlayer
         /// <summary>移动输入轴</summary>
         public Vector2 MoveInput { get; set; }
 
-        /// <summary>当前移动方向</summary>
+        /// <summary>本帧移动方向</summary>
         public Vector3 CurrentMoveDirection { get; set; }
 
         /// <summary>上一帧移动方向</summary>

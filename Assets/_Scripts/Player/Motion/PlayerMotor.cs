@@ -33,28 +33,62 @@ namespace SPPlayer
             _transform = characterController.transform;
         }
 
+        #region 旋转更新
+
         /// <summary>
-        /// 应用本帧移动
+        /// 在 Update 中提前更新旋转，使 Animator 计算根运动时能基于新朝向
         /// </summary>
-        public void ApplyMove()
+        public void ApplyRotation()
         {
             if (_characterController == null || _animator == null || _blackboard == null || _config == null || _transform == null) return;
 
-            var DeltaTime = Time.deltaTime;
-            if (DeltaTime <= 0f) return;
+            var deltaTime = Time.deltaTime;
+            if (deltaTime <= 0f) return;
 
-            UpdateRotation(DeltaTime);
-            UpdateVerticalVelocity(DeltaTime);
+            UpdateRotation(deltaTime);
+        }
 
-            var HorizontalMove = ResolveHorizontalMove(); // XZ 平面上的移动
-            var VerticalMove = Vector3.up * _verticalVelocity * DeltaTime; // Y轴上的移动 
+        private void UpdateRotation(float deltaTime)
+        {
+            var currentState = _blackboard.CurrentPlayerState;
+            switch (currentState) // 设置不宜旋转的状态
+            {
+                case PlayerStateType.RunTurn:
+                case PlayerStateType.EvadeFront:
+                case PlayerStateType.EvadeBack:
+                    return;
+            }
 
-            _characterController.Move(HorizontalMove + VerticalMove);
+            var Direction = _blackboard.CurrentMoveDirection;
+            if (Direction.sqrMagnitude <= 0.0001f || _config.RotationSpeed <= 0f) return;
+
+            var TargetRotation = Quaternion.LookRotation(Direction, Vector3.up);
+            _transform.rotation = Quaternion.RotateTowards(_transform.rotation, TargetRotation, _config.RotationSpeed * deltaTime);
+        }
+
+        #endregion
+
+        #region 位移更新
+
+        /// <summary>
+        /// 在 OnAnimatorMove 中应用位置，此时 deltaPosition 已反映提前设定的朝向
+        /// </summary>
+        public void ApplyPosition()
+        {
+            if (_characterController == null || _animator == null || _blackboard == null || _config == null || _transform == null) return;
+
+            var deltaTime = Time.deltaTime;
+            if (deltaTime <= 0f) return;
+
+            UpdateVerticalVelocity(deltaTime);
+            var verticalMove = Vector3.up * _verticalVelocity * deltaTime;
+            var horizontalMove = ResolveHorizontalMove();
+            _characterController.Move(horizontalMove + verticalMove);
         }
 
         private Vector3 ResolveHorizontalMove()
         {
-            var RootDelta = _animator.deltaPosition;
+            var RootDelta = _animator.deltaPosition; // deltaPosition 本帧根物体位移 基于上一帧位置建立的世界坐标系
             RootDelta.y = 0f;
             return RootDelta * ResolveRootMotionScale();
         }
@@ -89,24 +123,6 @@ namespace SPPlayer
             }
         }
 
-        private void UpdateRotation(float deltaTime)
-        {
-            var currentState = _blackboard.CurrentPlayerState;
-            switch (currentState)
-            {
-                case PlayerStateType.RunTurn:
-                case PlayerStateType.EvadeFront:
-                case PlayerStateType.EvadeBack:
-                    return;
-            }
-
-            var Direction = _blackboard.CurrentMoveDirection;
-            if (Direction.sqrMagnitude <= 0.0001f || _config.RotationSpeed <= 0f) return;
-
-            var TargetRotation = Quaternion.LookRotation(Direction, Vector3.up);
-            _transform.rotation = Quaternion.RotateTowards(_transform.rotation, TargetRotation, _config.RotationSpeed * deltaTime);
-        }
-
         private void UpdateVerticalVelocity(float deltaTime)
         {
             if (_characterController.isGrounded && _verticalVelocity < 0f)
@@ -117,5 +133,7 @@ namespace SPPlayer
 
             _verticalVelocity += _config.Gravity * deltaTime;
         }
+
+        #endregion
     }
 }

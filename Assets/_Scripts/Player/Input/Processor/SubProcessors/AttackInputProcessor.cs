@@ -15,6 +15,8 @@ namespace SPPlayer
         {
             if (current.AttackPressed)
                 blackboard.WantToAttack = true;
+
+            blackboard.AttackHeld = current.AttackHeld;
         }
     }
 }

@@ -35,5 +35,8 @@ namespace SPPlayer
         Attack_3_End,
         Attack_4_Normal,
         Attack_4_Normal_End,
+        Attack_4_Prefect,
+        Attack_4_Prefect_End,
+
     }
 }

@@ -64,6 +64,8 @@ namespace SPPlayer
                 case PlayerStateType.Attack_3_End:
                 case PlayerStateType.Attack_4_Normal:
                 case PlayerStateType.Attack_4_Normal_End:
+                case PlayerStateType.Attack_4_Prefect:
+                case PlayerStateType.Attack_4_Prefect_End:
                     return;
             }
 

@@ -89,3 +89,11 @@ MonoBehaviour:
     Config:
       Transition: {fileID: 2066277019197770802, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
       IsLooping: 0
+  - StateType: 20
+    Config:
+      Transition: {fileID: 6242774432388879547, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
+      IsLooping: 0
+  - StateType: 21
+    Config:
+      Transition: {fileID: 2255192837056866867, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
+      IsLooping: 0

@@ -36,6 +36,7 @@ namespace SPPlayer
                 case PlayerStateType.Attack_2_End:
                 case PlayerStateType.Attack_3_End:
                 case PlayerStateType.Attack_4_Normal_End:
+                case PlayerStateType.Attack_4_Prefect_End:
                     if (!blackboard.WantToAttack)
                         nextState = player.StateMachine.GetState(PlayerStateType.WalkStart);
                     break;

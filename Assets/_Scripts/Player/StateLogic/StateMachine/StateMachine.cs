@@ -43,6 +43,8 @@ namespace SPPlayer
                 { PlayerStateType.Attack_3_End, new Attack_3_End(_player) },
                 { PlayerStateType.Attack_4_Normal, new Attack_4_Normal(_player) },
                 { PlayerStateType.Attack_4_Normal_End, new Attack_4_Normal_End(_player) },
+                { PlayerStateType.Attack_4_Prefect, new Attack_4_Prefect(_player) },
+                { PlayerStateType.Attack_4_Prefect_End, new Attack_4_Prefect_End(_player) },
             };
         }
 

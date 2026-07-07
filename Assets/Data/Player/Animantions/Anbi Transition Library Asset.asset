@@ -356,6 +356,8 @@ MonoBehaviour:
     - {fileID: 4594726399627986978}
     - {fileID: 3816972774441687842}
     - {fileID: 2066277019197770802}
+    - {fileID: 6242774432388879547}
+    - {fileID: 2255192837056866867}
     _Modifiers:
     - _From: 2
       _To: 3
@@ -402,6 +404,21 @@ MonoBehaviour:
     - _From: 16
       _To: 17
       _Fade: 0
+    - _From: 11
+      _To: 12
+      _Fade: 0
+    - _From: 13
+      _To: 14
+      _Fade: 0
+    - _From: 15
+      _To: 16
+      _Fade: 0
+    - _From: 17
+      _To: 18
+      _Fade: 0
+    - _From: 19
+      _To: 20
+      _Fade: 0
     _Aliases: []
     _AliasAllTransitions: 0
 --- !u!114 &2066277019197770802
@@ -431,6 +448,34 @@ MonoBehaviour:
           _Callbacks: []
           _Names: []
         _Clip: {fileID: -1255724913015548518, guid: c09f3c2f072f3c24d89562dea3caf8a9, type: 3}
+        _NormalizedStartTime: NaN
+--- !u!114 &2255192837056866867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
+  m_Name: Attack_4_Prefect_End_Transition
+  m_EditorClassIdentifier: 
+  _Transition:
+    rid: 4423005587468189710
+  references:
+    version: 2
+    RefIds:
+    - rid: 4423005587468189710
+      type: {class: ClipTransition, ns: Animancer, asm: Kybernetik.Animancer}
+      data:
+        _FadeDuration: 0.25
+        _Speed: 1
+        _Events:
+          _NormalizedTimes: []
+          _Callbacks: []
+          _Names: []
+        _Clip: {fileID: -5905341722766833271, guid: c09f3c2f072f3c24d89562dea3caf8a9, type: 3}
         _NormalizedStartTime: NaN
 --- !u!114 &2712891228141345348
 MonoBehaviour:
@@ -601,6 +646,34 @@ MonoBehaviour:
           _Names: []
         _Clip: {fileID: 6032505460816376181, guid: dde6900bd931c3142a6e49505c92f125, type: 3}
         _NormalizedStartTime: 0
+--- !u!114 &6242774432388879547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
+  m_Name: Attack_4_Prefect_Transition
+  m_EditorClassIdentifier: 
+  _Transition:
+    rid: 4423005587468189709
+  references:
+    version: 2
+    RefIds:
+    - rid: 4423005587468189709
+      type: {class: ClipTransition, ns: Animancer, asm: Kybernetik.Animancer}
+      data:
+        _FadeDuration: 0.25
+        _Speed: 1
+        _Events:
+          _NormalizedTimes: []
+          _Callbacks: []
+          _Names: []
+        _Clip: {fileID: -8828523188362425792, guid: c09f3c2f072f3c24d89562dea3caf8a9, type: 3}
+        _NormalizedStartTime: NaN
 --- !u!114 &6893289660320910757
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -15,6 +15,9 @@ namespace SPPlayer
 
         /// <summary>闪避/冲刺按键按下边沿触发</summary>
         public bool EvadeJustPressed;
+
+        /// <summary>攻击按键本帧是否持续按住（非边沿信号）</summary>
+        public bool AttackHeld;
     }
 
     /// <summary>
@@ -30,6 +33,9 @@ namespace SPPlayer
 
         /// <summary>闪避是否处于缓存窗口内</summary>
         public bool EvadePressed;
+
+        /// <summary>攻击按键本帧是否持续按住（不经 buffer 处理）</summary>
+        public bool AttackHeld;
     }
 
     /// <summary>

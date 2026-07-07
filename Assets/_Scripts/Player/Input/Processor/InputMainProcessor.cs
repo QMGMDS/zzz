@@ -27,6 +27,7 @@ namespace SPPlayer
             {
                 new MoveInputProcessor(),
                 new EvadeInputProcessor(),
+                new AttackInputProcessor(),
             };
         }
 

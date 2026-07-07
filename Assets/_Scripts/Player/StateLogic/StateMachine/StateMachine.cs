@@ -35,6 +35,14 @@ namespace SPPlayer
                 { PlayerStateType.RunStart, new RunStartState(_player) },
                 { PlayerStateType.RunLoop, new RunLoopState(_player) },
                 { PlayerStateType.RunTurn, new RunTurnState(_player) },
+                { PlayerStateType.Attack_1, new Attack_1(_player) },
+                { PlayerStateType.Attack_1_End, new Attack_1_End(_player) },
+                { PlayerStateType.Attack_2, new Attack_2(_player) },
+                { PlayerStateType.Attack_2_End, new Attack_2_End(_player) },
+                { PlayerStateType.Attack_3, new Attack_3(_player) },
+                { PlayerStateType.Attack_3_End, new Attack_3_End(_player) },
+                { PlayerStateType.Attack_4_Normal, new Attack_4_Normal(_player) },
+                { PlayerStateType.Attack_4_Normal_End, new Attack_4_Normal_End(_player) },
             };
         }
 

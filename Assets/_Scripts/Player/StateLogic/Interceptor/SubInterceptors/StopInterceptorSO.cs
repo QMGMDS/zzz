@@ -34,6 +34,10 @@ namespace SPPlayer
                     break;
                 case PlayerStateType.EvadeFrontEnd:
                 case PlayerStateType.EvadeBackEnd:
+                case PlayerStateType.Attack_1_End:
+                case PlayerStateType.Attack_2_End:
+                case PlayerStateType.Attack_3_End:
+                case PlayerStateType.Attack_4_Normal_End:
                     if (blackboard.AnimationCompleted)
                         nextState = player.StateMachine.GetState(PlayerStateType.Idle);
                     break;

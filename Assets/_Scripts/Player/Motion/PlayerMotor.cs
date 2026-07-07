@@ -56,6 +56,14 @@ namespace SPPlayer
                 case PlayerStateType.RunTurn:
                 case PlayerStateType.EvadeFront:
                 case PlayerStateType.EvadeBack:
+                case PlayerStateType.Attack_1:
+                case PlayerStateType.Attack_1_End:
+                case PlayerStateType.Attack_2:
+                case PlayerStateType.Attack_2_End:
+                case PlayerStateType.Attack_3:
+                case PlayerStateType.Attack_3_End:
+                case PlayerStateType.Attack_4_Normal:
+                case PlayerStateType.Attack_4_Normal_End:
                     return;
             }
 
@@ -115,7 +123,14 @@ namespace SPPlayer
                 case PlayerStateType.EvadeBack:
                     return _config.EvadeBackRootMotionScale;
 
-                case PlayerStateType.Attack:
+                case PlayerStateType.Attack_1:
+                case PlayerStateType.Attack_1_End:
+                case PlayerStateType.Attack_2:
+                case PlayerStateType.Attack_2_End:
+                case PlayerStateType.Attack_3:
+                case PlayerStateType.Attack_3_End:
+                case PlayerStateType.Attack_4_Normal:
+                case PlayerStateType.Attack_4_Normal_End:
                     return _config.AttackRootMotionScale;
 
                 default:

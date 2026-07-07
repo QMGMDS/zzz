@@ -32,6 +32,13 @@ namespace SPPlayer
                 case PlayerStateType.EvadeBackEnd:
                     nextState = player.StateMachine.GetState(PlayerStateType.WalkStart);
                     break;
+                case PlayerStateType.Attack_1_End:
+                case PlayerStateType.Attack_2_End:
+                case PlayerStateType.Attack_3_End:
+                case PlayerStateType.Attack_4_Normal_End:
+                    if (!blackboard.WantToAttack)
+                        nextState = player.StateMachine.GetState(PlayerStateType.WalkStart);
+                    break;
                 case PlayerStateType.EvadeFront:
                     if (blackboard.AnimationCompleted)
                         nextState = player.StateMachine.GetState(PlayerStateType.RunStart);

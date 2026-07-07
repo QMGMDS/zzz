@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PlayerInterceptorConfig
   m_EditorClassIdentifier: 
   _globalInterceptors:
+  - {fileID: 11400000, guid: 23e0f8cc0b0329a4faf4b680628453c6, type: 2}
   - {fileID: 11400000, guid: e7f0e4750676d8b4980b41c58545b0f2, type: 2}
   - {fileID: 11400000, guid: bdcb628397579f34c98b6379fbff9150, type: 2}
   - {fileID: 11400000, guid: 534b4754a8eda0e45bce2e62e3110d99, type: 2}

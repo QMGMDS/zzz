@@ -57,3 +57,35 @@ MonoBehaviour:
     Config:
       Transition: {fileID: -4102543315347955523, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
       IsLooping: 0
+  - StateType: 12
+    Config:
+      Transition: {fileID: -9215571058428218152, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
+      IsLooping: 0
+  - StateType: 13
+    Config:
+      Transition: {fileID: -1861346877425635748, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
+      IsLooping: 0
+  - StateType: 14
+    Config:
+      Transition: {fileID: -4384822489846559565, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
+      IsLooping: 0
+  - StateType: 15
+    Config:
+      Transition: {fileID: -7886318179992046726, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
+      IsLooping: 0
+  - StateType: 16
+    Config:
+      Transition: {fileID: -6602737560424168365, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
+      IsLooping: 0
+  - StateType: 17
+    Config:
+      Transition: {fileID: 4594726399627986978, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
+      IsLooping: 0
+  - StateType: 18
+    Config:
+      Transition: {fileID: 3816972774441687842, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
+      IsLooping: 0
+  - StateType: 19
+    Config:
+      Transition: {fileID: 2066277019197770802, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
+      IsLooping: 0

@@ -27,6 +27,16 @@ namespace SPPlayer
         EvadeBackEnd,
 
         // 攻击族成员
-        Attack,
+        Attack_1,
+        Attack_1_End,
+        Attack_2,
+        Attack_2_End,
+        Attack_3,
+        Attack_3_End,
+        Attack_4_Normal,
+        Attack_4_Normal_End,
+        Attack_4_Prefect,
+        Attack_4_Prefect_End,
+
     }
 }

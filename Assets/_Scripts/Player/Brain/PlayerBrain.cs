@@ -20,6 +20,9 @@ namespace SPPlayer
         /// <summary>攻击意图标记</summary>
         public bool WantToAttack { get; set; }
 
+        /// <summary>攻击按键本帧是否持续按住（每帧写入，不跨帧残留）</summary>
+        public bool AttackHeld { get; set; }
+
         /// <summary>闪避意图标记</summary>
         public bool WantToEvade { get; set; }
 
@@ -43,6 +46,7 @@ namespace SPPlayer
             WantToAttack = false;
             WantToEvade = false;
             WantToMove = false;
+            AttackHeld = false;
             MoveInput = Vector2.zero;
         }
 

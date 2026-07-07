@@ -32,6 +32,7 @@ namespace SPPlayer
         {
             rawData.MoveAxis = _moveAction != null ? _moveAction.action.ReadValue<Vector2>() : Vector2.zero;
             rawData.AttackJustPressed = _attackAction != null && _attackAction.action.WasPressedThisFrame();
+            rawData.AttackHeld = _attackAction != null && _attackAction.action.IsPressed();
             rawData.EvadeJustPressed = _evadeAction != null && _evadeAction.action.WasPressedThisFrame();
         }
 

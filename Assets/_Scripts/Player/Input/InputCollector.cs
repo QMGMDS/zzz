@@ -101,6 +101,7 @@ namespace SPPlayer
 
             currentFrame.Processed.AttackPressed = _attackBufferTimer > 0f;
             currentFrame.Processed.EvadePressed = _evadeBufferTimer > 0f;
+            currentFrame.Processed.AttackHeld = _rawData.AttackHeld;
 
             _inputData.CurrentFrameData = currentFrame;
         }

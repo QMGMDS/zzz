@@ -198,11 +198,7 @@ namespace SPPlayer
                     return !_brain.WantToMove;
 
                 case TransitionCondition.MoveDirectionFlipped:
-                    {
-                        var dir = _brain.CurrentMoveDirection;
-                        if (dir.sqrMagnitude <= 0.0001f) return false;
-                        return Vector3.Dot(dir.normalized, _player.transform.forward) <= -0.75f;
-                    }
+                    return _brain.IsMoveDirectionFlipped;
 
                 case TransitionCondition.Custom:
                     return false;

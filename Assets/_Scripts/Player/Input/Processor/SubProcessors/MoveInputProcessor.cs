@@ -20,6 +20,11 @@ namespace SPPlayer
 
             blackboard.LastMoveDirection = ToCameraRelativeDirection(last.Move, blackboard.CameraTransform);
             blackboard.CurrentMoveDirection = ToCameraRelativeDirection(current.Move, blackboard.CameraTransform);
+
+            if (current.Move.sqrMagnitude > 0.0001f && last.Move.sqrMagnitude > 0.0001f)
+                blackboard.IsMoveDirectionFlipped = Vector2.Dot(current.Move.normalized, last.Move.normalized) <= -0.75f;
+            else
+                blackboard.IsMoveDirectionFlipped = false;
         }
 
         private static Vector3 ToCameraRelativeDirection(Vector2 moveInput, Transform cameraTransform)

@@ -63,20 +63,10 @@ LateUpdate:
 关键子系统职责：
 
 - **`PlayerController`**：装配子系统、严格时序分发，不写具体游戏逻辑。
-- **`PlayerBrain`**：所有模块共享的数据黑板。输入意图（`WantToAttack`、`WantToEvade`）、当前逻辑状态 `CurrentPlayerState`、动画进度 `CurrentNormalizedTime` / `AnimationCompleted` 均在此。
+- **`PlayerBrain`**：所有模块共享的数据黑板。
 - **`InputSource`**：通过 `InputActionReference` 采样原始设备输入。
-- **`InputCollector`**：维护当前帧/上一帧输入快照，提供 Move 防抖与 Attack/Evade 缓存窗口，并支持 `ConsumeAttackPressed()` / `ConsumeEvadePressed()` 显式核销。
+- **`InputCollector`**：维护当前帧/上一帧输入快照，提供 Move 防抖与 Attack/Evade 缓存窗口。
 - **`InputMainProcessor`**：`IInputProcessor` 子处理器的工厂与驱动器，将处理后的输入翻译为意图写入黑板。
-- **`StateMachine` / `BaseState`**：纯状态生命周期管理。`BaseState.LogicUpdate()` 先执行全局拦截，再执行状态逻辑。`BaseState` 不写动画播放代码。
-- **`MainInterceptor` / `StateInterceptorSO`**：全局可配置的状态转移拦截管线，按数组顺序决定优先级。每个拦截器可维护豁免清单。
-- **`AnimationDriver` / `StateToAnimationAdapter` / `AnimationSource`**：动画表现层。`AnimationDriver` 监听黑板中的 `CurrentPlayerState`，通过 SO 配置映射到 `AnimationStateConfig`，再经 `AnimationSource` 调用 Animancer 播放，并把归一化时间与完成标记回写黑板。
-- **`PlayerMotor`**：角色移动器。在 `OnAnimatorMove` 中根据当前状态选择根运动倍率、平滑旋转朝向、施加重力，最终调用 `CharacterController.Move()` 移动角色。
-
-#### ScriptableObject 配置约定
-
-- 动画配置：`PlayerAnimationConfigSO`，位于 `Assets/_Scripts/Player/Animation/Config/`。
-- 拦截器：`PlayerInterceptorConfigSO`，位于 `Assets/_Scripts/Player/StateLogic/Interceptor/Config`。
-- 移动配置：`PlayerMotorConfigSO`，位于 `Assets/_Scripts/Player/Motion/`。
 
 ## 编码规范
 

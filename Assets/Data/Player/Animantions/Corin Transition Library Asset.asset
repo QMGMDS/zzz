@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: StopTransition
+  m_Name: Corin_Stop
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005587468189716
@@ -27,7 +27,7 @@ MonoBehaviour:
           _Callbacks: []
           _Names: []
         _Clip: {fileID: 7406756570927251844, guid: bc09439dcfe58fc4b895600cd44c3418, type: 3}
-        _NormalizedStartTime: NaN
+        _NormalizedStartTime: 0
 --- !u!114 &-6767258149849919529
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38,7 +38,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: Attack_5_Transition
+  m_Name: Corin_Attack_5
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005609958047776
@@ -66,7 +66,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: Attack_1_End_Transition
+  m_Name: Corin_Attack_1_End
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005609958047769
@@ -94,7 +94,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: Attack_2_Transition
+  m_Name: Corin_Attack_2
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005609958047770
@@ -122,7 +122,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: RunLoopTransition
+  m_Name: Corin_RunLoop
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005609958047762
@@ -138,7 +138,7 @@ MonoBehaviour:
           _NormalizedTimes: []
           _Callbacks: []
           _Names: []
-        _Clip: {fileID: 0}
+        _Clip: {fileID: -186969883458142690, guid: bc09439dcfe58fc4b895600cd44c3418, type: 3}
         _NormalizedStartTime: NaN
 --- !u!114 &-5258885315837704551
 MonoBehaviour:
@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: IdleTransition
+  m_Name: Corin_Idle
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005587468189715
@@ -178,7 +178,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: RunTurnTransition
+  m_Name: Corin_RunTurn
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005609958047767
@@ -194,7 +194,7 @@ MonoBehaviour:
           _NormalizedTimes: []
           _Callbacks: []
           _Names: []
-        _Clip: {fileID: 0}
+        _Clip: {fileID: -6596474249868104091, guid: bc09439dcfe58fc4b895600cd44c3418, type: 3}
         _NormalizedStartTime: NaN
 --- !u!114 &-3422651808103797869
 MonoBehaviour:
@@ -206,7 +206,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: EvadeFrontTransition
+  m_Name: Corin_EvadeFront
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005609958047763
@@ -222,8 +222,8 @@ MonoBehaviour:
           _NormalizedTimes: []
           _Callbacks: []
           _Names: []
-        _Clip: {fileID: 0}
-        _NormalizedStartTime: NaN
+        _Clip: {fileID: -2854323109134612706, guid: bc09439dcfe58fc4b895600cd44c3418, type: 3}
+        _NormalizedStartTime: 0
 --- !u!114 &-3105446584179240882
 MonoBehaviour:
   m_ObjectHideFlags: 17
@@ -248,7 +248,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: Attack_1_Transition
+  m_Name: Corin_Attack_1
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005609958047768
@@ -276,7 +276,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: EvadeFrontEndTransition
+  m_Name: Corin_EvadeFrontEnd
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005609958047764
@@ -292,7 +292,7 @@ MonoBehaviour:
           _NormalizedTimes: []
           _Callbacks: []
           _Names: []
-        _Clip: {fileID: 0}
+        _Clip: {fileID: 4480973628537466264, guid: bc09439dcfe58fc4b895600cd44c3418, type: 3}
         _NormalizedStartTime: NaN
 --- !u!114 &-2323630085088809229
 MonoBehaviour:
@@ -304,7 +304,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: RunStartTransition
+  m_Name: Corin_RunStart
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005609958047761
@@ -320,7 +320,7 @@ MonoBehaviour:
           _NormalizedTimes: []
           _Callbacks: []
           _Names: []
-        _Clip: {fileID: 0}
+        _Clip: {fileID: 7903921579761640450, guid: ff538814d5441b942b4c618828952cf3, type: 3}
         _NormalizedStartTime: NaN
 --- !u!114 &11400000
 MonoBehaviour:
@@ -357,7 +357,40 @@ MonoBehaviour:
     - {fileID: 1332872345210539606}
     - {fileID: -6767258149849919529}
     - {fileID: 9212349773659727547}
-    _Modifiers: []
+    _Modifiers:
+    - _From: 4
+      _To: 5
+      _Fade: 0
+    - _From: 6
+      _To: 7
+      _Fade: 0
+    - _From: 8
+      _To: 9
+      _Fade: 0
+    - _From: 10
+      _To: 5
+      _Fade: 0
+    - _From: 11
+      _To: 12
+      _Fade: 0
+    - _From: 13
+      _To: 14
+      _Fade: 0
+    - _From: 15
+      _To: 16
+      _Fade: 0
+    - _From: 17
+      _To: 18
+      _Fade: 0
+    - _From: 19
+      _To: 20
+      _Fade: 0
+    - _From: 2
+      _To: 3
+      _Fade: 0
+    - _From: 5
+      _To: 5
+      _Fade: 0
     _Aliases: []
     _AliasAllTransitions: 0
 --- !u!114 &251012883332217203
@@ -370,7 +403,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: Attack_3_Transition
+  m_Name: Corin_Attack_3
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005609958047772
@@ -398,7 +431,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: Attack_4_End_Transition
+  m_Name: Corin_Attack_4_End
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005609958047775
@@ -426,7 +459,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: Attack_2_End_Transition
+  m_Name: Corin_Attack_2_End
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005609958047771
@@ -454,7 +487,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: WalkStartTransition
+  m_Name: Corin_WalkStart
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005587468189717
@@ -471,7 +504,7 @@ MonoBehaviour:
           _Callbacks: []
           _Names: []
         _Clip: {fileID: -6618487354093737412, guid: ff538814d5441b942b4c618828952cf3, type: 3}
-        _NormalizedStartTime: NaN
+        _NormalizedStartTime: 0
 --- !u!114 &5940149985229655286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -482,7 +515,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: WalkLoopTransition
+  m_Name: Corin_WalkLoop
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005587468189718
@@ -510,7 +543,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: Attack_4_Transition
+  m_Name: Corin_Attack_4
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005609958047774
@@ -538,7 +571,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: EvadeBackTransition
+  m_Name: Corin_EvadeBack
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005609958047765
@@ -554,8 +587,8 @@ MonoBehaviour:
           _NormalizedTimes: []
           _Callbacks: []
           _Names: []
-        _Clip: {fileID: 0}
-        _NormalizedStartTime: NaN
+        _Clip: {fileID: -3267941484112812129, guid: bc09439dcfe58fc4b895600cd44c3418, type: 3}
+        _NormalizedStartTime: 0
 --- !u!114 &6185064779523502741
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -566,7 +599,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: EvadeBackEndTransition
+  m_Name: Corin_EvadeBackEnd
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005609958047766
@@ -582,7 +615,7 @@ MonoBehaviour:
           _NormalizedTimes: []
           _Callbacks: []
           _Names: []
-        _Clip: {fileID: 0}
+        _Clip: {fileID: 1902599481753002793, guid: bc09439dcfe58fc4b895600cd44c3418, type: 3}
         _NormalizedStartTime: NaN
 --- !u!114 &8254575637085400738
 MonoBehaviour:
@@ -594,7 +627,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: Attack_3_End_Transition
+  m_Name: Corin_Attack_3_End
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005609958047773
@@ -622,7 +655,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: Attack_5_End_Transition
+  m_Name: Corin_Attack_5_End
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005609958047778

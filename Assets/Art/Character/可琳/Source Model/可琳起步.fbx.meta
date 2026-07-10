@@ -37,7 +37,7 @@ ModelImporter:
       takeName: Avatar_Female_Size01_Corin_Ani_Run_Start
       internalID: 7903921579761640450
       firstFrame: 0
-      lastFrame: 63
+      lastFrame: 61
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -66,7 +66,7 @@ ModelImporter:
       takeName: Avatar_Female_Size01_Corin_Ani_Walk_Start
       internalID: -6618487354093737412
       firstFrame: 0
-      lastFrame: 75
+      lastFrame: 73
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

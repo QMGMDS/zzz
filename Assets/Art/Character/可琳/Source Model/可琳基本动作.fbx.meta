@@ -37,7 +37,7 @@ ModelImporter:
       takeName: Avatar_Female_Size01_Corin_Ani_Run
       internalID: -186969883458142690
       firstFrame: 0
-      lastFrame: 32
+      lastFrame: 29
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -149,7 +149,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Avatar_Female_Size01_Corin_Ani_TurnBack
+      name: Avatar_Female_Size01_Corin_Ani_RunTurn
       takeName: Avatar_Female_Size01_Corin_Ani_TurnBack
       internalID: -6596474249868104091
       firstFrame: 0

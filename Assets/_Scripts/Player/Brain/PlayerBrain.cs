@@ -54,8 +54,8 @@ namespace SPPlayer
 
         #region 逻辑状态板块 (状态逻辑层负责写入)
 
-        /// <summary>当前逻辑状态类型</summary>
-        public PlayerStateType CurrentPlayerState { get; set; }
+        /// <summary>当前激活的状态节点</summary>
+        public StateNodeSO CurrentStateNode { get; set; }
 
         #endregion
 

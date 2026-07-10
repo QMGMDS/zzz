@@ -263,6 +263,6 @@ MonoBehaviour:
   _animator: {fileID: 4688605390485151653}
   _animancer: {fileID: 7915542844063938094}
   _playerInputSource: {fileID: 4038207794239765629}
+  _initGroup: {fileID: 0}
   _interceptorConfig: {fileID: 11400000, guid: 523cf4a312b1d24408e54ff451f04a0e, type: 2}
-  _animationConfig: {fileID: 11400000, guid: c9283cc658cf88c47a6794c20f0c877e, type: 2}
   _motorConfig: {fileID: 11400000, guid: 338d29f891ae83745828378d8131f00c, type: 2}

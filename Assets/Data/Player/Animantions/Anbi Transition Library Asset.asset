@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: Attack_1_Transition
+  m_Name: Anbi_Attack_1
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005587468189696
@@ -38,7 +38,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: IdleTransition
+  m_Name: Anbi_Idle
   m_EditorClassIdentifier: 
   _Transition:
     rid: 1446820273962090509
@@ -66,7 +66,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: Attack_2_End_Transition
+  m_Name: Anbi_Attack_2_End
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005587468189700
@@ -94,7 +94,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: EvadeFrontEndTransition
+  m_Name: Anbi_EvadeFrontEnd
   m_EditorClassIdentifier: 
   _Transition:
     rid: 1446820299843043333
@@ -122,7 +122,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: RunStartTransition
+  m_Name: Anbi_RunStart
   m_EditorClassIdentifier: 
   _Transition:
     rid: 1446820299843043330
@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: WalkLoopTransition
+  m_Name: Anbi_WalkLoop
   m_EditorClassIdentifier: 
   _Transition:
     rid: 1446820273962090514
@@ -179,7 +179,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: Attack_3_Transition
+  m_Name: Anbi_Attack_3
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005587468189701
@@ -207,7 +207,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: Attack_2_Transition
+  m_Name: Anbi_Attack_2
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005587468189698
@@ -235,7 +235,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: RunTurnTransition
+  m_Name: Anbi_RunTurn
   m_EditorClassIdentifier: 
   _Transition:
     rid: 1446820308101365760
@@ -263,7 +263,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: Attack_1_End_Transition
+  m_Name: Anbi_Attack_1_End
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005587468189697
@@ -305,7 +305,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: RunLoopTransition
+  m_Name: Anbi_RunLoop
   m_EditorClassIdentifier: 
   _Transition:
     rid: 1446820299843043331
@@ -431,7 +431,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: Attack_4_Normal_End_Transition
+  m_Name: Anbi_Attack_4_Normal_End
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005587468189704
@@ -459,7 +459,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: Attack_4_Prefect_End_Transition
+  m_Name: Anbi_Attack_4_Prefect_End
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005587468189710
@@ -487,7 +487,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: WalkStartTransition
+  m_Name: Anbi_WalkStart
   m_EditorClassIdentifier: 
   _Transition:
     rid: 1446820273962090513
@@ -516,7 +516,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: Attack_4_Normal_Transition
+  m_Name: Anbi_Attack_4_Normal
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005587468189703
@@ -544,7 +544,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: EvadeBackTransition
+  m_Name: Anbi_EvadeBack
   m_EditorClassIdentifier: 
   _Transition:
     rid: 1446820299843043334
@@ -572,7 +572,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: Attack_3_End_Transition
+  m_Name: Anbi_Attack_3_End
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005587468189702
@@ -600,7 +600,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: EvadeBackEndTransition
+  m_Name: Anbi_EvadeBackEnd
   m_EditorClassIdentifier: 
   _Transition:
     rid: 1446820299843043335
@@ -628,7 +628,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: StopTransition
+  m_Name: Anbi_Stop
   m_EditorClassIdentifier: 
   _Transition:
     rid: 1446820273962090512
@@ -656,7 +656,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: Attack_4_Prefect_Transition
+  m_Name: Anbi_Attack_4_Prefect
   m_EditorClassIdentifier: 
   _Transition:
     rid: 4423005587468189709
@@ -684,7 +684,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
-  m_Name: EvadeFrontTransition
+  m_Name: Anbi_EvadeFront
   m_EditorClassIdentifier: 
   _Transition:
     rid: 1446820299843043332

@@ -34,25 +34,27 @@ namespace SPPlayer
         [Tooltip("玩家输入源，采集员的工作区")]
         [SerializeField] private InputSource _playerInputSource;
 
-        [Header("拦截器配置")]
-        [Tooltip("玩家拦截器配置 SO——定义全局状态拦截器的优先级列表")]
-        [SerializeField] private PlayerInterceptorConfigSO _interceptorConfig;
+        [Header("初始状态族")]
+        [Tooltip("角色初始所在的状态族")]
+        [SerializeField] private StateGroupSO _initGroup;
 
-        [Header("动画配置")]
-        [Tooltip("玩家动画配置 SO——定义状态到动画的映射")]
-        [SerializeField] private PlayerAnimationConfigSO _animationConfig;
+        [Header("拦截器配置")]
+        [Tooltip("节点拦截器配置 SO——定义跨族精确节点转移规则")]
+        [SerializeField] private NodeInterceptorConfigSO _interceptorConfig;
 
         [Header("移动配置")]
-        [Tooltip("玩家移动配置 SO——定义移动时的速度、转向和重力参数")]
+        [Tooltip("玩家移动配置 SO——定义转向速度和重力参数")]
         [SerializeField] private PlayerMotorConfigSO _motorConfig;
 
         #endregion
 
-        #region 子系统(Public 供状态类访问)
+        #region 子系统(Public 供拦截器和行为插件访问)
 
+        /// <summary>角色大脑黑板</summary>
         public PlayerBrain PlayerBrainBlackboard { get; private set; }
-        public StateMachine StateMachine { get; private set; }
-        public MainInterceptor MainInterceptor { get; private set; }
+
+        /// <summary>族长状态机——管理族间和族内状态转移</summary>
+        public GroupStateMachine GroupStateMachine { get; private set; }
 
         #endregion
 
@@ -62,7 +64,6 @@ namespace SPPlayer
         private InputMainProcessor _inputMainProcessor;
         private AnimationDriver _animationDriver;
         private AnimationSource _animationSource;
-        private StateToAnimationAdapter _adapter;
         private PlayerMotor _playerMotor;
 
         #endregion
@@ -80,8 +81,8 @@ namespace SPPlayer
             if (_animancer.Animator == null) _animancer.Animator = _animator;
 
             if (_playerInputSource == null) Debug.LogError($"{name} 的 {nameof(PlayerController)} 缺少 {nameof(InputSource)} 引用，输入模块将无法工作。");
-            if (_interceptorConfig == null) Debug.LogError($"{name} 的 {nameof(PlayerController)} 缺少 {nameof(PlayerInterceptorConfigSO)} 引用，拦截器将无法工作。");
-            if (_animationConfig == null) Debug.LogError($"{name} 的 {nameof(PlayerController)} 缺少 {nameof(PlayerAnimationConfigSO)} 引用，动画层将无法工作。");
+            if (_initGroup == null) Debug.LogError($"{name} 的 {nameof(PlayerController)} 缺少 {nameof(StateGroupSO)} 引用，初始状态族未设置。");
+            if (_interceptorConfig == null) Debug.LogError($"{name} 的 {nameof(PlayerController)} 缺少 {nameof(NodeInterceptorConfigSO)} 引用，拦截器将无法工作。");
             if (_motorConfig == null) Debug.LogError($"{name} 的 {nameof(PlayerController)} 缺少 {nameof(PlayerMotorConfigSO)} 引用，移动层将无法工作。");
 
             // 实现代码接管根运动的前提
@@ -106,19 +107,15 @@ namespace SPPlayer
 
             // --- 角色状态模块 ---
 
-            // 角色状态机
-            StateMachine = new StateMachine(this);
-            // 初始化状态机: 从 Idle 开始
-            StateMachine.Initialize(PlayerStateType.Idle);
-            // 主拦截处理器
-            MainInterceptor = new MainInterceptor(this, _interceptorConfig?.GlobalInterceptors);
+            // 族长状态机
+            GroupStateMachine = new GroupStateMachine(this, _interceptorConfig?.Interceptors);
+            // 进入初始状态族
+            GroupStateMachine.EnterGroup(_initGroup, _initGroup != null ? _initGroup.DefaultEntryIndex : 0);
 
             // 动画源
             _animationSource = new AnimationSource(_animancer);
-            // 状态→动画适配器
-            _adapter = new StateToAnimationAdapter(_animationConfig);
             // 动画驱动器
-            _animationDriver = new AnimationDriver(PlayerBrainBlackboard, _animationSource, _adapter);
+            _animationDriver = new AnimationDriver(PlayerBrainBlackboard, _animationSource);
 
             // 玩家移动器
             _playerMotor = new PlayerMotor(_characterController, _animator, PlayerBrainBlackboard, _motorConfig);
@@ -132,8 +129,8 @@ namespace SPPlayer
             // 2. 后处理数据 + 主输入翻译处理器 -> 输入意图 -> 写入角色大脑黑板
             _inputMainProcessor.UpdateInputProcessors();
 
-            // 3. 当前状态的逻辑更新 (含全局拦截器检查)
-            StateMachine.CurrentState.LogicUpdate();
+            // 3. 族长状态机逻辑更新（含拦截器检查 + 族内转移）
+            GroupStateMachine.LogicUpdate();
 
             // 4. 动画驱动器更新动画，仅发出指令
             _animationDriver.Update();
@@ -151,7 +148,6 @@ namespace SPPlayer
                 实际 Animator 在 Update 之后 OnAnimatorMove 之前刷骨骼
                 此时才拥有最新鲜的动画根骨骼 Transform 数据
             */
-            // StateMachine.CurrentState.PhysicsUpdate(); // 旧移动更新方法 (已废弃)
             // 位移更新
             _playerMotor?.ApplyPosition();
         }

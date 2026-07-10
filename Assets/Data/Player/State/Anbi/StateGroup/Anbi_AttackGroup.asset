@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13ec275d189fec145a8439c20e135b86, type: 3}
+  m_Name: Anbi_AttackGroup
+  m_EditorClassIdentifier: 
+  Nodes:
+  - {fileID: 11400000, guid: 1af17df25a116b44b9cc9d437f0b02ee, type: 2}
+  - {fileID: 11400000, guid: b30295ad4e339fb4396e12ad6b0a9833, type: 2}
+  - {fileID: 11400000, guid: 1ae99106031a6274b91750a68e713e28, type: 2}
+  - {fileID: 11400000, guid: 2e9da774ce60bbc45975177807f4f314, type: 2}
+  - {fileID: 11400000, guid: 4ec6c1032d09b584283bd714c4a214ec, type: 2}
+  - {fileID: 11400000, guid: 2acde923209934346afef115f93940cb, type: 2}
+  - {fileID: 11400000, guid: 05735b8142aeed040a5da2aefd3d882c, type: 2}
+  - {fileID: 11400000, guid: 32ef34e24ceda5a4dbe8839c02d93b96, type: 2}
+  - {fileID: 11400000, guid: 35323c961dec6894b8edd80223c00a9d, type: 2}
+  - {fileID: 11400000, guid: 7376d4fcc461b754b8d4492998cc2854, type: 2}
+  Rules:
+  - FromIndex: 0
+    ToIndex: 1
+    Condition: 2
+  - FromIndex: 1
+    ToIndex: 2
+    Condition: 3
+  - FromIndex: 2
+    ToIndex: 3
+    Condition: 2
+  - FromIndex: 3
+    ToIndex: 4
+    Condition: 3
+  - FromIndex: 4
+    ToIndex: 5
+    Condition: 2
+  - FromIndex: 5
+    ToIndex: 6
+    Condition: 3
+  - FromIndex: 6
+    ToIndex: 7
+    Condition: 2
+  - FromIndex: 8
+    ToIndex: 9
+    Condition: 2
+  - FromIndex: 7
+    ToIndex: 0
+    Condition: 3
+  - FromIndex: 9
+    ToIndex: 0
+    Condition: 3
+  DefaultEntryIndex: 0

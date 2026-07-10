@@ -1,48 +1,44 @@
 namespace SPPlayer
 {
     /// <summary>
-    /// 动画驱动器——监听黑板的 CurrentPlayerState，通过适配器获取动画配置并播放。
+    /// 动画驱动器——监听黑板的 CurrentStateNode，直接从节点读取动画数据并播放。
     /// 每帧将当前动画进度回写黑板。
     /// </summary>
     public class AnimationDriver
     {
         private readonly PlayerBrain _blackboard;
         private readonly AnimationSource _animSource;
-        private readonly StateToAnimationAdapter _adapter;
 
-        private PlayerStateType _lastState;
-        private AnimationStateConfig _lastConfig;
+        private StateNodeSO _lastNode;
         private bool _initialized;
 
         /// <summary>
         /// 创建动画驱动器
         /// </summary>
         /// <param name="blackboard">角色大脑黑板</param>
-        /// <param name="animFacade">动画源外观</param>
-        /// <param name="adapter">状态→动画适配器</param>
-        public AnimationDriver(PlayerBrain blackboard, AnimationSource animFacade, StateToAnimationAdapter adapter)
+        /// <param name="animSource">动画源外观</param>
+        public AnimationDriver(PlayerBrain blackboard, AnimationSource animSource)
         {
             _blackboard = blackboard;
-            _animSource = animFacade;
-            _adapter = adapter;
+            _animSource = animSource;
         }
 
         /// <summary>
-        /// 检测状态变化，状态变化便播放对应动画
+        /// 检测状态节点变化，变化时播放对应动画
         /// </summary>
         public void Update()
         {
-            if (_blackboard == null || _animSource == null || _adapter == null) return;
+            if (_blackboard == null || _animSource == null) return;
 
-            var currentState = _blackboard.CurrentPlayerState;
+            var currentNode = _blackboard.CurrentStateNode;
 
-            if (!_initialized || currentState != _lastState)
+            if (!_initialized || currentNode != _lastNode)
             {
-                _lastState = currentState;
+                _lastNode = currentNode;
                 _initialized = true;
 
-                if (_adapter.TryTranslate(currentState, out _lastConfig))
-                    _animSource.Play(_lastConfig.Transition);
+                if (currentNode != null && currentNode.Transition != null)
+                    _animSource.Play(currentNode.Transition);
             }
         }
 
@@ -55,7 +51,7 @@ namespace SPPlayer
 
             _blackboard.CurrentNormalizedTime = _animSource.CurrentNormalizedTime;
 
-            if (!_lastConfig.IsLooping)
+            if (_lastNode != null && !_lastNode.IsLooping)
                 _blackboard.AnimationCompleted = _animSource.CurrentNormalizedTime >= 1f;
             else
                 _blackboard.AnimationCompleted = false;

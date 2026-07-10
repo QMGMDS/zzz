@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13ec275d189fec145a8439c20e135b86, type: 3}
+  m_Name: Anbi_EvadeGroup
+  m_EditorClassIdentifier: 
+  Nodes:
+  - {fileID: 11400000, guid: 4de8813f62c19364d94ea5cc7e686cdb, type: 2}
+  - {fileID: 11400000, guid: 7f9964d34c7febe40a76c317f60992c3, type: 2}
+  - {fileID: 11400000, guid: b6baf2ebcd1b03f419e8ae83101adf19, type: 2}
+  - {fileID: 11400000, guid: 6c5fb8d6e3ecf3142b1f0edaabcee83d, type: 2}
+  Rules:
+  - FromIndex: 0
+    ToIndex: 1
+    Condition: 2
+  - FromIndex: 2
+    ToIndex: 3
+    Condition: 2
+  DefaultEntryIndex: 0

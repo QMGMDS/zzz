@@ -3,7 +3,7 @@ using UnityEngine;
 namespace SPPlayer
 {
     /// <summary>
-    /// 玩家移动器
+    /// 玩家移动器——从 StateNodeSO 读取元数据驱动旋转和位移
     /// </summary>
     public class PlayerMotor
     {
@@ -50,30 +50,14 @@ namespace SPPlayer
 
         private void UpdateRotation(float deltaTime)
         {
-            var currentState = _blackboard.CurrentPlayerState;
-            switch (currentState) // 设置不宜旋转的状态
-            {
-                case PlayerStateType.RunTurn:
-                case PlayerStateType.EvadeFront:
-                case PlayerStateType.EvadeBack:
-                case PlayerStateType.Attack_1:
-                case PlayerStateType.Attack_1_End:
-                case PlayerStateType.Attack_2:
-                case PlayerStateType.Attack_2_End:
-                case PlayerStateType.Attack_3:
-                case PlayerStateType.Attack_3_End:
-                case PlayerStateType.Attack_4_Normal:
-                case PlayerStateType.Attack_4_Normal_End:
-                case PlayerStateType.Attack_4_Prefect:
-                case PlayerStateType.Attack_4_Prefect_End:
-                    return;
-            }
+            var node = _blackboard.CurrentStateNode;
+            if (node == null || !node.AllowRotation) return;
 
-            var Direction = _blackboard.CurrentMoveDirection;
-            if (Direction.sqrMagnitude <= 0.0001f || _config.RotationSpeed <= 0f) return;
+            var direction = _blackboard.CurrentMoveDirection;
+            if (direction.sqrMagnitude <= 0.0001f || _config.RotationSpeed <= 0f) return;
 
-            var TargetRotation = Quaternion.LookRotation(Direction, Vector3.up);
-            _transform.rotation = Quaternion.RotateTowards(_transform.rotation, TargetRotation, _config.RotationSpeed * deltaTime);
+            var targetRotation = Quaternion.LookRotation(direction, Vector3.up);
+            _transform.rotation = Quaternion.RotateTowards(_transform.rotation, targetRotation, _config.RotationSpeed * deltaTime);
         }
 
         #endregion
@@ -98,46 +82,9 @@ namespace SPPlayer
 
         private Vector3 ResolveHorizontalMove()
         {
-            var RootDelta = _animator.deltaPosition; // deltaPosition 本帧根物体位移 基于上一帧位置建立的世界坐标系
-            RootDelta.y = 0f;
-            return RootDelta * ResolveRootMotionScale();
-        }
-
-        private float ResolveRootMotionScale()
-        {
-            switch (_blackboard.CurrentPlayerState)
-            {
-                case PlayerStateType.WalkStart:
-                case PlayerStateType.WalkLoop:
-                    return _config.WalkRootMotionScale;
-
-                case PlayerStateType.RunStart:
-                case PlayerStateType.RunLoop:
-                case PlayerStateType.RunTurn:
-                    return _config.RunRootMotionScale;
-
-                case PlayerStateType.Stop:
-                    return _config.StopRootMotionScale;
-
-                case PlayerStateType.EvadeFront:
-                    return _config.EvadeFrontRootMotionScale;
-
-                case PlayerStateType.EvadeBack:
-                    return _config.EvadeBackRootMotionScale;
-
-                case PlayerStateType.Attack_1:
-                case PlayerStateType.Attack_1_End:
-                case PlayerStateType.Attack_2:
-                case PlayerStateType.Attack_2_End:
-                case PlayerStateType.Attack_3:
-                case PlayerStateType.Attack_3_End:
-                case PlayerStateType.Attack_4_Normal:
-                case PlayerStateType.Attack_4_Normal_End:
-                    return _config.AttackRootMotionScale;
-
-                default:
-                    return _config.DefaultRootMotionScale;
-            }
+            var rootDelta = _animator.deltaPosition;
+            rootDelta.y = 0f;
+            return rootDelta * (_blackboard.CurrentStateNode?.RootMotionScale ?? 1f);
         }
 
         private void UpdateVerticalVelocity(float deltaTime)

@@ -81,20 +81,18 @@ namespace SPPlayer
         /// 每帧 LogicUpdate：
         /// 1) 检查跨族节点拦截器
         /// 2) 若节点有行为插件，交给插件处理
-        /// 3) 检查族内转移规则
-        /// 4) 检查攻击节点提前取消
+        /// 3) 检查族内转移规则（输入型条件会附加打断窗口检查）
         /// </summary>
         public void LogicUpdate()
         {
             if (_currentGroup == null) return;
 
-            if (TryNodeIntercept()) return;
+            if (TryNodeIntercept()) return; // 跨族状态切换 -> 拦截器负责
 
             if (_activeBehaviour != null && _activeBehaviour.OnUpdate(_player))
                 return;
 
-            if (TryTransitionRule()) return;
-            TryEarlyCancel();
+            TryTransitionRule(); // 同族状态切换 -> StateGroupSO 负责
         }
 
         #region Internal
@@ -139,6 +137,15 @@ namespace SPPlayer
                 if (rule.Condition == TransitionCondition.Custom) continue;
                 if (!EvaluateCondition(rule.Condition)) continue;
 
+                if (IsInputDrivenCondition(rule.Condition))
+                {
+                    var node = CurrentNode;
+                    if (!node.HasCancelWindow) continue;
+                    if (_brain.CurrentNormalizedTime < node.CancelWindowStart ||
+                        _brain.CurrentNormalizedTime > node.CancelWindowEnd)
+                        continue;
+                }
+
                 TransitionToNode(rule.ToIndex);
                 return true;
             }
@@ -146,16 +153,20 @@ namespace SPPlayer
             return false;
         }
 
-        private void TryEarlyCancel()
+        // 同族下的这些切换条件下才会进行打断窗口判定
+        private static bool IsInputDrivenCondition(TransitionCondition condition)
         {
-            if (_activeBehaviour != null) return;
-
-            var node = CurrentNode;
-            if (node == null || !node.IsAttackNode || node.EarlyCancelTargetIndex < 0) return;
-            if (!_brain.WantToAttack) return;
-            if (_brain.CurrentNormalizedTime < node.EarlyCancelThreshold) return;
-
-            TransitionToNode(node.EarlyCancelTargetIndex);
+            switch (condition)
+            {
+                case TransitionCondition.WantToAttack:
+                case TransitionCondition.WantToEvade:
+                case TransitionCondition.WantToMove:
+                case TransitionCondition.NotWantToMove:
+                case TransitionCondition.MoveDirectionFlipped:
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         private bool EvaluateCondition(TransitionCondition condition)
@@ -187,11 +198,7 @@ namespace SPPlayer
                     return !_brain.WantToMove;
 
                 case TransitionCondition.MoveDirectionFlipped:
-                    {
-                        var dir = _brain.CurrentMoveDirection;
-                        if (dir.sqrMagnitude <= 0.0001f) return false;
-                        return Vector3.Dot(dir.normalized, _player.transform.forward) <= -0.75f;
-                    }
+                    return _brain.IsMoveDirectionFlipped;
 
                 case TransitionCondition.Custom:
                     return false;

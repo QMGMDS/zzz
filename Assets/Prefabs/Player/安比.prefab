@@ -114,6 +114,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: "\u5B89\u6BD4"
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b084e535d646a5b43a43bd417fb7c814, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1193648089417242316, guid: b084e535d646a5b43a43bd417fb7c814, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -234,8 +238,8 @@ MonoBehaviour:
   _animator: {fileID: 6647038994690343824}
   _animancer: {fileID: 4958650350627866175}
   _playerInputSource: {fileID: 2844736639046646012}
-  _interceptorConfig: {fileID: 11400000, guid: 523cf4a312b1d24408e54ff451f04a0e, type: 2}
-  _animationConfig: {fileID: 11400000, guid: 6fde5bd7531ce6343b4d7eb4940d8aa5, type: 2}
+  _initGroup: {fileID: 11400000, guid: 650cd0f4187e59549b7db95d9f48e3b4, type: 2}
+  _interceptorConfig: {fileID: 11400000, guid: 7444e63418b293d4ca4e7bb50ebeb73b, type: 2}
   _motorConfig: {fileID: 11400000, guid: 338d29f891ae83745828378d8131f00c, type: 2}
 --- !u!4 &783391499299445226 stripped
 Transform:

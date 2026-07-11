@@ -53,7 +53,7 @@ namespace SPPlayer
                 if (!brain.WantToAttack) return false;
 
                 var node = player.GroupStateMachine.CurrentNode;
-                if (node == null || brain.CurrentNormalizedTime < node.EarlyCancelThreshold)
+                if (node == null || brain.CurrentNormalizedTime < node.CancelWindowStart)
                     return false;
 
                 if (brain.AttackHeld && _heldStartTime >= 0f && Time.time - _heldStartTime >= _config.HoldThreshold)

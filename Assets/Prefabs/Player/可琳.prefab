@@ -76,11 +76,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 871fdbbd55d54e649b91ebff2b898cd7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.39
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 871fdbbd55d54e649b91ebff2b898cd7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.66
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 871fdbbd55d54e649b91ebff2b898cd7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -263,6 +263,6 @@ MonoBehaviour:
   _animator: {fileID: 4688605390485151653}
   _animancer: {fileID: 7915542844063938094}
   _playerInputSource: {fileID: 4038207794239765629}
-  _initGroup: {fileID: 0}
-  _interceptorConfig: {fileID: 11400000, guid: 523cf4a312b1d24408e54ff451f04a0e, type: 2}
+  _initGroup: {fileID: 11400000, guid: 7e938111ef1305a43a995e3b4eeb8628, type: 2}
+  _interceptorConfig: {fileID: 11400000, guid: 1463a890db6336541b2f19ff23ec5713, type: 2}
   _motorConfig: {fileID: 11400000, guid: 338d29f891ae83745828378d8131f00c, type: 2}

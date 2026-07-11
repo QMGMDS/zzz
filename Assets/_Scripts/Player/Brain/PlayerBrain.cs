@@ -38,6 +38,9 @@ namespace SPPlayer
         /// <summary>上一帧移动方向 (默认联系摄像机)</summary>
         public Vector3 LastMoveDirection { get; set; }
 
+        /// <summary>本帧移动输入方向发生翻转</summary>
+        public bool IsMoveDirectionFlipped { get; set; }
+
         /// <summary>
         /// 每帧 LateUpdate 末尾调用——清除输入意图脑区的所有标记，防止跨帧残留。
         /// </summary>
@@ -48,6 +51,7 @@ namespace SPPlayer
             WantToMove = false;
             AttackHeld = false;
             MoveInput = Vector2.zero;
+            IsMoveDirectionFlipped = false;
         }
 
         #endregion

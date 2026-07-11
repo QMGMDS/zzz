@@ -16,17 +16,14 @@ namespace SPPlayer
 
         private class Runtime : IStateBehaviour
         {
-            private Vector3 _enterDirection;
+            private Quaternion _targetRotation;
 
             public void OnEnter(PlayerController player)
             {
-                _enterDirection = player.transform.forward;
-                _enterDirection.y = 0f;
-
-                if (_enterDirection.sqrMagnitude < 0.0001f)
-                    _enterDirection = Vector3.forward;
-                else
-                    _enterDirection.Normalize();
+                var dir = player.PlayerBrainBlackboard.CurrentMoveDirection;
+                dir.y = 0f;
+                if (dir.sqrMagnitude < 0.0001f) dir = Vector3.forward;
+                _targetRotation = Quaternion.LookRotation(dir);
             }
 
             public bool OnUpdate(PlayerController player)
@@ -36,17 +33,7 @@ namespace SPPlayer
 
             public void OnExit(PlayerController player)
             {
-                var currentDir = player.PlayerBrainBlackboard.CurrentMoveDirection;
-                if (currentDir.sqrMagnitude <= 0.0001f) return;
-
-                currentDir.y = 0f;
-                currentDir.Normalize();
-
-                var enterAngle = Mathf.Atan2(_enterDirection.x, _enterDirection.z) * Mathf.Rad2Deg;
-                var currentAngle = Mathf.Atan2(currentDir.x, currentDir.z) * Mathf.Rad2Deg;
-                var delta = Mathf.DeltaAngle(currentAngle, enterAngle);
-
-                player.transform.Rotate(Vector3.up, delta, Space.World);
+                player.transform.rotation = _targetRotation;
             }
         }
     }

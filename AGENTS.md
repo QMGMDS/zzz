@@ -45,14 +45,16 @@ Update:
     ↓
   InputMainProcessor.UpdateInputProcessors()  ── 意图翻译 → 黑板
     ↓
-  StateMachine.CurrentState.LogicUpdate()  ── 全局拦截 → 状态逻辑
+  GroupStateMachine. LogicUpdate()  ── 族长状态机逻辑更新（含拦截器检查+族内转移）
     ↓
   AnimationDriver.Update()  ── 下达动画指令
+    ↓
+  _playerMotor? .ApplyRotation() ;  ── 旋转更新，使 Animator 计算根运动时基于新朝向
 
   [Animator 自动更新骨骼，产出本帧根位移]
 
 OnAnimatorMove:
-  PlayerMotor.ApplyMove()  ── 根运动缩放 + 旋转 + 重力
+  PlayerMotor.ApplyMove()  ── 位移更新
 
 LateUpdate:
   AnimationDriver.SyncAnimProgress()  ── 动画进度回写黑板

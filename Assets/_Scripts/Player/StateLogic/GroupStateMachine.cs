@@ -153,7 +153,7 @@ namespace SPPlayer
             return false;
         }
 
-        // 这些切换条件下才会进行打断窗口判定
+        // 同族下的这些切换条件下才会进行打断窗口判定
         private static bool IsInputDrivenCondition(TransitionCondition condition)
         {
             switch (condition)

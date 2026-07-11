@@ -16,6 +16,6 @@ MonoBehaviour:
   IsLooping: 0
   AllowRotation: 0
   RootMotionScale: 1
-  CancelWindowStart: 0.2
+  CancelWindowStart: 0.5
   CancelWindowEnd: 1
   Behaviour: {fileID: 0}

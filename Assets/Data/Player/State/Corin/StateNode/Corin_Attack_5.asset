@@ -16,7 +16,6 @@ MonoBehaviour:
   IsLooping: 0
   AllowRotation: 0
   RootMotionScale: 1
-  IsAttackNode: 1
-  EarlyCancelTargetIndex: 0
-  EarlyCancelThreshold: 0.9
+  CancelWindowStart: 0.9
+  CancelWindowEnd: 1
   Behaviour: {fileID: 0}

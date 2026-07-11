@@ -54,4 +54,16 @@ MonoBehaviour:
   - FromIndex: 9
     ToIndex: 0
     Condition: 3
+  - FromIndex: 0
+    ToIndex: 2
+    Condition: 3
+  - FromIndex: 2
+    ToIndex: 4
+    Condition: 3
+  - FromIndex: 4
+    ToIndex: 6
+    Condition: 3
+  - FromIndex: 6
+    ToIndex: 8
+    Condition: 3
   DefaultEntryIndex: 0

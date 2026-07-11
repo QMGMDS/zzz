@@ -26,7 +26,7 @@ namespace SPPlayer
         [Min(0f)]
         public float RootMotionScale = 1f;
 
-        [Header("打断窗口")]
+        [Header("打断窗口，仅适用于族内状态的打断处理")]
         [Tooltip("可被打断的起始归一化时间（0~1），>= End 时关闭窗口")]
         [Range(0f, 1f)]
         public float CancelWindowStart;

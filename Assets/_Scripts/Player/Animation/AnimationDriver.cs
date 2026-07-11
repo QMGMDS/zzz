@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace SPPlayer
 {
     /// <summary>
@@ -49,7 +51,10 @@ namespace SPPlayer
         {
             if (_blackboard == null || _animSource == null || !_initialized) return;
 
-            _blackboard.CurrentNormalizedTime = _animSource.CurrentNormalizedTime;
+            var time = _animSource.CurrentNormalizedTime;
+            if (_lastNode != null && _lastNode.IsLooping)
+                time -= Mathf.Floor(time);
+            _blackboard.CurrentNormalizedTime = time;
 
             if (_lastNode != null && !_lastNode.IsLooping)
                 _blackboard.AnimationCompleted = _animSource.CurrentNormalizedTime >= 1f;

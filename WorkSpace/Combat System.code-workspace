@@ -2,7 +2,7 @@
 	"folders": [
 		{
             "name": "SPPlayer",
-            "path": "../Assets/_Scripts/Player"
+            "path": "../Assets/_Scripts/"
         },
 		{
             "name": "ALL PROJECT",

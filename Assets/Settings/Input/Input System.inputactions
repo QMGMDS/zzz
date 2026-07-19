@@ -7,6 +7,15 @@
             "id": "8bfefe49-3cb3-43d1-9966-5e9b4c2b5da7",
             "actions": [
                 {
+                    "name": "Camera Look",
+                    "type": "Value",
+                    "id": "8eb00412-6a6f-4208-bb4e-4a70eda04bec",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "Move",
                     "type": "Value",
                     "id": "13795ccf-6ee1-4a31-85ea-8a41e0e88d5f",
@@ -34,13 +43,31 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Camera Look",
-                    "type": "Value",
-                    "id": "8eb00412-6a6f-4208-bb4e-4a70eda04bec",
-                    "expectedControlType": "Vector2",
+                    "name": "Skill",
+                    "type": "Button",
+                    "id": "0d19dd16-48b4-4d6e-b9a7-7cb10fd1f28c",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Switch Character",
+                    "type": "Button",
+                    "id": "06c7ddf7-e193-4531-a331-52c490b93415",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Ultimate",
+                    "type": "Button",
+                    "id": "fbe95bc4-94f6-4f79-a8db-26f99ae8e870",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -140,6 +167,39 @@
                     "processors": "",
                     "groups": "",
                     "action": "Camera Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b7e365ed-1d05-4889-8713-ad968ee1fb8a",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Skill",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "63ea2ecf-a1ad-4c1e-bb63-d09cede1e0c2",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Switch Character",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d496030b-21c0-4a90-ab30-eb7beb6b3547",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Ultimate",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

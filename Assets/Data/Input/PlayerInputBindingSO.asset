@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97d79f8143edd8240bdabce394ef1717, type: 3}
+  m_Name: PlayerInputBindingSO
+  m_EditorClassIdentifier: 
+  MoveAction: {fileID: -2396146652731416428, guid: 19233add5a256844fad4c8b6fed6339a, type: 3}
+  AttackAction: {fileID: 1211467669973809243, guid: 19233add5a256844fad4c8b6fed6339a, type: 3}
+  EvadeAction: {fileID: -1338146725540236266, guid: 19233add5a256844fad4c8b6fed6339a, type: 3}
+  SkillAction: {fileID: 3551632961237328470, guid: 19233add5a256844fad4c8b6fed6339a, type: 3}
+  SwitchCharacterAction: {fileID: 9016827086732302416, guid: 19233add5a256844fad4c8b6fed6339a, type: 3}
+  UltimateAction: {fileID: -7507692294469225143, guid: 19233add5a256844fad4c8b6fed6339a, type: 3}

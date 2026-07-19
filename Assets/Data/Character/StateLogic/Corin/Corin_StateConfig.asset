@@ -1,0 +1,229 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da01a99121469d549bfdf76d6e1fe4d3, type: 3}
+  m_Name: Corin_StateConfig
+  m_EditorClassIdentifier: 
+  Nodes:
+  - {fileID: 11400000, guid: d8eaccfc9ac44c143a8adf941e59504d, type: 2}
+  - {fileID: 11400000, guid: 22479278c80b3174d8abedec6a5a4ee0, type: 2}
+  - {fileID: 11400000, guid: 61ca1d9886b020e4e9f1ace868ddd95c, type: 2}
+  - {fileID: 11400000, guid: dccd4ebb02ecbf74d95d8e0278172a21, type: 2}
+  - {fileID: 11400000, guid: b1958db8e7caccd4c88dc8bbbb283d24, type: 2}
+  - {fileID: 11400000, guid: d367b15047dc9c44cbd3c77de65300d9, type: 2}
+  - {fileID: 11400000, guid: 5c6c8df019e85d849a824bdd74321505, type: 2}
+  - {fileID: 11400000, guid: 44e8138692d36bc41a6927217fe11a53, type: 2}
+  - {fileID: 11400000, guid: a7c69c337083bb84eb5e4d97ce49b355, type: 2}
+  - {fileID: 11400000, guid: 8fe6c1d42919e7546aa4292ffc01cf87, type: 2}
+  - {fileID: 11400000, guid: 36fae3cb95a812d47bef16bad39beb1a, type: 2}
+  - {fileID: 11400000, guid: 4f3ab49a9ed0e8b46b83aac397d87984, type: 2}
+  - {fileID: 11400000, guid: df2150e0cd48fa441bec9588a2b64827, type: 2}
+  - {fileID: 11400000, guid: 1005e8d2cd5027c4baadd8763ea5fee3, type: 2}
+  - {fileID: 11400000, guid: 9209900ea04049047bc625d49b2db078, type: 2}
+  - {fileID: 11400000, guid: 63f37c2d5139b9f429eef05ebba0fb61, type: 2}
+  - {fileID: 11400000, guid: d61b00b12c92d4743ac89c47b25f5768, type: 2}
+  - {fileID: 11400000, guid: e4e99c4f1a525844b91477f47f5de693, type: 2}
+  - {fileID: 11400000, guid: 5799afff093cc744eaf1062b1f18ad45, type: 2}
+  - {fileID: 11400000, guid: 3b4b813eaace36c40a7e3771ec952da9, type: 2}
+  - {fileID: 11400000, guid: 58aab3cfbdbddfd43b3066d0a1a90119, type: 2}
+  Rules:
+  - FromIndex: 0
+    ToIndex: 2
+    Condition: 128
+  - FromIndex: 0
+    ToIndex: 7
+    Condition: 640
+  - FromIndex: 0
+    ToIndex: 9
+    Condition: 768
+  - FromIndex: 0
+    ToIndex: 11
+    Condition: 1024
+  - FromIndex: 1
+    ToIndex: 0
+    Condition: 1
+  - FromIndex: 1
+    ToIndex: 2
+    Condition: 128
+  - FromIndex: 1
+    ToIndex: 7
+    Condition: 640
+  - FromIndex: 1
+    ToIndex: 9
+    Condition: 768
+  - FromIndex: 1
+    ToIndex: 11
+    Condition: 1024
+  - FromIndex: 2
+    ToIndex: 1
+    Condition: 256
+  - FromIndex: 2
+    ToIndex: 3
+    Condition: 129
+  - FromIndex: 2
+    ToIndex: 7
+    Condition: 640
+  - FromIndex: 2
+    ToIndex: 11
+    Condition: 1024
+  - FromIndex: 3
+    ToIndex: 1
+    Condition: 256
+  - FromIndex: 3
+    ToIndex: 7
+    Condition: 640
+  - FromIndex: 3
+    ToIndex: 11
+    Condition: 1024
+  - FromIndex: 4
+    ToIndex: 1
+    Condition: 256
+  - FromIndex: 4
+    ToIndex: 5
+    Condition: 129
+  - FromIndex: 4
+    ToIndex: 11
+    Condition: 1024
+  - FromIndex: 5
+    ToIndex: 1
+    Condition: 256
+  - FromIndex: 5
+    ToIndex: 6
+    Condition: 2048
+  - FromIndex: 5
+    ToIndex: 7
+    Condition: 640
+  - FromIndex: 5
+    ToIndex: 11
+    Condition: 1024
+  - FromIndex: 6
+    ToIndex: 1
+    Condition: 256
+  - FromIndex: 6
+    ToIndex: 5
+    Condition: 129
+  - FromIndex: 7
+    ToIndex: 5
+    Condition: 129
+  - FromIndex: 7
+    ToIndex: 8
+    Condition: 257
+  - FromIndex: 8
+    ToIndex: 0
+    Condition: 257
+  - FromIndex: 8
+    ToIndex: 2
+    Condition: 128
+  - FromIndex: 8
+    ToIndex: 7
+    Condition: 640
+  - FromIndex: 8
+    ToIndex: 9
+    Condition: 768
+  - FromIndex: 8
+    ToIndex: 11
+    Condition: 1024
+  - FromIndex: 9
+    ToIndex: 2
+    Condition: 129
+  - FromIndex: 9
+    ToIndex: 10
+    Condition: 257
+  - FromIndex: 10
+    ToIndex: 0
+    Condition: 257
+  - FromIndex: 10
+    ToIndex: 2
+    Condition: 128
+  - FromIndex: 10
+    ToIndex: 7
+    Condition: 640
+  - FromIndex: 10
+    ToIndex: 9
+    Condition: 768
+  - FromIndex: 10
+    ToIndex: 11
+    Condition: 1024
+  - FromIndex: 11
+    ToIndex: 12
+    Condition: 1
+  - FromIndex: 11
+    ToIndex: 13
+    Condition: 1024
+  - FromIndex: 12
+    ToIndex: 0
+    Condition: 257
+  - FromIndex: 12
+    ToIndex: 2
+    Condition: 128
+  - FromIndex: 12
+    ToIndex: 11
+    Condition: 1024
+  - FromIndex: 13
+    ToIndex: 14
+    Condition: 1
+  - FromIndex: 13
+    ToIndex: 15
+    Condition: 1024
+  - FromIndex: 14
+    ToIndex: 0
+    Condition: 257
+  - FromIndex: 14
+    ToIndex: 2
+    Condition: 128
+  - FromIndex: 14
+    ToIndex: 11
+    Condition: 1024
+  - FromIndex: 15
+    ToIndex: 16
+    Condition: 1
+  - FromIndex: 15
+    ToIndex: 17
+    Condition: 1024
+  - FromIndex: 16
+    ToIndex: 0
+    Condition: 257
+  - FromIndex: 16
+    ToIndex: 2
+    Condition: 128
+  - FromIndex: 16
+    ToIndex: 11
+    Condition: 1024
+  - FromIndex: 17
+    ToIndex: 18
+    Condition: 1
+  - FromIndex: 17
+    ToIndex: 19
+    Condition: 1024
+  - FromIndex: 18
+    ToIndex: 0
+    Condition: 257
+  - FromIndex: 18
+    ToIndex: 2
+    Condition: 128
+  - FromIndex: 18
+    ToIndex: 11
+    Condition: 1024
+  - FromIndex: 19
+    ToIndex: 11
+    Condition: 1024
+  - FromIndex: 19
+    ToIndex: 20
+    Condition: 1
+  - FromIndex: 20
+    ToIndex: 0
+    Condition: 257
+  - FromIndex: 20
+    ToIndex: 2
+    Condition: 128
+  - FromIndex: 20
+    ToIndex: 11
+    Condition: 1024

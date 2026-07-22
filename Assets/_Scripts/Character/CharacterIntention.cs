@@ -24,6 +24,8 @@ namespace SPCharacterController
         WantToEvade = 1 << 9,
         WantToAttack = 1 << 10,
         WantToTurn = 1 << 11,
+        SwitchIn = 1 << 12,
+        SwitchOut = 1 << 13,
 
         // ═══════════════════════════════════════
         //  怪物独有意图

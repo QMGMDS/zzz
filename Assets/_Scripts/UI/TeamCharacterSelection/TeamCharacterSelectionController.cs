@@ -1,5 +1,4 @@
 using System;
-using SPPlayerInput;
 using UnityEngine;
 
 namespace SPUI
@@ -37,19 +36,18 @@ namespace SPUI
             }
         }
 
-        private void Update()
+        private void OnEnable()
         {
-            SPPlayerInputCenter inputCenter = SPPlayerInputCenter.Instance;
-            if (inputCenter == null)
-            {
-                return;
-            }
+            SPEvent.GameEvent.CharacterSwitched += OnCharacterSwitched;
+        }
 
-            if (!inputCenter.CurrentFrameInput.SwitchCharacterPressed)
-            {
-                return;
-            }
+        private void OnDisable()
+        {
+            SPEvent.GameEvent.CharacterSwitched -= OnCharacterSwitched;
+        }
 
+        private void OnCharacterSwitched(int newIndex)
+        {
             _model.SelectNext();
         }
 

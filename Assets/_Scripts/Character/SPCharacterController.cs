@@ -15,6 +15,9 @@ namespace SPCharacterController
     public class SPCharacterController : MonoBehaviour
     {
         [Header("自定义配置")]
+        [Tooltip("角色基础信息资产")]
+        public CharacterInfoSO _characterInfo;
+
         [Tooltip("角色状态配置资产")]
         [SerializeField] private CharacterStateConfigSO _config;
         [Tooltip("角色输入源")]
@@ -39,13 +42,20 @@ namespace SPCharacterController
         private AnimationDriver _animationDriver;
         private CharacterMotionDriver _motionDriver;
         private Animator _animator;
+        private CCSourceSO _configuredInputSource;
+        private bool _isLeaving;
 
         #endregion
 
+        #region Life Cycle
+
         private void Awake()
         {
+            _configuredInputSource = _inputSource;
+
+            if (_characterInfo == null) throw new InvalidOperationException($"{name}: 未设置角色基础信息资产。");
             if (_config == null) throw new InvalidOperationException($"{name}: 未设置角色状态配置资产。");
-            if (_inputSource == null) throw new InvalidOperationException($"{name}: 未设置角色输入源。");
+            if (_inputSource == null) Debug.LogWarning($"{name}: 未设置角色输入源。");
             if (_animancer == null) throw new InvalidOperationException($"{name}: 未设置 Animancer 组件。");
             if (_motionConfig == null) throw new InvalidOperationException($"{name}: 未设置角色移动配置资产。");
 
@@ -66,7 +76,7 @@ namespace SPCharacterController
         private void Update()
         {
             // 输入源更新角色意图
-            _inputSource.WriteIntentions(_blackboard);
+            _inputSource?.WriteIntentions(_blackboard);
 
             // 状态机逻辑更新
             _stateMachine.LogicUpdate();
@@ -94,6 +104,45 @@ namespace SPCharacterController
         {
             // 动画进度回写黑板
             _animationDriver.SyncAnimProgress();
+
+            if (_isLeaving && _blackboard.EvaluateCondition(CharacterIntention.AnimationCompleted))
+            {
+                _isLeaving = false;
+                gameObject.SetActive(false);
+            }
         }
+
+        #endregion
+
+        #region TeamController
+
+        /// <summary>
+        /// 角色下场 - 写入 SwitchOut 意图并滞空输入源，由状态配置驱动退场动画。
+        /// </summary>
+        public void LeaveTeam()
+        {
+            _isLeaving = true;
+            _blackboard.SetInputIntention(CharacterIntention.SwitchOut, true);
+            _inputSource = null;
+        }
+
+        /// <inheritdoc cref="EnterTeam(Vector3, Quaternion)"/>
+        public void EnterTeam() => EnterTeam(transform.position, transform.rotation);
+
+        /// <summary>
+        /// 角色登场 - 在指定位置和朝向恢复输入源并写入 SwitchIn 意图，由状态配置驱动入场动画。
+        /// </summary>
+        /// <param name="position">登场位置</param>
+        /// <param name="rotation">登场朝向</param>
+        public void EnterTeam(Vector3 position, Quaternion rotation)
+        {
+            transform.SetPositionAndRotation(position, rotation);
+            gameObject.SetActive(true);
+            _isLeaving = false;
+            _inputSource = _configuredInputSource;
+            _blackboard.SetInputIntention(CharacterIntention.SwitchIn, true);
+        }
+
+        #endregion
     }
 }

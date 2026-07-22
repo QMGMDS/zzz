@@ -1,5 +1,33 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8403769771376170919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
+  m_Name: Corin_SwitchOut
+  m_EditorClassIdentifier: 
+  _Transition:
+    rid: 4423005927939506184
+  references:
+    version: 2
+    RefIds:
+    - rid: 4423005927939506184
+      type: {class: ClipTransition, ns: Animancer, asm: Kybernetik.Animancer}
+      data:
+        _FadeDuration: 0.25
+        _Speed: 1
+        _Events:
+          _NormalizedTimes: []
+          _Callbacks: []
+          _Names: []
+        _Clip: {fileID: 6925700049797844252, guid: bc09439dcfe58fc4b895600cd44c3418, type: 3}
+        _NormalizedStartTime: NaN
 --- !u!114 &-7138179480702012574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -111,6 +139,34 @@ MonoBehaviour:
           _Callbacks: []
           _Names: []
         _Clip: {fileID: 5484589743669072159, guid: 1d664ff9f6716ff4889dc8db71dc7775, type: 3}
+        _NormalizedStartTime: NaN
+--- !u!114 &-5614522290179349341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
+  m_Name: Corin_SwitchIn
+  m_EditorClassIdentifier: 
+  _Transition:
+    rid: 4423005927939506183
+  references:
+    version: 2
+    RefIds:
+    - rid: 4423005927939506183
+      type: {class: ClipTransition, ns: Animancer, asm: Kybernetik.Animancer}
+      data:
+        _FadeDuration: 0.25
+        _Speed: 1
+        _Events:
+          _NormalizedTimes: []
+          _Callbacks: []
+          _Names: []
+        _Clip: {fileID: -5579995443258601828, guid: bc09439dcfe58fc4b895600cd44c3418, type: 3}
         _NormalizedStartTime: NaN
 --- !u!114 &-5263067374354594245
 MonoBehaviour:
@@ -357,6 +413,8 @@ MonoBehaviour:
     - {fileID: 1332872345210539606}
     - {fileID: -6767258149849919529}
     - {fileID: 9212349773659727547}
+    - {fileID: -5614522290179349341}
+    - {fileID: -8403769771376170919}
     _Modifiers:
     - _From: 4
       _To: 5

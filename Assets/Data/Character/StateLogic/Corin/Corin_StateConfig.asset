@@ -34,6 +34,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5799afff093cc744eaf1062b1f18ad45, type: 2}
   - {fileID: 11400000, guid: 3b4b813eaace36c40a7e3771ec952da9, type: 2}
   - {fileID: 11400000, guid: 58aab3cfbdbddfd43b3066d0a1a90119, type: 2}
+  - {fileID: 11400000, guid: 497a8c8071ebd4b4da7ddc676fda4078, type: 2}
+  - {fileID: 11400000, guid: 927b555a7fb9544438d92e1e1b5fc30d, type: 2}
   Rules:
   - FromIndex: 0
     ToIndex: 2
@@ -47,6 +49,12 @@ MonoBehaviour:
   - FromIndex: 0
     ToIndex: 11
     Condition: 1024
+  - FromIndex: 0
+    ToIndex: 21
+    Condition: 4096
+  - FromIndex: 0
+    ToIndex: 22
+    Condition: 8192
   - FromIndex: 1
     ToIndex: 0
     Condition: 1
@@ -62,6 +70,12 @@ MonoBehaviour:
   - FromIndex: 1
     ToIndex: 11
     Condition: 1024
+  - FromIndex: 1
+    ToIndex: 21
+    Condition: 4096
+  - FromIndex: 1
+    ToIndex: 22
+    Condition: 8192
   - FromIndex: 2
     ToIndex: 1
     Condition: 256
@@ -74,6 +88,12 @@ MonoBehaviour:
   - FromIndex: 2
     ToIndex: 11
     Condition: 1024
+  - FromIndex: 2
+    ToIndex: 21
+    Condition: 4096
+  - FromIndex: 2
+    ToIndex: 22
+    Condition: 8192
   - FromIndex: 3
     ToIndex: 1
     Condition: 256
@@ -83,6 +103,12 @@ MonoBehaviour:
   - FromIndex: 3
     ToIndex: 11
     Condition: 1024
+  - FromIndex: 3
+    ToIndex: 21
+    Condition: 4096
+  - FromIndex: 3
+    ToIndex: 22
+    Condition: 8192
   - FromIndex: 4
     ToIndex: 1
     Condition: 256
@@ -92,6 +118,12 @@ MonoBehaviour:
   - FromIndex: 4
     ToIndex: 11
     Condition: 1024
+  - FromIndex: 4
+    ToIndex: 21
+    Condition: 4096
+  - FromIndex: 4
+    ToIndex: 22
+    Condition: 8192
   - FromIndex: 5
     ToIndex: 1
     Condition: 256
@@ -104,18 +136,36 @@ MonoBehaviour:
   - FromIndex: 5
     ToIndex: 11
     Condition: 1024
+  - FromIndex: 5
+    ToIndex: 21
+    Condition: 4096
+  - FromIndex: 5
+    ToIndex: 22
+    Condition: 8192
   - FromIndex: 6
     ToIndex: 1
     Condition: 256
   - FromIndex: 6
     ToIndex: 5
     Condition: 129
+  - FromIndex: 6
+    ToIndex: 21
+    Condition: 4096
+  - FromIndex: 6
+    ToIndex: 22
+    Condition: 8192
   - FromIndex: 7
     ToIndex: 5
     Condition: 129
   - FromIndex: 7
     ToIndex: 8
     Condition: 257
+  - FromIndex: 7
+    ToIndex: 21
+    Condition: 4096
+  - FromIndex: 7
+    ToIndex: 22
+    Condition: 8192
   - FromIndex: 8
     ToIndex: 0
     Condition: 257
@@ -131,12 +181,24 @@ MonoBehaviour:
   - FromIndex: 8
     ToIndex: 11
     Condition: 1024
+  - FromIndex: 8
+    ToIndex: 21
+    Condition: 4096
+  - FromIndex: 8
+    ToIndex: 22
+    Condition: 8192
   - FromIndex: 9
     ToIndex: 2
     Condition: 129
   - FromIndex: 9
     ToIndex: 10
     Condition: 257
+  - FromIndex: 9
+    ToIndex: 21
+    Condition: 4096
+  - FromIndex: 9
+    ToIndex: 22
+    Condition: 8192
   - FromIndex: 10
     ToIndex: 0
     Condition: 257
@@ -152,12 +214,24 @@ MonoBehaviour:
   - FromIndex: 10
     ToIndex: 11
     Condition: 1024
+  - FromIndex: 10
+    ToIndex: 21
+    Condition: 4096
+  - FromIndex: 10
+    ToIndex: 22
+    Condition: 8192
   - FromIndex: 11
     ToIndex: 12
     Condition: 1
   - FromIndex: 11
     ToIndex: 13
     Condition: 1024
+  - FromIndex: 11
+    ToIndex: 21
+    Condition: 4096
+  - FromIndex: 11
+    ToIndex: 22
+    Condition: 8192
   - FromIndex: 12
     ToIndex: 0
     Condition: 257
@@ -167,12 +241,24 @@ MonoBehaviour:
   - FromIndex: 12
     ToIndex: 11
     Condition: 1024
+  - FromIndex: 12
+    ToIndex: 21
+    Condition: 4096
+  - FromIndex: 12
+    ToIndex: 22
+    Condition: 8192
   - FromIndex: 13
     ToIndex: 14
     Condition: 1
   - FromIndex: 13
     ToIndex: 15
     Condition: 1024
+  - FromIndex: 13
+    ToIndex: 21
+    Condition: 4096
+  - FromIndex: 13
+    ToIndex: 22
+    Condition: 8192
   - FromIndex: 14
     ToIndex: 0
     Condition: 257
@@ -182,12 +268,24 @@ MonoBehaviour:
   - FromIndex: 14
     ToIndex: 11
     Condition: 1024
+  - FromIndex: 14
+    ToIndex: 21
+    Condition: 4096
+  - FromIndex: 14
+    ToIndex: 22
+    Condition: 8192
   - FromIndex: 15
     ToIndex: 16
     Condition: 1
   - FromIndex: 15
     ToIndex: 17
     Condition: 1024
+  - FromIndex: 15
+    ToIndex: 21
+    Condition: 4096
+  - FromIndex: 15
+    ToIndex: 22
+    Condition: 8192
   - FromIndex: 16
     ToIndex: 0
     Condition: 257
@@ -197,12 +295,24 @@ MonoBehaviour:
   - FromIndex: 16
     ToIndex: 11
     Condition: 1024
+  - FromIndex: 16
+    ToIndex: 21
+    Condition: 4096
+  - FromIndex: 16
+    ToIndex: 22
+    Condition: 8192
   - FromIndex: 17
     ToIndex: 18
     Condition: 1
   - FromIndex: 17
     ToIndex: 19
     Condition: 1024
+  - FromIndex: 17
+    ToIndex: 21
+    Condition: 4096
+  - FromIndex: 17
+    ToIndex: 22
+    Condition: 8192
   - FromIndex: 18
     ToIndex: 0
     Condition: 257
@@ -212,12 +322,24 @@ MonoBehaviour:
   - FromIndex: 18
     ToIndex: 11
     Condition: 1024
+  - FromIndex: 18
+    ToIndex: 21
+    Condition: 4096
+  - FromIndex: 18
+    ToIndex: 22
+    Condition: 8192
   - FromIndex: 19
     ToIndex: 11
     Condition: 1024
   - FromIndex: 19
     ToIndex: 20
     Condition: 1
+  - FromIndex: 19
+    ToIndex: 21
+    Condition: 4096
+  - FromIndex: 19
+    ToIndex: 22
+    Condition: 8192
   - FromIndex: 20
     ToIndex: 0
     Condition: 257
@@ -227,3 +349,21 @@ MonoBehaviour:
   - FromIndex: 20
     ToIndex: 11
     Condition: 1024
+  - FromIndex: 20
+    ToIndex: 21
+    Condition: 4096
+  - FromIndex: 20
+    ToIndex: 22
+    Condition: 8192
+  - FromIndex: 21
+    ToIndex: 0
+    Condition: 1
+  - FromIndex: 21
+    ToIndex: 2
+    Condition: 128
+  - FromIndex: 21
+    ToIndex: 22
+    Condition: 8192
+  - FromIndex: 22
+    ToIndex: 21
+    Condition: 4096

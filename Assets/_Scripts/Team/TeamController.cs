@@ -1,39 +1,43 @@
 using System;
-using System.Collections.Generic;
+using SPCharacterController;
 using SPPlayerInput;
 using UnityEngine;
 
 namespace SPTeam
 {
     /// <summary>
-    /// 队伍控制器 - 轮询切换唯一激活角色，并通过角色激活状态交接玩家输入。
+    /// 队伍控制器 - 根据 TeamInfoSO 实例化角色预制体，轮询切换唯一激活角色，并通过角色激活状态交接玩家输入。
     /// </summary>
     [DefaultExecutionOrder(-350)]
     public class TeamController : MonoBehaviour
     {
         [Header("队伍配置")]
-        [Tooltip("按切换顺序排列的角色根物体，同一时间仅激活其中一个角色。")]
-        [SerializeField] private GameObject[] _characters = Array.Empty<GameObject>();
+        [Tooltip("队伍数据 ScriptableObject，作为角色构成与激活索引的单一数据源。")]
+        [SerializeField] private TeamInfoSO _teamInfo;
+
+        [Tooltip("角色实例化的父节点与初始位置，未设置时使用自身 Transform。")]
+        [SerializeField] private Transform _spawnPoint;
 
         [Tooltip("两次角色切换之间的最短间隔（秒）。")]
         [SerializeField] private float _switchCooldown = 0.5f;
 
-        private int _currentCharacterIndex;
         private float _cooldownTimer;
         private SPPlayerInputCenter _inputCenter;
+        private TeamInfoSO _runtimeTeamInfo;
         private SPCharacterController.SPCharacterController[] _characterControllers;
 
         private void Awake()
         {
             ValidateConfiguration();
-            CacheCharacterControllers();
+            _runtimeTeamInfo = Instantiate(_teamInfo);
+            InstantiateCharacters();
         }
 
         private void Start()
         {
             for (int i = 0; i < _characterControllers.Length; i++)
             {
-                if (i == _currentCharacterIndex)
+                if (i == _runtimeTeamInfo.ActiveCharacterIndex)
                     _characterControllers[i].EnterTeam();
                 else
                     _characterControllers[i].LeaveTeam();
@@ -54,36 +58,51 @@ namespace SPTeam
             _inputCenter = SPPlayerInputCenter.Instance;
             if (_inputCenter == null)
                 throw new InvalidOperationException($"{name}: 场景中没有可用的玩家输入中心。");
-            if (_characters == null || _characters.Length < 2)
-                throw new InvalidOperationException($"{name}: 队伍至少需要配置两个角色。");
+            if (_teamInfo == null)
+                throw new InvalidOperationException($"{name}: TeamInfoSO 未设置。");
 
-            var uniqueCharacters = new HashSet<GameObject>();
-            for (int i = 0; i < _characters.Length; i++)
+            for (int i = 0; i < TeamInfoSO.CharacterCount; i++)
             {
-                GameObject character = _characters[i];
-                if (character == null)
-                    throw new InvalidOperationException($"{name}: 队伍角色索引 {i} 未设置角色物体。");
-                if (!uniqueCharacters.Add(character))
-                    throw new InvalidOperationException($"{name}: 角色物体 {character.name} 被重复配置。");
-                if (character == gameObject || transform.IsChildOf(character.transform))
-                    throw new InvalidOperationException($"{name}: TeamController 不能位于角色物体 {character.name} 上或其子层级中。");
-                if (!character.TryGetComponent(out SPCharacterController.SPCharacterController _))
-                    throw new InvalidOperationException($"{name}: 角色物体 {character.name} 没有 SPCharacterController 组件。");
+                CharacterInfoSO info = _teamInfo.Characters[i];
+                if (info == null)
+                    throw new InvalidOperationException($"{name}: TeamInfoSO 索引 {i} 的角色信息未设置。");
+                if (info.Prefab == null)
+                    throw new InvalidOperationException($"{name}: TeamInfoSO 索引 {i} 的角色 {info.name} 未配置预制体。");
+            }
+        }
+
+        private void InstantiateCharacters()
+        {
+            Transform parent = _spawnPoint != null ? _spawnPoint : transform;
+            _characterControllers = new SPCharacterController.SPCharacterController[TeamInfoSO.CharacterCount];
+
+            for (int i = 0; i < TeamInfoSO.CharacterCount; i++)
+            {
+                GameObject prefab = _runtimeTeamInfo.GetPrefab(i);
+                GameObject instance = Instantiate(prefab, parent.position, parent.rotation, parent);
+                _characterControllers[i] = instance.GetComponent<SPCharacterController.SPCharacterController>();
             }
         }
 
         private void SwitchToNextCharacter()
         {
-            Transform leaving = _characters[_currentCharacterIndex].transform;
+            int oldIndex = _runtimeTeamInfo.ActiveCharacterIndex;
+            Transform leaving = _characterControllers[oldIndex].transform;
             Vector3 position = leaving.position;
             Quaternion rotation = leaving.rotation;
-            _characterControllers[_currentCharacterIndex].LeaveTeam();
-            _currentCharacterIndex = (_currentCharacterIndex + 1) % _characters.Length;
-            _characterControllers[_currentCharacterIndex].EnterTeam(position, rotation);
-            _cooldownTimer = _switchCooldown;
+            _characterControllers[oldIndex].LeaveTeam();
 
-            SPEvent.GameEvent.OnCharacterSwitched(_currentCharacterIndex);
+            int newIndex = _runtimeTeamInfo.SwitchCharacter();
+            _characterControllers[newIndex].EnterTeam(position, rotation);
+
+            _cooldownTimer = _switchCooldown;
+            SPEvent.GameEvent.OnCharacterSwitched(newIndex);
         }
+
+        /// <summary>
+        /// 运行时队伍数据副本，持有可变状态。
+        /// </summary>
+        public TeamInfoSO RuntimeTeamInfo => _runtimeTeamInfo;
 
         /// <summary>
         /// 获取指定索引角色的 Transform。
@@ -92,16 +111,9 @@ namespace SPTeam
         /// <returns>对应角色的 Transform</returns>
         public Transform GetCharacterTransform(int index)
         {
-            if (index < 0 || index >= _characters.Length)
+            if (index < 0 || index >= _characterControllers.Length)
                 throw new ArgumentOutOfRangeException(nameof(index));
-            return _characters[index].transform;
-        }
-
-        private void CacheCharacterControllers()
-        {
-            _characterControllers = new SPCharacterController.SPCharacterController[_characters.Length];
-            for (int i = 0; i < _characters.Length; i++)
-                _characterControllers[i] = _characters[i].GetComponent<SPCharacterController.SPCharacterController>();
+            return _characterControllers[index].transform;
         }
     }
 }

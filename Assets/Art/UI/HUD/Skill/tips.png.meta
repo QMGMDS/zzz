@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 23c03750736ef1047b866737a2f6b785
+guid: 944f031e1002bd84a8637c9ecba163b9
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -72,7 +72,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -97,22 +97,106 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\u6280\u80FD (\u672A\u6FC0\u6D3B)_0"
+      name: tips_0
       rect:
         serializedVersion: 2
-        x: 319
-        y: 304
-        width: 1420
-        height: 1420
+        x: 320
+        y: 140
+        width: 38
+        height: 38
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 70adf405afda75e4788af6c7eb472ac4
-      internalID: 892291868
+      spriteID: 48b34f3b080252c42bd339249f1a6b86
+      internalID: -1594778137
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tips_1
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 32
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 91d15a814d02eac46a32defa7768ce76
+      internalID: -1744691896
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tips_2
+      rect:
+        serializedVersion: 2
+        x: 110
+        y: 0
+        width: 31
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5dd6851c43dc492428ec591d654008c7
+      internalID: -2070563311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tips_3
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 0
+        width: 37
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 75fedd229e113fc4db4aee40d8553cb5
+      internalID: 1386455158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tips_4
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 0
+        width: 93
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7fda0d8b2c52bd14d9f6132e5d86ba10
+      internalID: -1162229283
       vertices: []
       indices: 
       edges: []
@@ -128,7 +212,11 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      "\u6280\u80FD (\u672A\u6FC0\u6D3B)_0": 892291868
+      tips_0: -1594778137
+      tips_1: -1744691896
+      tips_2: -2070563311
+      tips_3: 1386455158
+      tips_4: -1162229283
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

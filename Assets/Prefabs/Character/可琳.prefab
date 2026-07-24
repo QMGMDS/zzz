@@ -72,7 +72,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 871fdbbd55d54e649b91ebff2b898cd7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.92
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 871fdbbd55d54e649b91ebff2b898cd7, type: 3}
       propertyPath: m_LocalPosition.y
@@ -80,7 +80,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 871fdbbd55d54e649b91ebff2b898cd7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 8.52
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 871fdbbd55d54e649b91ebff2b898cd7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -88,15 +88,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 871fdbbd55d54e649b91ebff2b898cd7, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 871fdbbd55d54e649b91ebff2b898cd7, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 871fdbbd55d54e649b91ebff2b898cd7, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 871fdbbd55d54e649b91ebff2b898cd7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -243,7 +243,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _characterInfo: {fileID: 11400000, guid: cde773723732e354b9f0f5dca511fadd, type: 2}
   _config: {fileID: 11400000, guid: 41fc0cade0631f6478d6ba474984724c, type: 2}
-  _inputSource: {fileID: 0}
+  _inputSource: {fileID: 11400000, guid: 27216c12375bbc94ba3525ad54f6475e, type: 2}
   _motionConfig: {fileID: 11400000, guid: 63c699566d89d154c9a0f86b09f9b6e3, type: 2}
   _animancer: {fileID: 7915542844063938094}
   _characterController: {fileID: 6036368207788230149}

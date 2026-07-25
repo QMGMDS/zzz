@@ -37,6 +37,10 @@ namespace SPCharacterController.Editor
                 DrawRootMotionProperties();
             }
 
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("特效", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(StateNodeSO.Effects)));
+
             serializedObject.ApplyModifiedProperties();
         }
 

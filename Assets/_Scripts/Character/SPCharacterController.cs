@@ -41,6 +41,7 @@ namespace SPCharacterController
         private StateMachine _stateMachine;
         private AnimationDriver _animationDriver;
         private CharacterMotionDriver _motionDriver;
+        private EffectDriver _effectDriver;
         private Animator _animator;
         private CCSourceSO _configuredInputSource;
         private bool _isLeaving;
@@ -71,6 +72,7 @@ namespace SPCharacterController
             _animationDriver = new AnimationDriver(_blackboard, animationSource);
             var motor = new CharacterMotor(_characterController, transform);
             _motionDriver = new CharacterMotionDriver(_blackboard, _motionConfig, motor, transform, _movementReference);
+            _effectDriver = new EffectDriver(_blackboard, transform);
         }
 
         private void Update()
@@ -104,6 +106,9 @@ namespace SPCharacterController
         {
             // 动画进度回写黑板
             _animationDriver.SyncAnimProgress();
+
+            // 特效驱动器响应状态变化与动画进度释放特效
+            _effectDriver.LogicUpdate();
 
             if (_isLeaving && _blackboard.EvaluateCondition(CharacterIntention.AnimationCompleted))
             {

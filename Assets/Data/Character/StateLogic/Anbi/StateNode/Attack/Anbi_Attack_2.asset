@@ -21,6 +21,8 @@ MonoBehaviour:
     _end: 1
   MotionMode: 1
   AllowRotation: 0
+  SnapRotationOnExit: 0
   RootMotionScale: 1
   UseRootMotionRotation: 0
   RootMotionRotationScale: 1
+  Effects: {fileID: 11400000, guid: 4ca9caa6a15bf5741b45a6979c8bfbe2, type: 2}

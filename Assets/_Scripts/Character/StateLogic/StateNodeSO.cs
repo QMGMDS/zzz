@@ -42,5 +42,9 @@ namespace SPCharacterController
         [Tooltip("根运动旋转倍率（0 = 忽略，1 = 原始）")]
         [Min(0f)]
         public float RootMotionRotationScale = 1f;
+
+        [Header("特效")]
+        [Tooltip("该状态下释放的特效配置，为空表示无特效")]
+        public EffectInfoSO Effects;
     }
 }

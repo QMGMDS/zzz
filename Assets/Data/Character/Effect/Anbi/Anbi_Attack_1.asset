@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a3b4243f47e88741832340dc38604aa, type: 3}
+  m_Name: Anbi_Attack_1
+  m_EditorClassIdentifier: 
+  Effects:
+  - Prefab: {fileID: 6922743098465838680, guid: 86b0240d91604bd498f399a243371041, type: 3}
+    ReleaseWindow:
+      _start: 0.325
+      _end: 0.425
+    ParentBoneName: 
+    AttachToParent: 1
+    LocalPosition: {x: 0, y: 0.7, z: 0.3}
+    LocalRotation: {x: 0, y: 160, z: 0}
+    LocalScale: {x: 0, y: 0, z: 0}
+    DestroyPolicy: 1
+    AutoDestroyDelay: 0

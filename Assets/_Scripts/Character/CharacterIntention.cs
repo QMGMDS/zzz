@@ -15,17 +15,17 @@ namespace SPCharacterController
         //  公共意图 0 ~ 6
         // ═══════════════════════════════════════
         AnimationCompleted = 1 << 0,
+        WantToMove = 1 << 1,
+        NotWantToMove = 1 << 2,
+        WantToAttack = 1 << 3,
 
         // ═══════════════════════════════════════
         //  玩家独有意图 7 ~ 
         // ═══════════════════════════════════════
-        WantToMove = 1 << 7,
-        NotWantToMove = 1 << 8,
-        WantToEvade = 1 << 9,
-        WantToAttack = 1 << 10,
-        WantToTurn = 1 << 11,
-        SwitchIn = 1 << 12,
-        SwitchOut = 1 << 13,
+        WantToEvade = 1 << 7,
+        WantToTurn = 1 << 8,
+        SwitchIn = 1 << 9,
+        SwitchOut = 1 << 10,
 
         // ═══════════════════════════════════════
         //  怪物独有意图

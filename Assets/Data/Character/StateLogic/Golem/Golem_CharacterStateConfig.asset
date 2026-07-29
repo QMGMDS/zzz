@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da01a99121469d549bfdf76d6e1fe4d3, type: 3}
+  m_Name: Golem_CharacterStateConfig
+  m_EditorClassIdentifier: 
+  Nodes:
+  - {fileID: 11400000, guid: 6d8128f532b3e58459fe13f78a456bd4, type: 2}
+  - {fileID: 11400000, guid: 04267d370e968b24abe0f335f4298a28, type: 2}
+  - {fileID: 11400000, guid: 9c409399f2bafc44f8b76877db1a2ceb, type: 2}
+  Rules:
+  - FromIndex: 0
+    ToIndex: 1
+    Condition: 2
+  - FromIndex: 0
+    ToIndex: 2
+    Condition: 8
+  - FromIndex: 1
+    ToIndex: 0
+    Condition: 4
+  - FromIndex: 1
+    ToIndex: 2
+    Condition: 8
+  - FromIndex: 2
+    ToIndex: 0
+    Condition: 1

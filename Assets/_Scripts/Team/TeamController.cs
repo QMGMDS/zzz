@@ -24,7 +24,7 @@ namespace SPTeam
         private float _cooldownTimer;
         private SPPlayerInputCenter _inputCenter;
         private TeamInfoSO _runtimeTeamInfo;
-        private SPCharacterController.SPCharacterController[] _characterControllers;
+        private SPCharacterController.SPCC[] _characterControllers;
 
         private void Awake()
         {
@@ -74,13 +74,13 @@ namespace SPTeam
         private void InstantiateCharacters()
         {
             Transform parent = _spawnPoint != null ? _spawnPoint : transform;
-            _characterControllers = new SPCharacterController.SPCharacterController[TeamInfoSO.CharacterCount];
+            _characterControllers = new SPCharacterController.SPCC[TeamInfoSO.CharacterCount];
 
             for (int i = 0; i < TeamInfoSO.CharacterCount; i++)
             {
                 GameObject prefab = _runtimeTeamInfo.GetPrefab(i);
                 GameObject instance = Instantiate(prefab, parent.position, parent.rotation, parent);
-                _characterControllers[i] = instance.GetComponent<SPCharacterController.SPCharacterController>();
+                _characterControllers[i] = instance.GetComponent<SPCharacterController.SPCC>();
             }
         }
 

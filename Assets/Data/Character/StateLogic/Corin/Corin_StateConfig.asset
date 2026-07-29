@@ -39,331 +39,331 @@ MonoBehaviour:
   Rules:
   - FromIndex: 0
     ToIndex: 2
-    Condition: 128
+    Condition: 2
   - FromIndex: 0
     ToIndex: 7
-    Condition: 640
+    Condition: 130
   - FromIndex: 0
     ToIndex: 9
-    Condition: 768
+    Condition: 132
   - FromIndex: 0
     ToIndex: 11
-    Condition: 1024
+    Condition: 8
   - FromIndex: 0
     ToIndex: 21
-    Condition: 4096
+    Condition: 512
   - FromIndex: 0
     ToIndex: 22
-    Condition: 8192
+    Condition: 1024
   - FromIndex: 1
     ToIndex: 0
     Condition: 1
   - FromIndex: 1
     ToIndex: 2
-    Condition: 128
+    Condition: 2
   - FromIndex: 1
     ToIndex: 7
-    Condition: 640
+    Condition: 130
   - FromIndex: 1
     ToIndex: 9
-    Condition: 768
+    Condition: 132
   - FromIndex: 1
     ToIndex: 11
-    Condition: 1024
+    Condition: 8
   - FromIndex: 1
     ToIndex: 21
-    Condition: 4096
+    Condition: 512
   - FromIndex: 1
     ToIndex: 22
-    Condition: 8192
+    Condition: 1024
   - FromIndex: 2
     ToIndex: 1
-    Condition: 256
+    Condition: 4
   - FromIndex: 2
     ToIndex: 3
-    Condition: 129
+    Condition: 3
   - FromIndex: 2
     ToIndex: 7
-    Condition: 640
+    Condition: 130
   - FromIndex: 2
     ToIndex: 11
-    Condition: 1024
+    Condition: 8
   - FromIndex: 2
     ToIndex: 21
-    Condition: 4096
+    Condition: 512
   - FromIndex: 2
     ToIndex: 22
-    Condition: 8192
+    Condition: 1024
   - FromIndex: 3
     ToIndex: 1
-    Condition: 256
+    Condition: 4
   - FromIndex: 3
     ToIndex: 7
-    Condition: 640
+    Condition: 130
   - FromIndex: 3
     ToIndex: 11
-    Condition: 1024
+    Condition: 8
   - FromIndex: 3
     ToIndex: 21
-    Condition: 4096
+    Condition: 512
   - FromIndex: 3
     ToIndex: 22
-    Condition: 8192
+    Condition: 1024
   - FromIndex: 4
     ToIndex: 1
-    Condition: 256
+    Condition: 4
   - FromIndex: 4
     ToIndex: 5
-    Condition: 129
+    Condition: 3
   - FromIndex: 4
     ToIndex: 11
-    Condition: 1024
+    Condition: 8
   - FromIndex: 4
     ToIndex: 21
-    Condition: 4096
+    Condition: 512
   - FromIndex: 4
     ToIndex: 22
-    Condition: 8192
+    Condition: 1024
   - FromIndex: 5
     ToIndex: 1
-    Condition: 256
+    Condition: 4
   - FromIndex: 5
     ToIndex: 6
-    Condition: 2048
+    Condition: 256
   - FromIndex: 5
     ToIndex: 7
-    Condition: 640
+    Condition: 130
   - FromIndex: 5
     ToIndex: 11
-    Condition: 1024
+    Condition: 8
   - FromIndex: 5
     ToIndex: 21
-    Condition: 4096
+    Condition: 512
   - FromIndex: 5
     ToIndex: 22
-    Condition: 8192
+    Condition: 1024
   - FromIndex: 6
     ToIndex: 1
-    Condition: 256
+    Condition: 4
   - FromIndex: 6
     ToIndex: 5
-    Condition: 129
+    Condition: 3
   - FromIndex: 6
     ToIndex: 21
-    Condition: 4096
+    Condition: 512
   - FromIndex: 6
     ToIndex: 22
-    Condition: 8192
+    Condition: 1024
   - FromIndex: 7
     ToIndex: 5
-    Condition: 129
+    Condition: 3
   - FromIndex: 7
     ToIndex: 8
-    Condition: 257
+    Condition: 5
   - FromIndex: 7
     ToIndex: 21
-    Condition: 4096
+    Condition: 512
   - FromIndex: 7
     ToIndex: 22
-    Condition: 8192
-  - FromIndex: 8
-    ToIndex: 0
-    Condition: 257
-  - FromIndex: 8
-    ToIndex: 2
-    Condition: 128
-  - FromIndex: 8
-    ToIndex: 7
-    Condition: 640
-  - FromIndex: 8
-    ToIndex: 9
-    Condition: 768
-  - FromIndex: 8
-    ToIndex: 11
     Condition: 1024
   - FromIndex: 8
+    ToIndex: 0
+    Condition: 5
+  - FromIndex: 8
+    ToIndex: 2
+    Condition: 2
+  - FromIndex: 8
+    ToIndex: 7
+    Condition: 130
+  - FromIndex: 8
+    ToIndex: 9
+    Condition: 132
+  - FromIndex: 8
+    ToIndex: 11
+    Condition: 8
+  - FromIndex: 8
     ToIndex: 21
-    Condition: 4096
+    Condition: 512
   - FromIndex: 8
     ToIndex: 22
-    Condition: 8192
+    Condition: 1024
   - FromIndex: 9
     ToIndex: 2
-    Condition: 129
+    Condition: 3
   - FromIndex: 9
     ToIndex: 10
-    Condition: 257
+    Condition: 5
   - FromIndex: 9
     ToIndex: 21
-    Condition: 4096
+    Condition: 512
   - FromIndex: 9
     ToIndex: 22
-    Condition: 8192
-  - FromIndex: 10
-    ToIndex: 0
-    Condition: 257
-  - FromIndex: 10
-    ToIndex: 2
-    Condition: 128
-  - FromIndex: 10
-    ToIndex: 7
-    Condition: 640
-  - FromIndex: 10
-    ToIndex: 9
-    Condition: 768
-  - FromIndex: 10
-    ToIndex: 11
     Condition: 1024
   - FromIndex: 10
+    ToIndex: 0
+    Condition: 5
+  - FromIndex: 10
+    ToIndex: 2
+    Condition: 2
+  - FromIndex: 10
+    ToIndex: 7
+    Condition: 130
+  - FromIndex: 10
+    ToIndex: 9
+    Condition: 132
+  - FromIndex: 10
+    ToIndex: 11
+    Condition: 8
+  - FromIndex: 10
     ToIndex: 21
-    Condition: 4096
+    Condition: 512
   - FromIndex: 10
     ToIndex: 22
-    Condition: 8192
+    Condition: 1024
   - FromIndex: 11
     ToIndex: 12
     Condition: 1
   - FromIndex: 11
     ToIndex: 13
-    Condition: 1024
+    Condition: 8
   - FromIndex: 11
     ToIndex: 21
-    Condition: 4096
+    Condition: 512
   - FromIndex: 11
     ToIndex: 22
-    Condition: 8192
+    Condition: 1024
   - FromIndex: 12
     ToIndex: 0
-    Condition: 257
+    Condition: 5
   - FromIndex: 12
     ToIndex: 2
-    Condition: 128
+    Condition: 2
   - FromIndex: 12
     ToIndex: 11
-    Condition: 1024
+    Condition: 8
   - FromIndex: 12
     ToIndex: 21
-    Condition: 4096
+    Condition: 512
   - FromIndex: 12
     ToIndex: 22
-    Condition: 8192
+    Condition: 1024
   - FromIndex: 13
     ToIndex: 14
     Condition: 1
   - FromIndex: 13
     ToIndex: 15
-    Condition: 1024
+    Condition: 8
   - FromIndex: 13
     ToIndex: 21
-    Condition: 4096
+    Condition: 512
   - FromIndex: 13
     ToIndex: 22
-    Condition: 8192
+    Condition: 1024
   - FromIndex: 14
     ToIndex: 0
-    Condition: 257
+    Condition: 5
   - FromIndex: 14
     ToIndex: 2
-    Condition: 128
+    Condition: 2
   - FromIndex: 14
     ToIndex: 11
-    Condition: 1024
+    Condition: 8
   - FromIndex: 14
     ToIndex: 21
-    Condition: 4096
+    Condition: 512
   - FromIndex: 14
     ToIndex: 22
-    Condition: 8192
+    Condition: 1024
   - FromIndex: 15
     ToIndex: 16
     Condition: 1
   - FromIndex: 15
     ToIndex: 17
-    Condition: 1024
+    Condition: 8
   - FromIndex: 15
     ToIndex: 21
-    Condition: 4096
+    Condition: 512
   - FromIndex: 15
     ToIndex: 22
-    Condition: 8192
+    Condition: 1024
   - FromIndex: 16
     ToIndex: 0
-    Condition: 257
+    Condition: 5
   - FromIndex: 16
     ToIndex: 2
-    Condition: 128
+    Condition: 2
   - FromIndex: 16
     ToIndex: 11
-    Condition: 1024
+    Condition: 8
   - FromIndex: 16
     ToIndex: 21
-    Condition: 4096
+    Condition: 512
   - FromIndex: 16
     ToIndex: 22
-    Condition: 8192
+    Condition: 1024
   - FromIndex: 17
     ToIndex: 18
     Condition: 1
   - FromIndex: 17
     ToIndex: 19
-    Condition: 1024
+    Condition: 8
   - FromIndex: 17
     ToIndex: 21
-    Condition: 4096
+    Condition: 512
   - FromIndex: 17
     ToIndex: 22
-    Condition: 8192
+    Condition: 1024
   - FromIndex: 18
     ToIndex: 0
-    Condition: 257
+    Condition: 5
   - FromIndex: 18
     ToIndex: 2
-    Condition: 128
+    Condition: 2
   - FromIndex: 18
     ToIndex: 11
-    Condition: 1024
+    Condition: 8
   - FromIndex: 18
     ToIndex: 21
-    Condition: 4096
+    Condition: 512
   - FromIndex: 18
     ToIndex: 22
-    Condition: 8192
+    Condition: 1024
   - FromIndex: 19
     ToIndex: 11
-    Condition: 1024
+    Condition: 8
   - FromIndex: 19
     ToIndex: 20
     Condition: 1
   - FromIndex: 19
     ToIndex: 21
-    Condition: 4096
+    Condition: 512
   - FromIndex: 19
     ToIndex: 22
-    Condition: 8192
-  - FromIndex: 20
-    ToIndex: 0
-    Condition: 257
-  - FromIndex: 20
-    ToIndex: 2
-    Condition: 128
-  - FromIndex: 20
-    ToIndex: 11
     Condition: 1024
   - FromIndex: 20
+    ToIndex: 0
+    Condition: 5
+  - FromIndex: 20
+    ToIndex: 2
+    Condition: 2
+  - FromIndex: 20
+    ToIndex: 11
+    Condition: 8
+  - FromIndex: 20
     ToIndex: 21
-    Condition: 4096
+    Condition: 512
   - FromIndex: 20
     ToIndex: 22
-    Condition: 8192
+    Condition: 1024
   - FromIndex: 21
     ToIndex: 0
     Condition: 1
   - FromIndex: 21
     ToIndex: 2
-    Condition: 128
+    Condition: 2
   - FromIndex: 21
     ToIndex: 22
-    Condition: 8192
+    Condition: 1024
   - FromIndex: 22
     ToIndex: 21
-    Condition: 4096
+    Condition: 512

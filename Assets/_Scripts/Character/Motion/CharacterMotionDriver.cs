@@ -12,7 +12,6 @@ namespace SPCharacterController
         private readonly CharacterMotionConfigSO _config;
         private readonly CharacterMotor _motor;
         private readonly Transform _characterTransform;
-        private readonly Transform _movementReference;
         private Vector3 _desiredMoveDirection;
         private Vector3 _planarVelocity;
         private float _verticalVelocity;
@@ -29,14 +28,12 @@ namespace SPCharacterController
         /// <param name="config">角色移动配置</param>
         /// <param name="motor">角色运动电机</param>
         /// <param name="characterTransform">角色根 Transform</param>
-        /// <param name="movementReference">相机相对移动方向参考</param>
-        public CharacterMotionDriver(CharacterRunTimeData blackboard, CharacterMotionConfigSO config, CharacterMotor motor, Transform characterTransform, Transform movementReference)
+        public CharacterMotionDriver(CharacterRunTimeData blackboard, CharacterMotionConfigSO config, CharacterMotor motor, Transform characterTransform)
         {
             _blackboard = blackboard ?? throw new ArgumentNullException(nameof(blackboard));
             _config = config != null ? config : throw new ArgumentNullException(nameof(config));
             _motor = motor ?? throw new ArgumentNullException(nameof(motor));
             _characterTransform = characterTransform != null ? characterTransform : throw new ArgumentNullException(nameof(characterTransform));
-            _movementReference = movementReference != null ? movementReference : throw new ArgumentNullException(nameof(movementReference));
         }
 
         /// <summary>当前状态是否等待动画根运动提交位移。</summary>
@@ -113,11 +110,9 @@ namespace SPCharacterController
 
         private Vector3 ResolveDesiredDirection(Vector2 moveInput)
         {
-            Vector3 forward = Vector3.ProjectOnPlane(_movementReference.forward, Vector3.up);
+            if (moveInput.sqrMagnitude < 0.0001f) return Vector3.zero;
 
-            forward.Normalize();
-            Vector3 right = Vector3.Cross(Vector3.up, forward).normalized;
-            return (forward * moveInput.y + right * moveInput.x).normalized;
+            return new Vector3(moveInput.x, 0f, moveInput.y).normalized;
         }
 
         /// <summary>
@@ -126,7 +121,7 @@ namespace SPCharacterController
         private Vector3 UpdatePlanarVelocity(StateNodeSO stateNode, Vector3 desiredDirection, float deltaTime)
         {
             Vector3 targetVelocity = stateNode.MotionMode == CharacterMotionMode.CodeDriven
-                ? desiredDirection * (_config.MaxMoveSpeed * _blackboard.MoveInputMagnitude)
+                ? desiredDirection * _config.MaxMoveSpeed
                 : Vector3.zero;
             float changeRate = targetVelocity.sqrMagnitude > 0f ? _config.Acceleration : _config.Deceleration;
             _planarVelocity = Vector3.MoveTowards(

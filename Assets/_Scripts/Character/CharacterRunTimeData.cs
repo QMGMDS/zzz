@@ -23,17 +23,13 @@ namespace SPCharacterController
 
         #region InputSource 写入
 
-        /// <summary>死区处理后的二维移动输入</summary>
+        /// <summary>摄像机相对的 XZ 平面移动方向（世界空间），XY 分量分别对应世界 XZ 轴</summary>
         public Vector2 MoveInput { get; private set; }
 
-        /// <summary>移动输入强度，范围为 0 到 1</summary>
-        public float MoveInputMagnitude { get; private set; }
-
         /// <summary>写入本帧移动输入。</summary>
-        internal void WriteInput(Vector2 moveInput, float moveInputMagnitude)
+        internal void WriteInput(Vector2 moveInput)
         {
             MoveInput = moveInput;
-            MoveInputMagnitude = moveInputMagnitude;
         }
 
         /// <summary>设置或清除输入源产生的意图。</summary>

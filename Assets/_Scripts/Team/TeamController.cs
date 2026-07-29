@@ -115,5 +115,17 @@ namespace SPTeam
                 throw new ArgumentOutOfRangeException(nameof(index));
             return _characterControllers[index].transform;
         }
+
+        /// <summary>
+        /// 获取指定索引角色的运行时属性副本。
+        /// </summary>
+        /// <param name="index">角色在队伍中的索引</param>
+        /// <returns>对应角色的运行时属性</returns>
+        public CharacterStats GetCharacterStats(int index)
+        {
+            if (index < 0 || index >= _characterControllers.Length)
+                throw new ArgumentOutOfRangeException(nameof(index));
+            return _characterControllers[index].Stats;
+        }
     }
 }

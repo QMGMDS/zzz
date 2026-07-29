@@ -126,8 +126,8 @@ namespace SPUI
         /// <param name="dataIndex">数据索引 0-2</param>
         private void RefreshHP(int slot, int dataIndex)
         {
-            CharacterInfoSO info = _model.Characters[dataIndex];
-            float fill = (float)info.CurrentHP / info.MaxHP;
+            CharacterStats stats = _model.GetCharacterStats(dataIndex);
+            float fill = (float)stats.CurrentHP / stats.MaxHP;
             Image target = GetHPBarGreenImage(slot);
             target.fillAmount = fill;
 

@@ -17,6 +17,7 @@ namespace SPUI
         [SerializeField] private PlayerHUD_View _view;
 
         private PlayerHUD_Model _model;
+        private bool _subscribed;
 
         private void Awake()
         {
@@ -28,7 +29,10 @@ namespace SPUI
 
         private void Start()
         {
-            _model = new PlayerHUD_Model(_teamController.RuntimeTeamInfo);
+            _model = new PlayerHUD_Model(_teamController);
+            for (int i = 0; i < TeamInfoSO.CharacterCount; i++)
+                _model.GetCharacterStats(i).HPChanged += OnCharacterStatsChanged;
+            _subscribed = true;
             _view.BindModel(_model);
         }
 
@@ -40,6 +44,12 @@ namespace SPUI
         private void OnDisable()
         {
             SPEvent.GameEvent.CharacterSwitched -= OnCharacterSwitched;
+            UnsubscribeStats();
+        }
+
+        private void OnDestroy()
+        {
+            UnsubscribeStats();
         }
 
         /// <summary>
@@ -49,6 +59,25 @@ namespace SPUI
         private void OnCharacterSwitched(int newIndex)
         {
             _model.SetActiveCharacter(newIndex);
+        }
+
+        /// <summary>
+        /// 任一角色生命值变化时，通知 Model 全量刷新 HUD。
+        /// </summary>
+        private void OnCharacterStatsChanged()
+        {
+            _model.NotifyDataChanged();
+        }
+
+        /// <summary>
+        /// 解绑全部角色属性事件，防止 HUD 失活后回调空引用。
+        /// </summary>
+        private void UnsubscribeStats()
+        {
+            if (!_subscribed || _model == null) return;
+            for (int i = 0; i < TeamInfoSO.CharacterCount; i++)
+                _model.GetCharacterStats(i).HPChanged -= OnCharacterStatsChanged;
+            _subscribed = false;
         }
     }
 }

@@ -15,6 +15,5 @@ MonoBehaviour:
   _characterId: Anbi
   _faction: 0
   _avatar: {fileID: -1090506288, guid: 435d37222c2a71b4bbc3e9c376c43eb8, type: 3}
-  _maxHP: 100
-  _currentHP: 50
+  _stats: {fileID: 11400000, guid: e237a4209177a894d97e7be0ee710544, type: 2}
   _prefab: {fileID: 113991625771680592, guid: 9fa94aa2eee1f7a46a8f374eeded979f, type: 3}

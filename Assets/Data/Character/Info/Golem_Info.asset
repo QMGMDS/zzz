@@ -15,6 +15,5 @@ MonoBehaviour:
   _characterId: Golem
   _faction: 1
   _avatar: {fileID: 0}
-  _maxHP: 100
-  _currentHP: 100
+  _stats: {fileID: 11400000, guid: 925677f9fd967c241a8c7cc31c96884b, type: 2}
   _prefab: {fileID: 6096398139790413044, guid: 37d92d2edf43af04b98a09185d78fee4, type: 3}

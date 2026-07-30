@@ -26,11 +26,8 @@ namespace SPCharacterController
         [Tooltip("角色头像")]
         [SerializeField] private Sprite _avatar;
 
-        [Tooltip("角色最大生命值")]
-        [SerializeField] private int _maxHP;
-
-        [Tooltip("角色当前生命值")]
-        [SerializeField] private int _currentHP;
+        [Tooltip("角色人物属性资产")]
+        [SerializeField] private CharacterStatsSO _stats;
 
         [Tooltip("角色对应的预制体。")]
         [SerializeField] private GameObject _prefab;
@@ -44,11 +41,8 @@ namespace SPCharacterController
         /// <summary>角色头像。</summary>
         public Sprite Avatar => _avatar;
 
-        /// <summary>角色最大生命值。</summary>
-        public int MaxHP => _maxHP;
-
-        /// <summary>角色当前生命值。</summary>
-        public int CurrentHP => _currentHP;
+        /// <summary>角色人物属性资产。</summary>
+        public CharacterStatsSO Stats => _stats;
 
         /// <summary>角色对应的预制体。</summary>
         public GameObject Prefab => _prefab;

@@ -15,6 +15,5 @@ MonoBehaviour:
   _characterId: Corin
   _faction: 0
   _avatar: {fileID: 751334513, guid: c43b4c8b2cc4ae54792010817dbaa6fe, type: 3}
-  _maxHP: 100
-  _currentHP: 75
+  _stats: {fileID: 11400000, guid: ed3c25d725e311d4b9b1264677362afc, type: 2}
   _prefab: {fileID: 5479783877762596062, guid: 6e940cdbb8dbe944ea300b3a786677eb, type: 3}

@@ -4,7 +4,7 @@ using UnityEngine;
 namespace SPUI
 {
     /// <summary>
-    /// PlayerHUD 控制器 - 持有数据依赖，创建并注入 Model，对接输入与全局事件。
+    /// PlayerHUD 控制器 - 装配视图与视图模型，管理订阅生命周期，不参与数据翻译。
     /// </summary>
     public class PlayerHUD_Controller : MonoBehaviour
     {
@@ -16,7 +16,7 @@ namespace SPUI
         [Tooltip("PlayerHUD 视图。")]
         [SerializeField] private PlayerHUD_View _view;
 
-        private PlayerHUD_Model _model;
+        private PlayerHUD_ViewModel _viewModel;
 
         private void Awake()
         {
@@ -24,31 +24,25 @@ namespace SPUI
                 throw new System.InvalidOperationException($"{name}: TeamController 未设置。");
             if (_view == null)
                 throw new System.InvalidOperationException($"{name}: PlayerHUD_View 未设置。");
-        }
 
-        private void Start()
-        {
-            _model = new PlayerHUD_Model(_teamController.RuntimeTeamInfo);
-            _view.BindModel(_model);
+            _viewModel = new PlayerHUD_ViewModel(_teamController);
+            _view.BindViewModel(_viewModel);
         }
 
         private void OnEnable()
         {
-            SPEvent.GameEvent.CharacterSwitched += OnCharacterSwitched;
+            _viewModel.Start();
         }
 
         private void OnDisable()
         {
-            SPEvent.GameEvent.CharacterSwitched -= OnCharacterSwitched;
+            _viewModel.Stop();
         }
 
-        /// <summary>
-        /// 响应角色切换事件，通知 Model 刷新。
-        /// </summary>
-        /// <param name="newIndex">新激活角色索引</param>
-        private void OnCharacterSwitched(int newIndex)
+        private void OnDestroy()
         {
-            _model.SetActiveCharacter(newIndex);
+            _viewModel?.Stop();
+            _view?.UnbindViewModel();
         }
     }
 }

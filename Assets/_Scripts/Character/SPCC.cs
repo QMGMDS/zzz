@@ -45,6 +45,13 @@ namespace SPCharacterController
 
         #endregion
 
+        #region Public API
+
+        /// <summary>角色运行时属性副本，供 UI 与战斗系统读写当前状态。</summary>
+        public CharacterStats Stats { get; private set; }
+
+        #endregion
+
         #region Life Cycle
 
         private void Awake()
@@ -54,6 +61,7 @@ namespace SPCharacterController
             _configuredInputSource = _inputSource;
 
             if (_characterInfo == null) throw new InvalidOperationException($"{name}: 未设置角色基础信息资产。");
+            if (_characterInfo.Stats == null) throw new InvalidOperationException($"{name}: 未设置角色属性资产。");
             if (_config == null) throw new InvalidOperationException($"{name}: 未设置角色状态配置资产。");
             if (_inputSource == null) throw new InvalidOperationException($"{name}: 未设置角色输入源。");
             if (_animancer == null) throw new InvalidOperationException($"{name}: 未设置 Animancer 组件。");
@@ -68,6 +76,8 @@ namespace SPCharacterController
 
             if (_inputSource is CCSource_AISO aiSource)
                 aiSource.Initialize(transform);
+
+            Stats = new CharacterStats(_characterInfo.Stats);
 
             _blackboard = new CharacterRunTimeData();
             _stateMachine = new StateMachine(_config, _blackboard, 0);

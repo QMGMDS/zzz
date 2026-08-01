@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f635e7f86cf7d584abe5cac194090c86, type: 3}
       propertyPath: m_Name
-      value: Monster_Golem
+      value: Golem
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -124,12 +124,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 276bce028428a594cafbe5ced5c08173, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animator: {fileID: 6386390556669972973}
+  _animancer: {fileID: 4561025979372001793}
+  _characterController: {fileID: 5740438186788921770}
   _characterInfo: {fileID: 11400000, guid: bc4a7a3365387ec44af63d313dd8dd08, type: 2}
   _config: {fileID: 11400000, guid: e6e4c14efb10e8e40ac20d83064774d1, type: 2}
   _inputSource: {fileID: 11400000, guid: e185dfc0dc3b01944bd42b14ddf8e545, type: 2}
   _motionConfig: {fileID: 11400000, guid: e0150cd709245cf4aa197ea94bd8bde9, type: 2}
-  _animancer: {fileID: 4561025979372001793}
-  _characterController: {fileID: 5740438186788921770}
+  _effectCatalog: {fileID: 11400000, guid: 7b0c6c985d4f45a5a51d4f72bd6f1f3a, type: 2}
 --- !u!95 &6386390556669972973 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: f635e7f86cf7d584abe5cac194090c86, type: 3}

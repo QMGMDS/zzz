@@ -216,13 +216,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 276bce028428a594cafbe5ced5c08173, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animator: {fileID: 6647038994690343824}
+  _animancer: {fileID: 4958650350627866175}
+  _characterController: {fileID: 1427599587602420100}
   _characterInfo: {fileID: 11400000, guid: 6d7f4e0cbe5dce64ca7f938a09919ab1, type: 2}
   _config: {fileID: 11400000, guid: 3577524b2b3b4ef4ea12cd6d8415cb38, type: 2}
   _inputSource: {fileID: 11400000, guid: 27216c12375bbc94ba3525ad54f6475e, type: 2}
   _motionConfig: {fileID: 11400000, guid: 63c699566d89d154c9a0f86b09f9b6e3, type: 2}
-  _animancer: {fileID: 4958650350627866175}
-  _characterController: {fileID: 1427599587602420100}
-  _movementReference: {fileID: 0}
+  _effectCatalog: {fileID: 11400000, guid: 7b0c6c985d4f45a5a51d4f72bd6f1f3a, type: 2}
 --- !u!4 &783391499299445226 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b084e535d646a5b43a43bd417fb7c814, type: 3}

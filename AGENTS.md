@@ -1,39 +1,36 @@
 # AGENTS.md
 
-请使用中文写提案和回答 这个文件为 OpenCode 提供指导，用于处理此代码库中的代码。
+请使用中文写提案和回答，这个文件为 AI Coding Agent 提供指导，用于处理此项目中的代码。
 
-## 编码规范
+## 项目进度
 
-### 命名
+本项目当前处于整体代码重构阶段，一切以用户输出为主，以审视角度查阅代码。
 
-- **私有成员**：`_camelCase`（下划线前缀），例如 `_currentState`。
-- **局部变量**：`camelCase`，例如 `temp`。
-- **其它所有**：`PascalCase`（类名、方法名、常量名、属性、枚举、事件）。
+## 项目环境
 
-- **接口**：`I` 前缀；泛型：`T` 前缀。
+- Unity Editor：2022.3.62f3 (revision 96770f904ca7)
+- 渲染管线：URP（com.unity.render-pipelines.universal 14.0.12）。写渲染/材质/后处理相关代码前先确认走 URP API，不要用 Built-in 管线写法。
+- 关键包：
+  - Input System 1.14.2（用新输入系统，不要用旧 Input Manager 的 `Input.GetAxis` 等）。
+  - Cinemachine 2.10.7。
+  - TextMeshPro 3.0.7。
+  - Timeline 1.7.7。
+- 动画框架：Animancer 8.0.0（com.kybernetik.animancer，UPM 包形式安装于 Packages/com.kybernetik.animancer）。用 Animancer 按需播放动画的 API，不要按旧 Mecanim Animator + Animator Controller 的状态机方式写。
+- 脚本根目录：Assets/_Scripts，下分 Camera、Character、Effects、Event、Input、Team、UI 等子目录。
 
-### 注释
+## 编码前先读
 
-注释要求简明扼要，不引用脚本名。
-不使用 "——"，使用 " - "。例如 : "玩家角色控制器 - Root MonoBehaviour 驱动源。"
+开始写或改 C# 脚本前，先阅读 `$unity-coding-rules-mini` 技能。在命名、注释、Inspector 字段、生命周期与事件订阅四个护栏领域严格遵守其约定；护栏之外（架构、异步方案、性能等）按最佳判断自由发挥。
 
-- **类**：提供 `<summary>`，说明职责。
-- **公有/保护方法**：三行 XML 注释（`<summary>` + 每个参数的 `<param>` + `<returns>`）。
-- **接口方法/属性**：单行 XML 注释。
+## 解决方案文件说明
 
-- **继承过来的 接口方法/父类方法**：`/// <inheritdoc />` 指明该方法是从父类或者接口继承而来的即可。
+本项目根文件夹曾多次更名，旧名 "Combat System"。
+- `.sln` / `.csproj` 由 Unity 自动生成，且已在 .gitignore 中忽略，不要纳入版本控制。
+- 如 IDE（VSCode / Rider 等）读取解决方案异常，删除根目录下所有 `.sln` 和 `.csproj` 及 `obj/`，切回 Unity 重新编译即可生成本次更新的解决方案 `UnityProject.sln`。
+- `.vscode/settings.json` 中 `dotnet.defaultSolution` 指向 `UnityProject.sln`，保持该项与 Unity 重新生成的文件名一致。
 
-### 其它
+## UnitySkills 服务器
 
-- Inspector 字段必须带 `[Tooltip]`。
-- **按契约式编程，只在入口校验并抛异常，函数内部禁止重复判空，保持逻辑纯净。**
-    参数自身为 null           -> ArgumentNullException
-    参数值或参数内容不合法     -> ArgumentException
-    Inspector/对象内部状态错误 -> InvalidOperationException
-    索引或数值超出允许范围     -> ArgumentOutOfRangeException
-
-## 交互约定
-
-- 向用户输出的内容必须是简体中文。
-- 除非用户说明，否则不要直接恢复已删除文件。
-- 当前 UnitySkills 服务器（localhost:8090）已启动。
+- 地址：localhost:8090。
+- 用于通过 REST API 自动化 Unity Editor 操作：创建/修改脚本、场景、预制体、组件、资源等；修改脚本后可触发编译验证（见 `unity-compile` skill）。
+- 改动场景、预制体、脚本等持久化内容后，优先用 UnitySkills 确认编译与引用状态，不要只改不验。

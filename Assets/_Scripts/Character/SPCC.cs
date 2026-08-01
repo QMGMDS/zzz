@@ -1,5 +1,7 @@
 using System;
 using Animancer;
+using SPEffects;
+using SPEvent;
 using UnityEngine;
 
 namespace SPCharacterController
@@ -14,23 +16,29 @@ namespace SPCharacterController
     [RequireComponent(typeof(CharacterController))]
     public class SPCC : MonoBehaviour
     {
-        [Header("自定义配置")]
-        [Tooltip("角色基础信息资产")]
-        public CharacterInfoSO _characterInfo;
-
-        [Tooltip("角色状态配置资产")]
-        [SerializeField] private CharacterStateConfigSO _config;
-        [Tooltip("角色输入源")]
-        [SerializeField] private CCSourceSO _inputSource;
-        [Tooltip("角色移动配置资产")]
-        [SerializeField] private CharacterMotionConfigSO _motionConfig;
-
         [Header("必要组件引用")]
-        [Tooltip("角色模型使用的 Animancer 组件")]
-        [SerializeField] private AnimancerComponent _animancer;
+        [SerializeField, Tooltip("角色模型使用的 Animator 组件")]
+        private Animator _animator;
+        [SerializeField, Tooltip("角色模型使用的 Animancer 组件")]
+        private AnimancerComponent _animancer;
+        [SerializeField, Tooltip("负责角色碰撞移动的 CharacterController")]
+        private CharacterController _characterController;
 
-        [Tooltip("负责角色碰撞移动的 CharacterController")]
-        [SerializeField] private CharacterController _characterController;
+        [Header("自定义配置")]
+        [SerializeField, Tooltip("角色基础信息资产")]
+        private CharacterInfoSO _characterInfo;
+
+        [SerializeField, Tooltip("角色状态配置资产")]
+        private CharacterStateConfigSO _config;
+
+        [SerializeField, Tooltip("角色输入源")]
+        private CCSourceSO _inputSource;
+
+        [SerializeField, Tooltip("角色移动配置资产")]
+        private CharacterMotionConfigSO _motionConfig;
+
+        [SerializeField, Tooltip("特效目录资产（可选，未配置时该角色不释放特效）")]
+        private EffectCatalogSO _effectCatalog;
 
         #region 私有依赖
 
@@ -38,8 +46,8 @@ namespace SPCharacterController
         private StateMachine _stateMachine;
         private AnimationDriver _animationDriver;
         private CharacterMotionDriver _motionDriver;
-        private EffectDriver _effectDriver;
-        private Animator _animator;
+        private EffectTriggerDriver _effectTriggerDriver;
+        private IEffectService _effectService;
         private CCSourceSO _configuredInputSource;
         private bool _isLeaving;
 
@@ -52,61 +60,53 @@ namespace SPCharacterController
 
         #endregion
 
-        #region Life Cycle
+        #region 时序指令分发
 
         private void Awake()
         {
-            // 输入源资产实例化为运行时副本，避免多角色共享同一资产实例的状态
-            _inputSource = Instantiate(_inputSource);
-            _configuredInputSource = _inputSource;
-
+            // 必要组件检查
+            if (_animancer == null) throw new InvalidOperationException($"{name}: 未设置 Animancer 组件。");
+            if (_characterController == null) throw new InvalidOperationException($"{name}: 未设置 CharacterController 组件。");
+            // 自定义配置检查
             if (_characterInfo == null) throw new InvalidOperationException($"{name}: 未设置角色基础信息资产。");
             if (_characterInfo.Stats == null) throw new InvalidOperationException($"{name}: 未设置角色属性资产。");
             if (_config == null) throw new InvalidOperationException($"{name}: 未设置角色状态配置资产。");
             if (_inputSource == null) throw new InvalidOperationException($"{name}: 未设置角色输入源。");
-            if (_animancer == null) throw new InvalidOperationException($"{name}: 未设置 Animancer 组件。");
             if (_motionConfig == null) throw new InvalidOperationException($"{name}: 未设置角色移动配置资产。");
 
-            _animator = GetComponent<Animator>();
-            if (_characterController == null) throw new InvalidOperationException($"{name}: 未设置 CharacterController 组件。");
+            _inputSource = Instantiate(_inputSource);
+            _configuredInputSource = _inputSource;
             _motionConfig.Validate();
 
             if (_inputSource is CCSource_PlayerSO playerSource)
                 playerSource.Initialize();
-
             if (_inputSource is CCSource_AISO aiSource)
                 aiSource.Initialize(transform);
 
             Stats = new CharacterStats(_characterInfo.Stats);
-
             _blackboard = new CharacterRunTimeData();
             _stateMachine = new StateMachine(_config, _blackboard, 0);
             var animationSource = new AnimationSource(_animancer);
             _animationDriver = new AnimationDriver(_blackboard, animationSource);
             var motor = new CharacterMotor(_characterController, transform);
             _motionDriver = new CharacterMotionDriver(_blackboard, _motionConfig, motor, transform);
-            _effectDriver = new EffectDriver(_blackboard, transform);
+
+            // 可选配置装配
+            if (_effectCatalog != null)
+            {
+                _effectService = new EffectService(_effectCatalog);
+                _effectTriggerDriver = new EffectTriggerDriver(_blackboard, transform, _effectService);
+            }
         }
 
         private void Update()
         {
-            // 输入源更新角色意图
             _inputSource?.WriteIntentions(_blackboard);
-
-            // 状态机逻辑更新
             _stateMachine.LogicUpdate();
-
-            // 动画驱动器响应状态变化，下达动画指令
             _animationDriver.LogicUpdate();
-
-            // 移动驱动器响应输入和状态运动政策
             _motionDriver.LogicUpdate(Time.deltaTime);
-
-            // 清除已消费的意图，LateUpdate 产生的动画意图留给下一帧
             _blackboard.ResetIntentions();
         }
-
-        //* Animator 自动更新骨骼，产出本帧根位移
 
         private void OnAnimatorMove()
         {
@@ -117,11 +117,8 @@ namespace SPCharacterController
 
         private void LateUpdate()
         {
-            // 动画进度回写黑板
             _animationDriver.SyncAnimProgress();
-
-            // 特效驱动器响应状态变化与动画进度释放特效
-            _effectDriver.LogicUpdate();
+            _effectTriggerDriver?.LogicUpdate();
 
             if (_isLeaving && _blackboard.EvaluateCondition(CharacterIntention.AnimationCompleted))
             {
@@ -129,6 +126,25 @@ namespace SPCharacterController
                 gameObject.SetActive(false);
             }
         }
+
+        #endregion
+
+        #region 事件
+
+        private void OnEnable()
+        {
+            GameEvent.RoundEnded += HandleRoundEnded;
+        }
+        private void OnDisable()
+        {
+            GameEvent.RoundEnded -= HandleRoundEnded;
+            _effectTriggerDriver?.Cleanup();
+        }
+
+        /// <summary>
+        /// 本局结束 - 清理本角色创建的全部特效实例。
+        /// </summary>
+        private void HandleRoundEnded() => _effectService?.CleanupAll();
 
         #endregion
 
@@ -164,3 +180,4 @@ namespace SPCharacterController
         #endregion
     }
 }
+

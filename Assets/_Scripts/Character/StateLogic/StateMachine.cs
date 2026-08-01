@@ -1,5 +1,4 @@
 using System;
-
 namespace SPCharacterController
 {
     /// <summary>
@@ -65,10 +64,7 @@ namespace SPCharacterController
             if (!currentNode.UseInterruptWindow)
                 return true;
 
-            float normalizedTime = _blackboard.AnimationNormalizedTime;
-            if (currentNode.IsLooping) normalizedTime -= (float)Math.Floor(normalizedTime);
-
-            return currentNode.InterruptWindow.Contains(normalizedTime);
+            return currentNode.InterruptWindow.Contains(_blackboard.AnimationNormalizedTime);
         }
 
         private void TransitionToNode(int nodeIndex)

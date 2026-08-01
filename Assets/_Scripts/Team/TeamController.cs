@@ -1,12 +1,12 @@
 using System;
 using SPCharacterController;
-using SPPlayerInput;
 using UnityEngine;
 
 namespace SPTeam
 {
     /// <summary>
-    /// 队伍控制器 - 根据 TeamInfoSO 实例化角色预制体，轮询切换唯一激活角色，并通过角色激活状态交接玩家输入。
+    /// 队伍控制器 - 根据 TeamInfoSO 实例化角色预制体，管理激活角色索引。
+    /// 切换触发逻辑待重写 - 原输入直读已移除，暂不触发切换。
     /// </summary>
     [DefaultExecutionOrder(-350)]
     public class TeamController : MonoBehaviour
@@ -22,7 +22,6 @@ namespace SPTeam
         [SerializeField] private float _switchCooldown = 0.5f;
 
         private float _cooldownTimer;
-        private SPPlayerInputCenter _inputCenter;
         private TeamInfoSO _runtimeTeamInfo;
         private SPCharacterController.SPCC[] _characterControllers;
 
@@ -49,15 +48,12 @@ namespace SPTeam
             if (_cooldownTimer > 0f)
                 _cooldownTimer -= Time.deltaTime;
 
-            if (_inputCenter.CurrentFrameInput.SwitchCharacterPressed && _cooldownTimer <= 0f)
-                SwitchToNextCharacter();
+            // TODO: 切换触发逻辑待重写 - 原直接读输入已移除，
+            //       后续由角色意图或事件模块驱动切换。
         }
 
         private void ValidateConfiguration()
         {
-            _inputCenter = SPPlayerInputCenter.Instance;
-            if (_inputCenter == null)
-                throw new InvalidOperationException($"{name}: 场景中没有可用的玩家输入中心。");
             if (_teamInfo == null)
                 throw new InvalidOperationException($"{name}: TeamInfoSO 未设置。");
 

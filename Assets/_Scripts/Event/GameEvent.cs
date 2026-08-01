@@ -13,9 +13,19 @@ namespace SPEvent
         public static event Action<int> CharacterSwitched;
 
         /// <summary>
+        /// 本局结束事件 - 用于清理本局产生的特效等局级资源。
+        /// </summary>
+        public static event Action RoundEnded;
+
+        /// <summary>
         /// 触发角色切换事件。
         /// </summary>
         /// <param name="newIndex">新激活角色的索引</param>
         public static void OnCharacterSwitched(int newIndex) => CharacterSwitched?.Invoke(newIndex);
+
+        /// <summary>
+        /// 触发本局结束事件。
+        /// </summary>
+        public static void OnRoundEnded() => RoundEnded?.Invoke();
     }
 }

@@ -241,10 +241,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 276bce028428a594cafbe5ced5c08173, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animator: {fileID: 4688605390485151653}
+  _animancer: {fileID: 7915542844063938094}
+  _characterController: {fileID: 6036368207788230149}
   _characterInfo: {fileID: 11400000, guid: cde773723732e354b9f0f5dca511fadd, type: 2}
   _config: {fileID: 11400000, guid: 41fc0cade0631f6478d6ba474984724c, type: 2}
   _inputSource: {fileID: 11400000, guid: 27216c12375bbc94ba3525ad54f6475e, type: 2}
   _motionConfig: {fileID: 11400000, guid: 63c699566d89d154c9a0f86b09f9b6e3, type: 2}
-  _animancer: {fileID: 7915542844063938094}
-  _characterController: {fileID: 6036368207788230149}
-  _movementReference: {fileID: 0}
+  _effectCatalog: {fileID: 11400000, guid: 7b0c6c985d4f45a5a51d4f72bd6f1f3a, type: 2}

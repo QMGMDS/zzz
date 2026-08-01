@@ -1,9 +1,10 @@
+using SPEffects;
 using UnityEngine;
 
 namespace SPCharacterController
 {
     /// <summary>
-    /// 纯数据状态节点 ScriptableObject - 只负责存储资源引用和元数据，绝不包含任何切换逻辑
+    /// 纯数据状态节点 ScriptableObject - 只负责存储资源引用和元数据，绝不包含任何切换逻辑。
     /// </summary>
     [CreateAssetMenu(menuName = "SPCharacterController/StateLogic/StateNode", fileName = "StateNode")]
     public class StateNodeSO : ScriptableObject
@@ -43,8 +44,11 @@ namespace SPCharacterController
         [Min(0f)]
         public float RootMotionRotationScale = 1f;
 
-        [Header("特效")]
-        [Tooltip("该状态下释放的特效配置，为空表示无特效")]
-        public EffectInfoSO Effects;
+        [Header("特效触发")]
+        [SerializeField, Tooltip("该状态下的特效触发配置，为空或空数组表示无特效")]
+        private EffectTrigger[] _effectTriggers;
+
+        /// <summary>该状态下的特效触发配置</summary>
+        public EffectTrigger[] EffectTriggers => _effectTriggers;
     }
 }

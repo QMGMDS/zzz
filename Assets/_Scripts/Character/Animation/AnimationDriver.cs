@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace SPCharacterController
 {
@@ -42,9 +43,16 @@ namespace SPCharacterController
         /// </summary>
         public void SyncAnimProgress()
         {
+            float normalizedTime = _animationSource.CurrentNormalizedTime;
+            if (_blackboard.CurrentStateNode.IsLooping)
+            {
+                normalizedTime -= Mathf.Floor(normalizedTime);
+                normalizedTime = normalizedTime >= 1f ? 0f : normalizedTime;
+            }
+
             _blackboard.PublishAnimationProgress(
                 _animationSource.CurrentTime,
-                _animationSource.CurrentNormalizedTime);
+                normalizedTime);
 
             if (_completionReported || _blackboard.CurrentStateNode.IsLooping)
                 return;

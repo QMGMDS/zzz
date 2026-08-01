@@ -25,4 +25,3 @@ MonoBehaviour:
   RootMotionScale: 1
   UseRootMotionRotation: 0
   RootMotionRotationScale: 1
-  Effects: {fileID: 0}

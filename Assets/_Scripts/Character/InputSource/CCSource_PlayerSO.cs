@@ -1,15 +1,21 @@
+using SPInput_Contract;
+using SPInput_Wiring;
 using UnityEngine;
 
 namespace SPCharacterController
 {
     /// <summary>
-    /// 玩家输入源 - 从 SPPlayerInputCenter 单例读取帧原始输入，
+    /// 玩家输入源 - 从 FrameInputProviderSO 槽位 Pull 帧原始输入，
     /// 经死区判定后翻译为角色意图，写入黑板。
     /// </summary>
     [CreateAssetMenu(menuName = "SPCharacterController/InputSource/Player", fileName = "CCSource_PlayerSO")]
     public class CCSource_PlayerSO : CCSourceSO
     {
         private const float TurnAngleThresholdDegrees = 135f;
+
+        [Header("输入来源")]
+        [Tooltip("帧输入提供者槽位 SO，运行时通过其 Provider 拉取当前帧原始输入。")]
+        [SerializeField] private FrameInputProviderSO _inputProviderSO;
 
         [Header("移动死区")]
         [Tooltip("移动输入长度低于此阈值时视为无移动意图")]
@@ -38,8 +44,11 @@ namespace SPCharacterController
         public override void WriteIntentions(CharacterRunTimeData blackboard)
         {
             if (blackboard == null) throw new System.ArgumentNullException(nameof(blackboard));
-            if (SPPlayerInput.SPPlayerInputCenter.Instance == null)
-                throw new System.InvalidOperationException("场景中没有可用的玩家输入中心。");
+
+            // 槽位未注入时静默跳过，保证删除接线后角色空转不报错。
+            var provider = _inputProviderSO != null ? _inputProviderSO.Provider : null;
+            if (provider == null) return;
+
             if (_movementReference == null)
             {
                 var cam = Camera.main;
@@ -49,8 +58,7 @@ namespace SPCharacterController
                     throw new System.InvalidOperationException("未设置移动方向参考且场景中没有 Main Camera。");
             }
 
-            SPPlayerInput.SPPlayerInputCenter inputCenter = SPPlayerInput.SPPlayerInputCenter.Instance;
-            SPPlayerInput.FrameRawInputData currentFrameInput = inputCenter.CurrentFrameInput;
+            FrameRawInput currentFrameInput = provider.CurrentFrame;
 
             ProcessMovement(currentFrameInput, blackboard);
             ProcessActions(currentFrameInput, blackboard);
@@ -59,7 +67,7 @@ namespace SPCharacterController
         #region 移动处理
 
         private void ProcessMovement(
-            SPPlayerInput.FrameRawInputData currentFrameInput,
+            FrameRawInput currentFrameInput,
             CharacterRunTimeData blackboard)
         {
             Vector2 rawMoveInput = Vector2.ClampMagnitude(currentFrameInput.MoveAxisValue, 1f);
@@ -132,7 +140,7 @@ namespace SPCharacterController
 
         #region 按键处理
 
-        private void ProcessActions(SPPlayerInput.FrameRawInputData input, CharacterRunTimeData blackboard)
+        private void ProcessActions(FrameRawInput input, CharacterRunTimeData blackboard)
         {
             if (input.AttackPressed)
                 blackboard.SetInputIntention(CharacterIntention.WantToAttack, true);

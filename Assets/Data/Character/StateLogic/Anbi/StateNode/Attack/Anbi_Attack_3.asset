@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7917283576d2d1f44a7d8c27edfa49cb, type: 3}
   m_Name: Anbi_Attack_3
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   Animation:
     Transition: {fileID: -6602737560424168365, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
   IsLooping: 0
@@ -25,4 +25,28 @@ MonoBehaviour:
   RootMotionScale: 1
   UseRootMotionRotation: 0
   RootMotionRotationScale: 1
-  Effects: {fileID: 11400000, guid: 1e3123af4e2727c4dab1c636985eef63, type: 2}
+  _effectTriggers:
+  - _releaseWindow:
+      _start: 0.254
+      _end: 0.354
+    _effectId: sword_qi
+    _space: 0
+    _bonePath:
+    _attachToSource: 1
+    _positionOffset: {x: 0, y: 0.7, z: 0.3}
+    _rotationOffset: {x: 0, y: 160, z: 15}
+    _scale: {x: 0, y: 0, z: 0}
+    _destroyPolicy: 1
+    _autoDestroyDelay: 0
+  - _releaseWindow:
+      _start: 0.476
+      _end: 0.576
+    _effectId: sword_qi
+    _space: 0
+    _bonePath:
+    _attachToSource: 1
+    _positionOffset: {x: 0, y: 0.7, z: 0.3}
+    _rotationOffset: {x: 0, y: 160, z: -15}
+    _scale: {x: 0, y: 0, z: 0}
+    _destroyPolicy: 1
+    _autoDestroyDelay: 0

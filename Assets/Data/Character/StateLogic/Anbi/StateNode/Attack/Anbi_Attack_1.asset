@@ -25,4 +25,13 @@ MonoBehaviour:
   RootMotionScale: 1
   UseRootMotionRotation: 0
   RootMotionRotationScale: 1
-  Effects: {fileID: 11400000, guid: 23c8076ff4ea8be44bacd855bf9d3ffd, type: 2}
+  _effectTriggers:
+  - _releaseTime: 0
+    _effectId: sword_qi
+    _space: 0
+    _attachToSource: 1
+    _positionOffset: {x: 0, y: 0.7, z: 0.3}
+    _rotationOffset: {x: 0, y: 160, z: 0}
+    _scale: {x: 0, y: 0, z: 0}
+    _destroyPolicy: 1
+    _autoDestroyDelay: 0

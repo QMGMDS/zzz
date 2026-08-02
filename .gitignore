@@ -104,3 +104,6 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# VSCode 本地配置与工作区设置
+.vscode/

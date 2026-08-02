@@ -1,0 +1,92 @@
+# .editorconfig — My-ZZZ Unity 项目编码护栏命名规则（首期）
+# 权威来源：.codex/skills/unity-coding-rules-mini/SKILL.md §1 命名约定
+# 范围：仅 Assets/_Scripts 下 .cs 文件（Unity 生成代码 / 第三方源码不约束）。
+# 本文件首期只挂"命名"规则；风格杂项（var / 缩进 / 大括号）暂不挂，避免噪音。
+# .editorconfig 做不到的机械条目（局部/参数命名、布尔特定前缀、Async 后缀、
+# Update 热路径、序列化属性、——、summary）由 tools/lint/lint.csx 兜底。
+# 严重级别：首期 warning（IDE 波浪线，不阻止编译）；存量清干净后可一行改 error 收紧。
+
+root = true
+
+[*]
+charset = utf-8
+
+# ============================================================
+#  C# 命名规则（仅作用于 Assets/_Scripts 下的 .cs）
+# ============================================================
+[Assets/_Scripts/**.cs]
+
+# ---------- 符号分组 ----------
+dotnet_naming_symbols.interfaces.applicable_kinds = interface
+
+dotnet_naming_symbols.types_pascal.applicable_kinds = class, struct, enum
+
+dotnet_naming_symbols.members_pascal.applicable_kinds = property, method, event
+
+# 私有实例字段
+dotnet_naming_symbols.private_instance_field.applicable_kinds = field
+dotnet_naming_symbols.private_instance_field.applicable_accessibilities = private
+
+# 私有静态字段
+dotnet_naming_symbols.private_static_field.applicable_kinds = field
+dotnet_naming_symbols.private_static_field.applicable_accessibilities = private
+dotnet_naming_symbols.private_static_field.required_modifiers = static
+
+# 常量字段（含 public const）
+dotnet_naming_symbols.const_field.applicable_kinds = field
+dotnet_naming_symbols.const_field.required_modifiers = const
+
+# static readonly 字段
+dotnet_naming_symbols.static_readonly_field.applicable_kinds = field
+dotnet_naming_symbols.static_readonly_field.required_modifiers = static, readonly
+
+# ---------- 样式 ----------
+dotnet_naming_style.pascal_case.capitalization = pascal_case
+
+dotnet_naming_style.interface_style.required_prefix = I
+dotnet_naming_style.interface_style.capitalization = pascal_case
+
+dotnet_naming_style.private_instance_field_style.required_prefix = _
+dotnet_naming_style.private_instance_field_style.capitalization = camel_case
+
+dotnet_naming_style.private_static_field_style.required_prefix = s_
+dotnet_naming_style.private_static_field_style.capitalization = camel_case
+
+# 常量 / static readonly → 大驼峰（决议：方案 A，对齐现有代码与 .NET 习惯）
+dotnet_naming_style.const_style.capitalization = pascal_case
+
+# ---------- 规则（后定义者更具体、覆盖前者） ----------
+# 接口 → I 前缀 + PascalCase
+dotnet_naming_rule.interfaces_should_start_with_i.symbols = interfaces
+dotnet_naming_rule.interfaces_should_start_with_i.style = interface_style
+dotnet_naming_rule.interfaces_should_start_with_i.severity = warning
+
+# 类 / 结构 / 枚举 → PascalCase
+dotnet_naming_rule.types_pascal_case.symbols = types_pascal
+dotnet_naming_rule.types_pascal_case.style = pascal_case
+dotnet_naming_rule.types_pascal_case.severity = warning
+
+# 属性 / 方法 / 事件 → PascalCase
+dotnet_naming_rule.members_pascal_case.symbols = members_pascal
+dotnet_naming_rule.members_pascal_case.style = pascal_case
+dotnet_naming_rule.members_pascal_case.severity = warning
+
+# 私有实例字段 → _ + camelCase
+dotnet_naming_rule.private_instance_field_underscore.symbols = private_instance_field
+dotnet_naming_rule.private_instance_field_underscore.style = private_instance_field_style
+dotnet_naming_rule.private_instance_field_underscore.severity = warning
+
+# 私有静态字段 → s_ + camelCase
+dotnet_naming_rule.private_static_field_underscore.symbols = private_static_field
+dotnet_naming_rule.private_static_field_underscore.style = private_static_field_style
+dotnet_naming_rule.private_static_field_underscore.severity = warning
+
+# 常量 → PascalCase（放在私有字段规则之后，覆盖前者，避免 const 被误判缺 _ 前缀）
+dotnet_naming_rule.const_case.symbols = const_field
+dotnet_naming_rule.const_case.style = const_style
+dotnet_naming_rule.const_case.severity = warning
+
+# static readonly → PascalCase
+dotnet_naming_rule.static_readonly_case.symbols = static_readonly_field
+dotnet_naming_rule.static_readonly_case.style = const_style
+dotnet_naming_rule.static_readonly_case.severity = warning

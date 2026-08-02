@@ -142,10 +142,10 @@ namespace SPCharacterController
 
         private void ProcessActions(FrameRawInput input, CharacterRunTimeData blackboard)
         {
-            if (input.AttackPressed)
+            if (input.IsAttackPressed)
                 blackboard.SetInputIntention(CharacterIntention.WantToAttack, true);
 
-            if (input.EvadePressed)
+            if (input.IsEvadePressed)
                 blackboard.SetInputIntention(CharacterIntention.WantToEvade, true);
         }
 

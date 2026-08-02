@@ -13,14 +13,14 @@ namespace SPInput_Debug
     {
         [Header("调试器设置")]
         [Tooltip("是否启用输入调试日志打印。")]
-        [SerializeField] private bool _debugEnabled = true;
+        [SerializeField] private bool _isDebugEnabled = true;
 
         [Tooltip("帧输入提供者槽位 SO，运行时从其 Provider 读取当前帧。")]
         [SerializeField] private FrameInputProviderSO _inputProviderSO;
 
         private void Update()
         {
-            if (!_debugEnabled) return;
+            if (!_isDebugEnabled) return;
             if (_inputProviderSO == null) return;
 
             var provider = _inputProviderSO.Provider;
@@ -28,22 +28,22 @@ namespace SPInput_Debug
 
             var input = provider.CurrentFrame;
 
-            bool anyPressed = input.AttackPressed
-                           || input.EvadePressed
-                           || input.SkillPressed
-                           || input.SwitchCharacterPressed
-                           || input.UltimatePressed;
+            bool anyPressed = input.IsAttackPressed
+                           || input.IsEvadePressed
+                           || input.IsSkillPressed
+                           || input.IsSwitchCharacterPressed
+                           || input.IsUltimatePressed;
 
             if (!anyPressed) return;
 
             Debug.Log(
                 $"<b>[输入调试]</b> 帧#{input.FrameIndex}  |  " +
                 $"移动: ({input.MoveAxisValue.x:F2}, {input.MoveAxisValue.y:F2})  |  " +
-                $"攻击:{Sym(input.AttackPressed)} " +
-                $"闪避:{Sym(input.EvadePressed)} " +
-                $"技能:{Sym(input.SkillPressed)} " +
-                $"切换角色:{Sym(input.SwitchCharacterPressed)} " +
-                $"终结技:{Sym(input.UltimatePressed)}"
+                $"攻击:{Sym(input.IsAttackPressed)} " +
+                $"闪避:{Sym(input.IsEvadePressed)} " +
+                $"技能:{Sym(input.IsSkillPressed)} " +
+                $"切换角色:{Sym(input.IsSwitchCharacterPressed)} " +
+                $"终结技:{Sym(input.IsUltimatePressed)}"
             );
         }
 

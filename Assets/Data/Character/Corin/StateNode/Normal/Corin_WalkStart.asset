@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7917283576d2d1f44a7d8c27edfa49cb, type: 3}
-  m_Name: Anbi_RunAttack
+  m_Name: Corin_WalkStart
   m_EditorClassIdentifier: 
-  _id: 
+  _id: Corin_WalkStart
   _animation:
-    Transition: {fileID: 0}
+    Transition: {fileID: 2449855899019821247, guid: 49d64c2bbb5c33048ab010d99f94cb9d, type: 2}
   _isLooping: 0
-  _rootMotionProfile: {fileID: 0}
-  _turnSpeedDegreesPerSecond: 0
+  _rootMotionProfile: {fileID: 11400000, guid: 340c56d57d5b2bb4ea14919ac710a5da, type: 2}
+  _turnSpeedDegreesPerSecond: 720
   _completionRotationDegrees: 0

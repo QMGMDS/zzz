@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7917283576d2d1f44a7d8c27edfa49cb, type: 3}
+  m_Name: Corin_AttackRush_End
+  m_EditorClassIdentifier: 
+  _id: Corin_AttackRush_End
+  _animation:
+    Transition: {fileID: 1648298373991975202, guid: 49d64c2bbb5c33048ab010d99f94cb9d, type: 2}
+  _isLooping: 0
+  _rootMotionProfile: {fileID: 11400000, guid: 86e234c509c9ab940b366fe9e6e2fdcb, type: 2}
+  _turnSpeedDegreesPerSecond: 0
+  _completionRotationDegrees: 0

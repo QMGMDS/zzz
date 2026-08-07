@@ -28,6 +28,34 @@ MonoBehaviour:
           _Names: []
         _Clip: {fileID: 6925700049797844252, guid: bc09439dcfe58fc4b895600cd44c3418, type: 3}
         _NormalizedStartTime: NaN
+--- !u!114 &-8374676061710434666
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
+  m_Name: Corin_AttackRush
+  m_EditorClassIdentifier: 
+  _Transition:
+    rid: 39035030283485187
+  references:
+    version: 2
+    RefIds:
+    - rid: 39035030283485187
+      type: {class: ClipTransition, ns: Animancer, asm: Kybernetik.Animancer}
+      data:
+        _FadeDuration: 0.25
+        _Speed: 1
+        _Events:
+          _NormalizedTimes: []
+          _Callbacks: []
+          _Names: []
+        _Clip: {fileID: 8218415396522783970, guid: 1d664ff9f6716ff4889dc8db71dc7775, type: 3}
+        _NormalizedStartTime: NaN
 --- !u!114 &-7138179480702012574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -415,6 +443,8 @@ MonoBehaviour:
     - {fileID: 9212349773659727547}
     - {fileID: -5614522290179349341}
     - {fileID: -8403769771376170919}
+    - {fileID: -8374676061710434666}
+    - {fileID: 1648298373991975202}
     _Modifiers:
     - _From: 4
       _To: 5
@@ -537,6 +567,34 @@ MonoBehaviour:
           _Callbacks: []
           _Names: []
         _Clip: {fileID: 762309987621588368, guid: 1d664ff9f6716ff4889dc8db71dc7775, type: 3}
+        _NormalizedStartTime: NaN
+--- !u!114 &1648298373991975202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
+  m_Name: Corin_AttackRush_End
+  m_EditorClassIdentifier: 
+  _Transition:
+    rid: 39035030283485188
+  references:
+    version: 2
+    RefIds:
+    - rid: 39035030283485188
+      type: {class: ClipTransition, ns: Animancer, asm: Kybernetik.Animancer}
+      data:
+        _FadeDuration: 0.25
+        _Speed: 1
+        _Events:
+          _NormalizedTimes: []
+          _Callbacks: []
+          _Names: []
+        _Clip: {fileID: 4492426502631767101, guid: 1d664ff9f6716ff4889dc8db71dc7775, type: 3}
         _NormalizedStartTime: NaN
 --- !u!114 &2449855899019821247
 MonoBehaviour:

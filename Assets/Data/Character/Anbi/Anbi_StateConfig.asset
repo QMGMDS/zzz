@@ -35,6 +35,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ab9efa5e9485e2340b93e405867b1ac5, type: 2}
   - {fileID: 11400000, guid: c5d37c8fda2a2ee4dbfaa874550a99a4, type: 2}
   - {fileID: 11400000, guid: c8ec661859b8359479a78126b78a971d, type: 2}
+  - {fileID: 11400000, guid: a275c0c7dc97dea4694715a05e3c3170, type: 2}
   _rules:
   - _fromId: Anbi_Idle
     _toId: Anbi_WalkStart
@@ -234,6 +235,12 @@ MonoBehaviour:
       _required: 3
       _forbidden: 0
     _interruptPoint: 0
+  - _fromId: Anbi_RunStart
+    _toId: Anbi_AttackRush
+    _condition:
+      _required: 4
+      _forbidden: 0
+    _interruptPoint: 0
   - _fromId: Anbi_RunLoop
     _toId: Anbi_Stop
     _condition:
@@ -250,6 +257,12 @@ MonoBehaviour:
     _toId: Anbi_RunTurn
     _condition:
       _required: 32
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_RunLoop
+    _toId: Anbi_AttackRush
+    _condition:
+      _required: 4
       _forbidden: 0
     _interruptPoint: 0
   - _fromId: Anbi_RunTurn
@@ -414,3 +427,21 @@ MonoBehaviour:
       _required: 4
       _forbidden: 0
     _interruptPoint: 0
+  - _fromId: Anbi_AttackRush
+    _toId: Anbi_Idle
+    _condition:
+      _required: 1
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_AttackRush
+    _toId: Anbi_WalkStart
+    _condition:
+      _required: 2
+      _forbidden: 0
+    _interruptPoint: 0.3
+  - _fromId: Anbi_AttackRush
+    _toId: Anbi_Attack_1
+    _condition:
+      _required: 4
+      _forbidden: 0
+    _interruptPoint: 0.25

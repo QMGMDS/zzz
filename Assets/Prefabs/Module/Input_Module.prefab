@@ -79,6 +79,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _binding: {fileID: 11400000, guid: 519e7b3d7a25a584ea292aee4836befa, type: 2}
+  _processingConfig: {fileID: 11400000, guid: 2a58fbfcb8250c94cbaa797f6d8d8232, type: 2}
 --- !u!1 &4906931311003622586
 GameObject:
   m_ObjectHideFlags: 0
@@ -169,5 +170,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8cf4f1dfca3347438af8334cabb5108, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _debugEnabled: 0
+  _isDebugEnabled: 0
   _inputProviderSO: {fileID: 11400000, guid: ab18c9343870cbd48a66f5cd119cc286, type: 2}

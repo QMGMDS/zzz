@@ -1,7 +1,7 @@
-using SPInput_Contract;
+using SPInput.Contract;
 using UnityEngine;
 
-namespace SPInput_Wiring
+namespace SPInput.Wiring
 {
     /// <summary>
     /// 帧输入提供者槽位 SO - 运行时信箱。
@@ -27,7 +27,7 @@ namespace SPInput_Wiring
         {
             if (provider == null) return;
             if (_provider != null && !ReferenceEquals(_provider, provider))
-                Debug.LogWarning(
+                UnityEngine.Debug.LogWarning(
                     $"FrameInputProviderSO: 已注入提供者 [{_provider}]，现又被覆盖为 [{provider}]。" +
                     "本槽位仅支持单采集器注入，请避免多实例接线同一份 SO 资产。");
 

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace SPInput_Core
+namespace SPInput.Core
 {
     /// <summary>
     /// 输入按键绑定 SO - 持有各 InputActionReference。

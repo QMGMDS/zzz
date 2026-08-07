@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace SPInput_Contract
+namespace SPInput.Contract
 {
     /// <summary>
     /// 帧原始输入 - 纯硬件事实汇报，绝无任何手感处理。

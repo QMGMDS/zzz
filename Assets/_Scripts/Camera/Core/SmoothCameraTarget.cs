@@ -4,13 +4,12 @@ namespace SPCamera
 {
     /// <summary>
     /// 平滑摄像机目标 - 挂载于 CameraLook 物体，持续平滑跟随当前目标 Transform。
-    /// Team 模块重写期间由外部显式指定目标，不再依赖旧队伍控制器。
     /// </summary>
     [DefaultExecutionOrder(-50)]
     public class SmoothCameraTarget : MonoBehaviour
     {
         [Header("目标")]
-        [Tooltip("当前跟随目标。Team 重写完成前可在 Inspector 手动指定玩家 Transform。")]
+        [Tooltip("当前跟随目标。")]
         [SerializeField] private Transform _targetCharacter;
 
         [Header("过渡参数")]
@@ -39,7 +38,7 @@ namespace SPCamera
         }
 
         /// <summary>
-        /// 设置新的摄像机跟随目标。供新 Team 模块完成后接线调用。
+        /// 设置新的摄像机跟随目标。
         /// </summary>
         /// <param name="target">新的跟随目标 Transform</param>
         public void SetTarget(Transform target)

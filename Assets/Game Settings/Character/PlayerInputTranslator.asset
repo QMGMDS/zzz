@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: PlayerInputTranslator
   m_EditorClassIdentifier: 
   _frameInput: {fileID: 11400000, guid: ab18c9343870cbd48a66f5cd119cc286, type: 2}
-  _coordinateConverter: {fileID: 0}
+  _coordinateConverter: {fileID: 11400000, guid: 1534d2c7aa8d0a1469568dde487ce95c, type: 2}
   _turnAngleThreshold: 135

@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70c882a4a3529c549914e080597c04d8, type: 3}
   m_Name: InputBinding
   m_EditorClassIdentifier: 
-  MoveAction: {fileID: -2396146652731416428, guid: 19233add5a256844fad4c8b6fed6339a, type: 3}
-  AttackAction: {fileID: 1211467669973809243, guid: 19233add5a256844fad4c8b6fed6339a, type: 3}
-  EvadeAction: {fileID: -1338146725540236266, guid: 19233add5a256844fad4c8b6fed6339a, type: 3}
-  SkillAction: {fileID: 3551632961237328470, guid: 19233add5a256844fad4c8b6fed6339a, type: 3}
-  SwitchCharacterAction: {fileID: 9016827086732302416, guid: 19233add5a256844fad4c8b6fed6339a, type: 3}
-  UltimateAction: {fileID: -7507692294469225143, guid: 19233add5a256844fad4c8b6fed6339a, type: 3}
+  _moveAction: {fileID: -2396146652731416428, guid: 19233add5a256844fad4c8b6fed6339a, type: 3}
+  _attackAction: {fileID: 1211467669973809243, guid: 19233add5a256844fad4c8b6fed6339a, type: 3}
+  _evadeAction: {fileID: -1338146725540236266, guid: 19233add5a256844fad4c8b6fed6339a, type: 3}
+  _skillAction: {fileID: 3551632961237328470, guid: 19233add5a256844fad4c8b6fed6339a, type: 3}
+  _switchCharacterAction: {fileID: 9016827086732302416, guid: 19233add5a256844fad4c8b6fed6339a, type: 3}
+  _ultimateAction: {fileID: -7507692294469225143, guid: 19233add5a256844fad4c8b6fed6339a, type: 3}

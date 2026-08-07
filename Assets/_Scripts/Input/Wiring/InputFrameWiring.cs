@@ -1,7 +1,7 @@
-using SPInput_Core;
+using SPInput.Core;
 using UnityEngine;
 
-namespace SPInput_Wiring
+namespace SPInput.Wiring
 {
     /// <summary>
     /// 输入接线胶水 - 让下游系统跨场景 pull 采集数据。

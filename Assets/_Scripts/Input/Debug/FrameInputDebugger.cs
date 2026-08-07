@@ -1,12 +1,10 @@
-using SPInput_Wiring;
+using SPInput.Wiring;
 using UnityEngine;
 
-namespace SPInput_Debug
+namespace SPInput.Debug
 {
     /// <summary>
-    /// 帧输入调试器 - 每有操作按键被按下，通过 Debug.Log 集体打印当前帧完整原始输入数据，
-    /// 避免 OnGUI 实时刷新导致的覆盖问题。
-    /// 通过 FrameInputProviderSO 槽位读取数据，不直接依赖 Core 实现类。
+    /// 帧输入调试器 - 每有操作按键被按下，通过 Debug.Log 集体打印当前帧完整原始输入数据
     /// </summary>
     [DefaultExecutionOrder(-300)]
     public class FrameInputDebugger : MonoBehaviour
@@ -36,7 +34,7 @@ namespace SPInput_Debug
 
             if (!anyPressed) return;
 
-            Debug.Log(
+            UnityEngine.Debug.Log(
                 $"<b>[输入调试]</b> 帧#{input.FrameIndex}  |  " +
                 $"移动: ({input.MoveAxisValue.x:F2}, {input.MoveAxisValue.y:F2})  |  " +
                 $"攻击:{Sym(input.IsAttackPressed)} " +

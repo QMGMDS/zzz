@@ -1,0 +1,416 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da01a99121469d549bfdf76d6e1fe4d3, type: 3}
+  m_Name: Anbi_StateConfig
+  m_EditorClassIdentifier: 
+  _entryId: Anbi_Idle
+  _nodes:
+  - {fileID: 11400000, guid: abd5537519476844296c6f6cc9505196, type: 2}
+  - {fileID: 11400000, guid: cf3310c1176fd4345bfc6f4d941d6962, type: 2}
+  - {fileID: 11400000, guid: 2292fbb0d586b8e46b161304bdd99c83, type: 2}
+  - {fileID: 11400000, guid: 5302e3a777b1ea54f825a7f6ea1c6a66, type: 2}
+  - {fileID: 11400000, guid: f5e5af4d0c9415e40b3dc42a6d5f6864, type: 2}
+  - {fileID: 11400000, guid: 2e0b451761f15f14ea2d828bc02d0c00, type: 2}
+  - {fileID: 11400000, guid: 5d8f30e3f9e7bc847ba01edac6349fab, type: 2}
+  - {fileID: 11400000, guid: 25fbb26cff54a64448fddcffd386b27e, type: 2}
+  - {fileID: 11400000, guid: 64553f2bc64f9124782b70dc9deed572, type: 2}
+  - {fileID: 11400000, guid: 12b1138a708247047a9cabb6638aff7a, type: 2}
+  - {fileID: 11400000, guid: eff490989567dde4cb8ba3e6f3bd54c8, type: 2}
+  - {fileID: 11400000, guid: fa5eff56adbd97b44a1d25034a60f7a5, type: 2}
+  - {fileID: 11400000, guid: 3ea19906bb7638f48824ea5ba74011c4, type: 2}
+  - {fileID: 11400000, guid: 100c53a645b8d514b97dca97e0195670, type: 2}
+  - {fileID: 11400000, guid: 634188c9b24cd684fbacdb3e51d32578, type: 2}
+  - {fileID: 11400000, guid: 71963bac1f35eb9428507af6b2d01432, type: 2}
+  - {fileID: 11400000, guid: d9adbaa7fe84cc344818cc396e9ccbbd, type: 2}
+  - {fileID: 11400000, guid: a523be4d54a81754ea9f6853bcb13e97, type: 2}
+  - {fileID: 11400000, guid: ab9efa5e9485e2340b93e405867b1ac5, type: 2}
+  - {fileID: 11400000, guid: c5d37c8fda2a2ee4dbfaa874550a99a4, type: 2}
+  - {fileID: 11400000, guid: c8ec661859b8359479a78126b78a971d, type: 2}
+  _rules:
+  - _fromId: Anbi_Idle
+    _toId: Anbi_WalkStart
+    _condition:
+      _required: 2
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Idle
+    _toId: Anbi_EvadeFront
+    _condition:
+      _required: 18
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Idle
+    _toId: Anbi_EvadeBack
+    _condition:
+      _required: 16
+      _forbidden: 2
+    _interruptPoint: 0
+  - _fromId: Anbi_Idle
+    _toId: Anbi_Attack_1
+    _condition:
+      _required: 4
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Stop
+    _toId: Anbi_Idle
+    _condition:
+      _required: 1
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Stop
+    _toId: Anbi_WalkStart
+    _condition:
+      _required: 2
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Stop
+    _toId: Anbi_EvadeFront
+    _condition:
+      _required: 18
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Stop
+    _toId: Anbi_EvadeBack
+    _condition:
+      _required: 16
+      _forbidden: 2
+    _interruptPoint: 0
+  - _fromId: Anbi_Stop
+    _toId: Anbi_Attack_1
+    _condition:
+      _required: 4
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_WalkStart
+    _toId: Anbi_Stop
+    _condition:
+      _required: 0
+      _forbidden: 2
+    _interruptPoint: 0
+  - _fromId: Anbi_WalkStart
+    _toId: Anbi_WalkLoop
+    _condition:
+      _required: 3
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_WalkStart
+    _toId: Anbi_EvadeFront
+    _condition:
+      _required: 18
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_WalkStart
+    _toId: Anbi_Attack_1
+    _condition:
+      _required: 4
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_WalkLoop
+    _toId: Anbi_Stop
+    _condition:
+      _required: 0
+      _forbidden: 2
+    _interruptPoint: 0
+  - _fromId: Anbi_WalkLoop
+    _toId: Anbi_EvadeFront
+    _condition:
+      _required: 18
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_WalkLoop
+    _toId: Anbi_Attack_1
+    _condition:
+      _required: 4
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_EvadeFront
+    _toId: Anbi_EvadeFrontEnd
+    _condition:
+      _required: 1
+      _forbidden: 2
+    _interruptPoint: 0
+  - _fromId: Anbi_EvadeFront
+    _toId: Anbi_RunStart
+    _condition:
+      _required: 3
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_EvadeFrontEnd
+    _toId: Anbi_Idle
+    _condition:
+      _required: 1
+      _forbidden: 2
+    _interruptPoint: 0
+  - _fromId: Anbi_EvadeFrontEnd
+    _toId: Anbi_WalkStart
+    _condition:
+      _required: 2
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_EvadeFrontEnd
+    _toId: Anbi_EvadeFront
+    _condition:
+      _required: 18
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_EvadeFrontEnd
+    _toId: Anbi_EvadeBack
+    _condition:
+      _required: 16
+      _forbidden: 2
+    _interruptPoint: 0
+  - _fromId: Anbi_EvadeFrontEnd
+    _toId: Anbi_Attack_1
+    _condition:
+      _required: 4
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_EvadeBack
+    _toId: Anbi_WalkStart
+    _condition:
+      _required: 3
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_EvadeBack
+    _toId: Anbi_EvadeBackEnd
+    _condition:
+      _required: 1
+      _forbidden: 2
+    _interruptPoint: 0
+  - _fromId: Anbi_EvadeBackEnd
+    _toId: Anbi_Idle
+    _condition:
+      _required: 1
+      _forbidden: 2
+    _interruptPoint: 0
+  - _fromId: Anbi_EvadeBackEnd
+    _toId: Anbi_WalkStart
+    _condition:
+      _required: 2
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_EvadeBackEnd
+    _toId: Anbi_EvadeFront
+    _condition:
+      _required: 18
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_EvadeBackEnd
+    _toId: Anbi_EvadeBack
+    _condition:
+      _required: 16
+      _forbidden: 2
+    _interruptPoint: 0
+  - _fromId: Anbi_EvadeBackEnd
+    _toId: Anbi_Attack_1
+    _condition:
+      _required: 4
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_RunStart
+    _toId: Anbi_Stop
+    _condition:
+      _required: 0
+      _forbidden: 2
+    _interruptPoint: 0
+  - _fromId: Anbi_RunStart
+    _toId: Anbi_EvadeFront
+    _condition:
+      _required: 18
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_RunStart
+    _toId: Anbi_RunLoop
+    _condition:
+      _required: 3
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_RunLoop
+    _toId: Anbi_Stop
+    _condition:
+      _required: 0
+      _forbidden: 2
+    _interruptPoint: 0
+  - _fromId: Anbi_RunLoop
+    _toId: Anbi_EvadeFront
+    _condition:
+      _required: 18
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_RunLoop
+    _toId: Anbi_RunTurn
+    _condition:
+      _required: 32
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_RunTurn
+    _toId: Anbi_RunLoop
+    _condition:
+      _required: 1
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Attack_1
+    _toId: Anbi_Attack_1_End
+    _condition:
+      _required: 1
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Attack_1
+    _toId: Anbi_Attack_2
+    _condition:
+      _required: 4
+      _forbidden: 0
+    _interruptPoint: 0.4
+  - _fromId: Anbi_Attack_1_End
+    _toId: Anbi_Idle
+    _condition:
+      _required: 1
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Attack_1_End
+    _toId: Anbi_WalkStart
+    _condition:
+      _required: 2
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Attack_1_End
+    _toId: Anbi_Attack_1
+    _condition:
+      _required: 4
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Attack_2
+    _toId: Anbi_Attack_2_End
+    _condition:
+      _required: 1
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Attack_2
+    _toId: Anbi_Attack_3
+    _condition:
+      _required: 4
+      _forbidden: 0
+    _interruptPoint: 0.4
+  - _fromId: Anbi_Attack_2_End
+    _toId: Anbi_Idle
+    _condition:
+      _required: 1
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Attack_2_End
+    _toId: Anbi_WalkStart
+    _condition:
+      _required: 2
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Attack_2_End
+    _toId: Anbi_Attack_1
+    _condition:
+      _required: 4
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Attack_3
+    _toId: Anbi_Attack_3_End
+    _condition:
+      _required: 1
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Attack_3
+    _toId: Anbi_Attack_4_Normal
+    _condition:
+      _required: 4
+      _forbidden: 0
+    _interruptPoint: 0.45
+  - _fromId: Anbi_Attack_3
+    _toId: Anbi_Attack_4_Prefect
+    _condition:
+      _required: 8
+      _forbidden: 0
+    _interruptPoint: 0.4
+  - _fromId: Anbi_Attack_3_End
+    _toId: Anbi_Idle
+    _condition:
+      _required: 1
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Attack_3_End
+    _toId: Anbi_WalkStart
+    _condition:
+      _required: 2
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Attack_3_End
+    _toId: Anbi_Attack_1
+    _condition:
+      _required: 4
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Attack_4_Normal
+    _toId: Anbi_Attack_1
+    _condition:
+      _required: 4
+      _forbidden: 0
+    _interruptPoint: 0.9
+  - _fromId: Anbi_Attack_4_Normal
+    _toId: Anbi_Attack_4_Normal_End
+    _condition:
+      _required: 1
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Attack_4_Normal_End
+    _toId: Anbi_Idle
+    _condition:
+      _required: 1
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Attack_4_Normal_End
+    _toId: Anbi_WalkStart
+    _condition:
+      _required: 2
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Attack_4_Normal_End
+    _toId: Anbi_Attack_1
+    _condition:
+      _required: 4
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Attack_4_Prefect
+    _toId: Anbi_Attack_1
+    _condition:
+      _required: 4
+      _forbidden: 0
+    _interruptPoint: 0.9
+  - _fromId: Anbi_Attack_4_Prefect
+    _toId: Anbi_Attack_4_Prefect_End
+    _condition:
+      _required: 1
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Attack_4_Prefect_End
+    _toId: Anbi_Idle
+    _condition:
+      _required: 1
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Attack_4_Prefect_End
+    _toId: Anbi_WalkStart
+    _condition:
+      _required: 2
+      _forbidden: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_Attack_4_Prefect_End
+    _toId: Anbi_Attack_1
+    _condition:
+      _required: 4
+      _forbidden: 0
+    _interruptPoint: 0

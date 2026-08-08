@@ -37,6 +37,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 28fb84682239f304ab69d78608c7a724, type: 2}
   - {fileID: 11400000, guid: 969eb5c3ec599554db21eae085767c41, type: 2}
   - {fileID: 11400000, guid: 5736ab0d8fef40a49a4a00076e1ada88, type: 2}
+  - {fileID: 11400000, guid: 1495f0d6d66edf2489e27fb752545673, type: 2}
+  - {fileID: 11400000, guid: 431f39911b7cf6c42b144bb55d088646, type: 2}
   _rules:
   - _fromId: Corin_Idle
     _toId: Corin_WalkStart

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0bbccbf1b6421e942b7ed1ac9973e535, type: 3}
-  m_Name: Anbi_Idle_BakedProfile
+  m_Name: Anbi_Idle
   m_EditorClassIdentifier: 
   _localX:
     serializedVersion: 2

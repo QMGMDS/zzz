@@ -36,6 +36,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c5d37c8fda2a2ee4dbfaa874550a99a4, type: 2}
   - {fileID: 11400000, guid: c8ec661859b8359479a78126b78a971d, type: 2}
   - {fileID: 11400000, guid: a275c0c7dc97dea4694715a05e3c3170, type: 2}
+  - {fileID: 11400000, guid: 4283c23052f2c9c48a3f44ddd63094a1, type: 2}
+  - {fileID: 11400000, guid: 63e05fc9af0a318408b63a7e60d669e8, type: 2}
   _rules:
   - _fromId: Anbi_Idle
     _toId: Anbi_WalkStart

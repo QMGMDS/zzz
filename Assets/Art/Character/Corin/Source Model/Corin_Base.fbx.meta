@@ -294,7 +294,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Avatar_Female_Size01_Corin_Ani_SiwtchIn
+      name: Avatar_Female_Size01_Corin_Ani_SwitchIn
       takeName: Avatar_Female_Size01_Corin_Ani_SiwtchIn_Normal
       internalID: -5579995443258601828
       firstFrame: 0

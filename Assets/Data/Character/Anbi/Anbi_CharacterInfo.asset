@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1b2c3d4e5f600000000000000000002, type: 3}
+  m_Name: Anbi_CharacterInfo
+  m_EditorClassIdentifier:
+  _id: Anbi
+  _camp: 1
+  _avatar: {fileID: 0}
+  _prefab: {fileID: 7573280741493047501, guid: bec124d35e53d81498d715fe498846d7, type: 2}
+  _baseHp: 1000
+  _baseAtk: 100

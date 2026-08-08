@@ -2,6 +2,7 @@ using System;
 using Animancer;
 using UnityEngine;
 using SPCharacter.Contract;
+using SPCharacter.Wiring;
 
 namespace SPCharacter.Core
 {
@@ -28,11 +29,16 @@ namespace SPCharacter.Core
         [Tooltip("意图供给者资产")]
         [SerializeField] private CharacterIntentionProviderAsset _directProvider;
 
+        [Header("角色拓展")]
+        [SerializeField, Tooltip("角色子拓展列表资产。")]
+        private CharacterExpanderListSO _expanderList;
+
         private CharacterRunTimeData _blackboard;
         private StateMachine _stateMachine;
         private AnimationDriver _animationDriver;
         private MotionDriver _motionDriver;
         private IntentionProcessor _intentionProcessor;
+        private MainExpander _mainExpander;
 
         private void Awake()
         {
@@ -48,6 +54,7 @@ namespace SPCharacter.Core
             _animationDriver = new AnimationDriver(_blackboard, _animancer, _stateMachine.NodesById);
             _motionDriver = new MotionDriver(_blackboard, _stateMachine.NodesById, transform);
             _intentionProcessor = new IntentionProcessor(_blackboard);
+            _mainExpander = new MainExpander(_blackboard, transform, _expanderList);
         }
 
         private void Update()
@@ -81,6 +88,9 @@ namespace SPCharacter.Core
 
             // 位移更新
             _motionDriver.PositionUpdate();
+
+            // 角色拓展统一逻辑更新
+            _mainExpander.LogicUpdate();
         }
     }
 }

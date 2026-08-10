@@ -1,145 +1,177 @@
-# 编码护栏规则（权威定义）
+# Unity AI 编辑硬门禁
 
-本文件是护栏四域的**权威定义源**。硬门禁 `tools/lint/lint.csx` 的 R1~R8 规则与此处章号对齐；软复核也会对照此处自检。
+> 该文件用于 AI 在 Unity 项目中执行代码、场景、Prefab、配置与资源编辑时的硬性约束
+> 任何不满足本文件的修改，默认视为无效修改
 
-> 护栏不是天花板：四域内强制，四域外放手发挥（详见 SKILL.md 顶部）。
+## 0 适用范围
 
-## 1 命名约定
+- 本文件只约束 AI 的编辑行为，不约束人类手工的临时排查
+- 本文件的优先级高于个人习惯、局部示例和局部风格
+- 未被明确允许的行为，一律视为禁止
+- 本文件中的规则以可执行、可判断、可验证为准，禁止模糊表述
 
-### 1.1 标识符大小写约定
+## 1 编辑边界
+
+- 只修改本次任务明确要求的文件与内容
+- 不得顺手修复无关问题
+- 不得顺手重构无关代码
+- 不得顺手格式化整个项目
+- 不得新增无关文件、无关依赖、无关资源
+- 不得删除、移动、重命名与任务无关的文件、对象或组件
+- 不得在未说明原因时改动 public API、序列化字段、事件名、Unity 回调名、资源路径、Prefab 绑定、场景引用
+- 涉及上述内容时，必须保证兼容；不能保证兼容时，先停止并说明
+- 未确认影响前，不得修改 `ProjectSettings`、`Packages/manifest.json`、`Packages/packages-lock.json`
+- 不得保留临时代码、调试输出、注释掉的旧实现、一次性修补代码
+- 不得用“顺手”“优化”“整理”作为修改理由
+
+## 2 命名规则
+
+### 2.1 通用规则
+
+- 命名统一使用英文
+- 命名必须能直接表达职责，不得使用无意义缩写
+- 同一概念在同一项目内必须使用同一命名风格
+- 布尔名称必须表达真假判断，优先使用 `is`、`has`、`can`、`should`
+- 不得把多个职责塞进一个名称
+- 不得为了显得简短而牺牲可读性
+- 不得同时存在两套可替换命名方式
+
+### 2.2 标识符大小写
 
 | 标识符 | 约定 | 示例 |
 |--------|------|------|
-| 命名空间、类、结构、接口、属性、方法、事件 | 大驼峰 | `TeamController`、`IDamageable`、`OnDead` |
+| 命名空间、类、结构体、接口、属性、方法、事件 | 大驼峰 | `TeamController`、`IDamageable`、`OnDead` |
 | 私有实例字段 | `_` + 小驼峰 | `private int _currentHp;` |
 | 私有静态字段 | `s_` + 小驼峰 | `private static int s_totalCount;` |
-| 常量 / `static readonly` | 大驼峰 | `private const int MaxLevel = 100;` |
+| 常量 | 大驼峰 | `private const int MaxLevel = 100;` |
+| `static readonly` | 大驼峰 | `private static readonly int StepMs = 16;` |
 | 局部变量、方法参数 | 小驼峰 | `int remainHp = 10;` |
-| 布尔 | `is`/`has`/`can`/`should` 前缀 | `bool _isDead;` |
 | 接口 | `I` 前缀 | `IDamageable` |
-| 抽象类 | `Base` 后缀或仅父类职责词 | `EnemyBase` |
+| 抽象基类 | `Base` 后缀 | `EnemyBase` |
 
-### 1.2 字段与方法示例
+### 2.3 Unity 字段命名
 
-```csharp
-private int _currentHp;                    // 私有字段：_小驼峰
-private static int s_totalCount;          // 私有静态：s_小驼峰
-private const int MaxLevel = 100;           // const：大驼峰
-private static readonly int StepMs = 16;    // static readonly：大驼峰
-
-public int CurrentHp => _currentHp;         // 公开属性：大驼峰
-public bool IsDead => _currentHp <= 0;     // 布尔属性：is 前缀
-public event Action<int> OnHpChanged;      // 事件：大驼峰
-
-// 异步方法：Async 后缀（仅 Task/UniTask 系；协程保留 XxxRoutine/XxxCoroutine 习惯，见下注）
-public async UniTask LoadDataAsync() { }
-// 事件回调：On 前缀
-private void OnHpChanged(int hp) { }
-```
-
-> 异步方案本身不受本 skill 约束，由 AI 自选；仅约束"异步方法名带 `Async` 后缀"这条命名一致性。
->
-> 协程例外：返回 `IEnumerator` 的协程免 `Async` 后缀，保留 `XxxRoutine`/`XxxCoroutine` 命名习惯（语义比 Async 更明确）；仅 `Task`/`UniTask` 系异步方法要求 `Async` 后缀。此约定与硬门禁 `lint.csx` 的 R6 规则对齐。
-
-### 1.3 Unity 序列化字段命名
-
-- Inspector 字段统一 `_` + 小驼峰 + `[SerializeField] private`，**不要**用 `public` 字段裸露给 Inspector。
+- 需要在 Inspector 暴露的字段，必须使用 `[SerializeField] private`
+- 禁止使用裸 `public` 字段直接暴露给 Inspector
+- 所有序列化字段统一使用 `_` + 小驼峰
+- 组件引用字段名称必须能直接看出用途或类型
+- 缩写只能用于项目内已统一且无需解释的标准缩写
 
 ```csharp
 [SerializeField, Tooltip("最大血量")] private int _maxHp = 100;
-[SerializeField, Tooltip("移动速度 (m/s)")] private float _moveSpeed = 5f;
+[SerializeField, Tooltip("移动速度 单位 m/s")] private float _moveSpeed = 5f;
+[SerializeField, Tooltip("动画控制器引用")] private Animator _anim;
 ```
 
-- 组件引用后缀用类型简称：`_rigid`、`_anim`、`_renderer`、`_collider`。
-- 类名尽量说明职责，避开 `Manager`/`Script`/`Handler` 滥用。
+## 3 注释规则
 
-## 2 注释规范
+- 注释只写必要信息，禁止解释显而易见的代码
+- 注释不得引用脚本名、文件名、类名作为重复说明
+- 注释中不使用全角破折号 `——`，统一使用 ` - `
+- 注释中不使用句号 `。`
+- 注释必须简短、直接、可验证
+- 注释必须与代码同步，代码变化后注释失效时应立即更新或删除
+- 禁止写“临时”“待优化”“后续再改”之类无执行价值注释
 
-注释要求简明扼要，**不引用脚本名**。
+### 3.1 类注释
 
-- 不使用 `——`，使用 ` - `。例：`玩家角色控制器 - Root MonoBehaviour 驱动源。`
-
-- **类**：提供 `<summary>`，说明职责。
+- 类必须提供 `<summary>`
+- 类注释只描述职责，不描述实现细节
 
 ```csharp
 /// <summary>
-/// 队伍控制器 - 控制玩家角色子物体
+/// 队伍控制器 - 管理角色切换与状态分发
 /// </summary>
 public class TeamController : MonoBehaviour
 ```
 
-- **公有/保护方法**：三行 XML 注释，必要时介绍参数和返回值。
+### 3.2 方法与属性注释
+
+- 新声明的公有或受保护成员必须提供 XML summary
+- 继承自接口或父类的重写成员可以直接使用 `/// <inheritdoc />`
+- 若重写成员有额外约束、副作用或局部差异，可在 `inheritdoc` 之外补充简短说明
+- 只有在逻辑复杂且命名无法充分表达时，私有方法才允许加注释
+- 参数和返回值只在有歧义或有约束时说明
 
 ```csharp
 /// <summary>
 /// 对目标造成伤害
 /// </summary>
-/// <param name="amount">伤害量，必须 > 0</param>
-/// <returns>实际扣减量（考虑护盾后的值）</returns>
+/// <param name="amount">伤害量 必须大于 0</param>
+/// <returns>实际扣减量</returns>
 public int TakeDamage(int amount) { }
 ```
 
-- **常量/公开属性**：单行 XML 注释。
-  ```csharp
-  /// <summary>最大血量上限</summary>
-  public int MaxHp => _maxHp;
-  ```
+```csharp
+/// <inheritdoc />
+public override CharacterIntentionFrame CurrentFrame { get; }
+```
 
-- **私有字段**：用 `[Tooltip]` 代替行内注释；逻辑确实非显而易见时才加 `//`。
+### 3.3 属性与常量注释
 
-## 3 Inspector 字段约定
+- 常量与新声明的公开属性必须提供 `<summary>`
+- 继承或重写属性可以直接使用 `/// <inheritdoc />`
+- 公开属性注释只说明语义，不解释推导过程
 
-- **私有优先**：所有 Inspector 字段用 `[SerializeField] private`，不要 `public` 字段。
-- **必带 Tooltip**：每个序列化字段必须带 `[Tooltip]`，说明含义和单位。
-- **单一所有者**：一个字段要么设计师编辑要么运行时维护，两者不可同时写。
-- 相关字段用 `[Header]` 分组，数值用 `[Range]` 约束，避免 Inspector 一片扁平。
+```csharp
+/// <summary>最大血量上限</summary>
+public int MaxHp => _maxHp;
+```
+
+```csharp
+/// <inheritdoc />
+public override CharacterIntentionFrame CurrentFrame { get; }
+```
+
+### 3.4 字段注释
+
+- 私有字段默认不写行内注释
+- 可序列化字段优先使用 `[Tooltip]`
+- 只有当字段意图无法从命名直接判断时，才允许补充最短必要注释
+
+## 4 Inspector 与序列化约束
+
+- 所有需要在 Inspector 中配置的字段必须使用 `[SerializeField] private`
+- 每个序列化字段必须带 `[Tooltip]`
+- `[Tooltip]` 必须说明字段含义与单位，不能只写同义词
+- 相关字段应使用 `[Header]` 分组
+- 数值字段应在合理时使用 `[Range]`
+- 一个字段只能有一个责任，要么设计期配置，要么运行时维护，不得同时承担
+- 运行时状态不得放入 ScriptableObject
+- ScriptableObject 只保存静态配置，不保存会被多实例共享改写的状态
+- 修改序列化字段名、类型、顺序之前，必须确认不会破坏已有资产、Prefab、场景与存档
 
 ```csharp
 [Header("战斗")]
 [SerializeField, Tooltip("最大血量")] private int _maxHp = 100;
-[SerializeField, Range(0, 10), Tooltip("移动速度 (m/s)")] private float _moveSpeed = 5f;
+[SerializeField, Range(0, 10), Tooltip("移动速度 单位 m/s")] private float _moveSpeed = 5f;
 ```
 
-- **ScriptableObject 边界**：静态配置（武器数值、关卡描述）可放 SO，运行时只读；**运行时状态（当前血量、选中目标）禁止放进 SO**——SO 是资产，会被多实例共享串改。
+## 5 禁止写法
 
-## 4 生命周期与事件订阅
+- 禁止 public 字段直接暴露给 Inspector
+- 禁止用注释代替代码
+- 禁止注释掉旧逻辑当备份
+- 禁止保留 `TODO`、`FIXME`、`HACK`、`TEMP` 作为交付结果
+- 禁止空行堆砌、无意义重排、纯格式噪音
+- 禁止制造歧义的缩写、临时别名和多套命名并存
+- 禁止通过“看起来更干净”而改变行为
+- 禁止在未明确要求时修改场景层级、Prefab 结构、资源命名、动画状态机、事件绑定
+- 禁止新增无关依赖、无关脚本、无关资源来绕过规则
 
-### 4.1 MonoBehaviour 生命周期选择
+## 6 生命周期与事件订阅约束
 
-| 想要 | 用 | 备注 |
-|------|----|------|
-| 组件/引用缓存 | `Awake` | 自身内部就绪 |
-| 跨对象引用/初始化 | `Start` | 依赖他人在 `Awake` 设置完的引用 |
-| 每帧逻辑 | `Update` | 必要才用 |
-| 一次性延迟/间隔 | 协程 或 AI 选择的异步方案 | 不要在 `Update` 累 `Time.deltaTime` 做长计时 |
-| 销毁清理 | `OnDestroy` | 退订事件、取消 CTS |
+- 事件订阅必须有对应退订
+- `OnEnable` 中订阅的事件必须在 `OnDisable` 中退订
+- `Awake` 或 `Start` 中建立的长期订阅必须在 `OnDestroy` 中退订
+- 禁止只订阅不退订
+- 禁止依赖对象销毁隐式清理事件订阅
+- 禁止在生命周期方法中混放无关职责
+- 生命周期方法只放与该生命周期阶段直接相关的逻辑
 
-> `Awake` 做"自身内部就绪"，`Start` 做"与他人连接"。
+## 7 不确定时的处理
 
-### 4.2 事件订阅与释放
-
-- 成对出现：`OnEnable` 订阅 → `OnDisable` 退订；`AddListener` 必须有对应 `RemoveListener`。
-- 回调方法用 `Handle`/`On` 前缀并对应事件名：`HandleHpChanged`、`OnLevelLoaded`。
-- 用 `CancellationTokenSource` 时，`OnDestroy` 必须 `cts.Cancel(); cts.Dispose();`。
-
-```csharp
-private void OnEnable() => _broker.OnHpChanged += HandleHpChanged;
-private void OnDisable() => _broker.OnHpChanged -= HandleHpChanged;
-private void OnDestroy() { _cts?.Cancel(); _cts?.Dispose(); }
-```
-
-### 4.3 协程
-
-- `StartCoroutine` 需要能在销毁/切场景时停掉（随 MonoBehaviour 销毁自动停，但显式停更稳）。
-- 别 `yield return null` 死循环做计时，用 `yield return new WaitForSeconds(...)`。
-
-## 5 护栏内禁止写法
-
-以下属于四个护栏领域，违反即需纠正：
-
-- `public` 可变字段裸露（用属性或事件替代）。
-- `Find("Name")` / `FindObjectOfType<T>()` 在 `Update` 里用；只在 `Awake`/`Start` 缓存一次。
-- `Update` 里 `GetComponent` / `transform.GetChild` / 字符串拼接。
-- 订阅事件不退订，造成"死后回调"空引用。
-- 一个字段同时被 Inspector 编辑和运行时脚本写回。
-- 把运行时可变状态塞进 ScriptableObject。
+- 任何一项规则无法满足时，先停止，不要猜
+- 先向用户确认，不要擅自折中
+- 如果需要例外，必须显式说明例外原因与影响
+- 如果修改会影响序列化、引用关系或运行时行为，必须先说明风险再执行

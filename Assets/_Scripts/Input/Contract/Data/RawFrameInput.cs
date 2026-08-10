@@ -3,10 +3,10 @@ using UnityEngine;
 namespace SPInput.Contract
 {
     /// <summary>
-    /// 帧原始输入 - 纯硬件事实汇报，绝无任何手感处理。
-    /// 作为值类型数据契约，构造期定稿后只读，下游不可修改。
+    /// 帧原始输入 - 纯硬件事实汇报，绝无任何手感处理
+    /// 作为值类型数据契约，构造期定稿后只读，下游不可修改
     /// </summary>
-    public struct FrameRawInput
+    public struct RawFrameInput
     {
         /// <summary>记录本帧是哪一帧</summary>
         public ulong FrameIndex { get; init; }

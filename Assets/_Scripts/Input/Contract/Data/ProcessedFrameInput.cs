@@ -3,8 +3,8 @@ using UnityEngine;
 namespace SPInput.Contract
 {
     /// <summary>
-    /// 帧后处理输入 - 输入模块对原始硬件数据做手感后处理后的特供数据。
-    /// 作为值类型数据契约，构造期定稿后只读，下游不可修改。
+    /// 帧后处理输入 - 输入模块对原始硬件数据做手感后处理后的特供数据
+    /// 作为值类型数据契约，构造期定稿后只读，下游不可修改
     /// </summary>
     public struct ProcessedFrameInput
     {
@@ -34,11 +34,11 @@ namespace SPInput.Contract
     }
 
     /// <summary>
-    /// 单个按键的后处理状态 - "被按下"为本帧按下边沿，"被长按"为持续按压时长超过阈值。
+    /// 单个按键的后处理状态 - "被按下"为本帧按下边沿，"被长按"为持续按压时长超过阈值
     /// </summary>
     public struct ButtonInputState
     {
-        /// <summary>本帧被按下（按下边沿，与原始 FrameRawInput 同源）</summary>
+        /// <summary>本帧被按下（按下边沿，与原始 RawFrameInput 同源）</summary>
         public bool IsPressed { get; init; }
 
         /// <summary>被长按 - 持续按压时长已超过长按判定阈值，松开即失效并复位</summary>

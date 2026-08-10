@@ -1,5 +1,6 @@
-using SPInput.Wiring;
 using UnityEngine;
+
+using SPInput.Wiring;
 
 namespace SPInput.Debug
 {
@@ -7,13 +8,13 @@ namespace SPInput.Debug
     /// 帧输入调试器 - 每有操作按键被按下，通过 Debug.Log 集体打印当前帧完整原始输入数据
     /// </summary>
     [DefaultExecutionOrder(-300)]
-    public class FrameInputDebugger : MonoBehaviour
+    internal sealed class FrameInputDebugger : MonoBehaviour
     {
         [Header("调试器设置")]
-        [Tooltip("是否启用输入调试日志打印。")]
+        [Tooltip("是否启用输入调试日志打印")]
         [SerializeField] private bool _isDebugEnabled = true;
 
-        [Tooltip("帧输入提供者槽位 SO，运行时从其 Provider 读取当前帧。")]
+        [Tooltip("帧输入提供者槽位 SO，运行时从其 Provider 读取当前帧")]
         [SerializeField] private FrameInputProviderSO _inputProviderSO;
 
         private void Update()
@@ -26,13 +27,13 @@ namespace SPInput.Debug
 
             var input = provider.CurrentFrame;
 
-            bool anyPressed = input.IsAttackPressed
+            bool hasAnyPressed = input.IsAttackPressed
                            || input.IsEvadePressed
                            || input.IsSkillPressed
                            || input.IsSwitchCharacterPressed
                            || input.IsUltimatePressed;
 
-            if (!anyPressed) return;
+            if (!hasAnyPressed) return;
 
             UnityEngine.Debug.Log(
                 $"<b>[输入调试]</b> 帧#{input.FrameIndex}  |  " +

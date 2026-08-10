@@ -4,11 +4,10 @@ using UnityEngine.InputSystem;
 namespace SPInput.Core
 {
     /// <summary>
-    /// 输入按键绑定 SO - 持有各 InputActionReference。
-    /// 字段为运行时只读配置，经只读属性对外暴露。
+    /// 输入按键绑定 SO - 持有各 InputActionReference
     /// </summary>
     [CreateAssetMenu(menuName = "SPInput/Input Binding", fileName = "InputBinding")]
-    public class InputBindingSO : ScriptableObject
+    internal sealed class InputBindingConfigSO : ScriptableObject
     {
         [Header("Movement")]
         [Tooltip("移动输入（Vector2）")]

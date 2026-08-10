@@ -1,38 +1,39 @@
-using SPInput.Contract;
 using System;
 using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
+
+using SPInput.Contract;
 
 namespace SPInput.Core
 {
     /// <summary>
-    /// 帧输入采集器 - 每帧从 InputBindingSO 读取玩家输入，
-    /// 同时产出 FrameRawInput 原始数据与 ProcessedFrameInput 后处理特供数据。
+    /// 帧输入采集器 - 每帧从 InputBindingConfigSO 读取玩家输入，产出帧级别输入数据
     /// </summary>
     [DefaultExecutionOrder(-400)]
-    public class FrameInputCollector : MonoBehaviour, IFrameInputProvider
+    internal sealed class FrameInputCollector : MonoBehaviour, IProvideFrameInput
     {
         [Header("输入按键绑定配置")]
-        [Tooltip("通过 ScriptableObject 配置的 InputActionReference 集合。")]
-        [SerializeField] private InputBindingSO _binding;
+        [Tooltip("通过 ScriptableObject 配置的 InputActionReference 集合")]
+        [SerializeField] private InputBindingConfigSO _binding;
 
         [Header("后处理参数配置")]
-        [Tooltip("输入后处理参数 SO（长按阈值、归零缓冲等），必配，Awake 强校验。")]
-        [SerializeField] private InputProcessingConfigSO _processingConfig;
+        [Tooltip("输入后处理参数 SO（长按阈值、归零缓冲等），必配，Awake 强校验")]
+        [SerializeField] private ProcessedFrameConfigSO _processingConfig;
 
-        /// <summary>当前帧的原始输入数据。</summary>
-        public FrameRawInput CurrentFrame { get; private set; }
+        /// <summary>当前帧的原始输入数据</summary>
+        public RawFrameInput CurrentFrame { get; private set; }
 
-        /// <summary>当前帧的后处理输入数据。</summary>
+        /// <summary>当前帧的后处理输入数据</summary>
         public ProcessedFrameInput CurrentProcessed { get; private set; }
 
         /// <summary>
-        /// 采集器内部使用的帧索引。
+        /// 采集器内部使用的帧索引
         /// </summary>
         private ulong _frameIndex;
 
-        // 按键长按计时 - 每个 InputAction 一份持续按压累计时长，松开归零。
+        // 按键长按计时 - 每个 InputAction 一份持续按压累计时长，松开归零
         private readonly Dictionary<InputAction, float> _holdTimers = new();
 
         // 轴延时缓冲状态
@@ -42,15 +43,17 @@ namespace SPInput.Core
         private float HoldThreshold => _processingConfig.HoldThreshold;
         private float ReleaseBuffer => _processingConfig.ReleaseBuffer;
 
+        #region 校验
+
         private void Awake()
         {
             if (_binding == null)
                 throw new InvalidOperationException(
-                    $"FrameInputCollector ({name}): InputBindingSO 未设置，请检查 Inspector 配置。");
+                    $"FrameInputCollector ({name}): InputBindingConfigSO 未设置，请检查 Inspector 配置");
 
             if (_processingConfig == null)
                 throw new InvalidOperationException(
-                    $"FrameInputCollector ({name}): InputProcessingConfigSO 未设置，请检查 Inspector 配置。");
+                    $"FrameInputCollector ({name}): ProcessedFrameConfigSO 未设置，请检查 Inspector 配置");
 
             ValidateBinding(_binding.MoveAction, nameof(_binding.MoveAction));
             ValidateBinding(_binding.AttackAction, nameof(_binding.AttackAction));
@@ -61,16 +64,16 @@ namespace SPInput.Core
         }
 
         /// <summary>
-        /// 校验单个 InputActionReference 是否已配置。
+        /// 校验单个 InputActionReference 是否已配置
         /// </summary>
-        /// <param name="actionRef">待校验的输入引用</param>
-        /// <param name="fieldName">SO 中对应字段名，用于错误定位</param>
         private static void ValidateBinding(InputActionReference actionRef, string fieldName)
         {
             if (actionRef == null)
                 throw new InvalidOperationException(
-                    $"InputBindingSO: [{fieldName}] 未配置 InputActionReference，请检查 SO 资产 Inspector。");
+                    $"InputBindingConfigSO: [{fieldName}] 未配置 InputActionReference，请检查 SO 资产 Inspector");
         }
+
+        #endregion
 
         #region 新输入系统的激活/失活
 
@@ -118,7 +121,7 @@ namespace SPInput.Core
 
             Vector2 moveAxis = ReadValue(_binding.MoveAction);
 
-            CurrentFrame = new FrameRawInput
+            CurrentFrame = new RawFrameInput
             {
                 FrameIndex = _frameIndex,
                 MoveAxisValue = moveAxis,
@@ -143,23 +146,20 @@ namespace SPInput.Core
         }
 
         /// <summary>
-        /// 读取 Vector2 输入值。
+        /// 读取 Vector2 输入值
         /// </summary>
-        /// <param name="actionRef">输入引用，由 Awake 校验非空</param>
         private static Vector2 ReadValue(InputActionReference actionRef)
             => actionRef.action.ReadValue<Vector2>();
 
         /// <summary>
-        /// 查询本帧是否按下。
+        /// 查询该按键本帧是否按下
         /// </summary>
-        /// <param name="actionRef">输入引用，由 Awake 校验非空</param>
         private static bool WasPressedThisFrame(InputActionReference actionRef)
             => actionRef.action.WasPressedThisFrame();
 
         /// <summary>
-        /// 按键后处理 - 累计持续按压时长，超过阈值即长按，松开归零。
+        /// 后处理 - 累计持续按压时长，超过阈值即长按，松开归零
         /// </summary>
-        /// <param name="actionRef">按键输入引用</param>
         private ButtonInputState ProcessButton(InputActionReference actionRef)
         {
             InputAction action = actionRef.action;
@@ -182,11 +182,8 @@ namespace SPInput.Core
         }
 
         /// <summary>
-        /// 轴输入后处理 - 延时缓冲非零方向，再归一化为单位方向向量。
-        /// 归零后在 ReleaseBuffer 秒内沿用上一帧非零方向，超过即冻结为零向量。
+        /// 后处理 - 延时缓冲非零方向
         /// </summary>
-        /// <param name="current">本帧原始轴值</param>
-        /// <param name="hasInput">输出：本帧是否存在有效移动输入</param>
         private Vector2 ProcessAxis(Vector2 current, out bool hasInput)
         {
             // 轻量死区过滤 - 视近零为零，避免抖动尾刺

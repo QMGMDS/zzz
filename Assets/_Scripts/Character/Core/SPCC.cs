@@ -1,82 +1,94 @@
 using System;
-using Animancer;
+
 using UnityEngine;
-using SPCharacter.Contract;
-using SPCharacter.Wiring;
+
+using Animancer;
 
 namespace SPCharacter.Core
 {
     /// <summary>
-    /// 角色控制器 - Root MonoBehaviour 驱动源。
-    /// 不包含任何具体游戏逻辑，仅负责子系统装配和严格的时序指令分发。
+    /// 角色控制器 - Root MonoBehaviour 驱动源
+    /// 绝不包含任何具体游戏逻辑，仅负责子系统装配和严格的时序指令分发
     /// </summary>
     [DefaultExecutionOrder(-300)]
     [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(AnimancerComponent))]
-    public class SPCC : MonoBehaviour
+    [RequireComponent(typeof(CharacterController))]
+    internal sealed class SPCC : MonoBehaviour
     {
         [Header("必要组件引用")]
         [SerializeField, Tooltip("角色模型使用的 Animator 组件")]
         private Animator _animator;
         [SerializeField, Tooltip("角色模型使用的 Animancer 组件")]
         private AnimancerComponent _animancer;
+        [SerializeField, Tooltip("角色模型使用的 CharacterController 组件")]
+        private CharacterController _characterController;
 
         [Header("控制器配置")]
         [SerializeField, Tooltip("角色状态配置资产")]
-        private CharacterStateConfigSO _config;
+        private CCStateConfigSO _config;
 
-        [Header("意图注入")]
-        [Tooltip("意图供给者资产")]
-        [SerializeField] private CharacterIntentionProviderAsset _directProvider;
+        #region 私有依赖
 
-        [Header("角色拓展")]
-        [SerializeField, Tooltip("角色子拓展列表资产。")]
-        private CharacterExpanderListSO _expanderList;
-
-        private CharacterRunTimeData _blackboard;
-        private StateMachine _stateMachine;
+        private CCRunTimeBlackboard _blackboard;
+        private CCStateMachine _stateMachine;
         private AnimationDriver _animationDriver;
         private MotionDriver _motionDriver;
-        private IntentionProcessor _intentionProcessor;
-        private MainExpander _mainExpander;
+        private CCWiringExtensionPipeline _wiringExtensionPipeline;
+
+        #endregion
+
+        #region 配置检查
 
         private void Awake()
         {
-            if (_animancer == null) throw new InvalidOperationException($"{name}: 未设置 Animancer 组件。");
-            if (_config == null) throw new InvalidOperationException($"{name}: 未设置角色状态配置资产。");
-            if (_animator == null) throw new InvalidOperationException($"{name}: 未设置 Animator 组件。");
+            if (_animator == null) throw new InvalidOperationException($"{name}: 未设置 Animator 组件");
+            if (_animancer == null) throw new InvalidOperationException($"{name}: 未设置 Animancer 组件");
+            if (_characterController == null) throw new InvalidOperationException($"{name}: 未设置 CharacterController 组件");
+            if (_config == null) throw new InvalidOperationException($"{name}: 未设置角色状态配置资产");
+        }
 
-            // 关闭引擎根运动 - 位移完全交由 MotionDriver 用烘焙曲线驱动。
+        #endregion
+
+        #region 内部初始化
+
+        private void Start()
+        {
+            // 关闭引擎根运动 - 位移完全交由 MotionDriver 用烘焙曲线驱动
             _animator.applyRootMotion = false;
 
-            _blackboard = new CharacterRunTimeData();
-            _stateMachine = new StateMachine(_config, _blackboard);
-            _animationDriver = new AnimationDriver(_blackboard, _animancer, _stateMachine.NodesById);
-            _motionDriver = new MotionDriver(_blackboard, _stateMachine.NodesById, transform);
-            _intentionProcessor = new IntentionProcessor(_blackboard);
-            _mainExpander = new MainExpander(_blackboard, transform, _expanderList);
+            _blackboard = new CCRunTimeBlackboard();
+            CCStateGraph stateGraph = _config.BuildRuntimeGraph();
+            _stateMachine = new CCStateMachine(stateGraph, _blackboard);
+            _animationDriver = new AnimationDriver(_blackboard, _animancer, stateGraph.NodesById);
+            _motionDriver = new MotionDriver(_blackboard, stateGraph.NodesById, transform, _characterController);
+
+            MonoBehaviour[] behaviours = GetComponents<MonoBehaviour>();
+            _wiringExtensionPipeline = new CCWiringExtensionPipeline(_blackboard, transform, behaviours);
         }
+
+        #endregion
+
+        #region 帧时序管理
 
         private void Update()
         {
-            // 意图写入黑板
-            if (_directProvider != null) _intentionProcessor.Process(_directProvider.CurrentFrame);
+            // 胶水扩展写入当前帧外部控制意图
+            _wiringExtensionPipeline.LogicUpdate();
 
-            // 状态更新
+            // 状态机更新
             _stateMachine.LogicUpdate();
+
+            // 黑板意图擦除
+            _blackboard.ResetIntentions();
 
             // 动画指令下发
             _animationDriver.LogicUpdate();
-
-            // 黑板意图刷新
-            _blackboard.ResetIntentions();
         }
 
         // *Animator 应用骨骼 Transform，动画更新*
-        // 占位实现 - applyRootMotion 已关闭，此处仅阻断默认根运动处理，位移逻辑在 LateUpdate 落位。
-        void OnAnimatorMove()
-        {
-        }
+        // 占位实现 - applyRootMotion 已关闭，此处仅阻断默认根运动处理
+        private void OnAnimatorMove() { }
 
         private void LateUpdate()
         {
@@ -88,9 +100,8 @@ namespace SPCharacter.Core
 
             // 位移更新
             _motionDriver.PositionUpdate();
-
-            // 角色拓展统一逻辑更新
-            _mainExpander.LogicUpdate();
         }
+
+        #endregion
     }
 }

@@ -1,19 +1,19 @@
 using System;
+
 using Animancer;
-using UnityEngine;
 
 namespace SPCharacter.Core
 {
     /// <summary>
-    /// 唯一对接动画系统的指令源 - 确保能自由更换动画系统
+    /// 角色动画播放指令源
     /// </summary>
-    public class AnimationSource
+    internal sealed class AnimationSource
     {
         private readonly AnimancerComponent _animancer;
         private AnimancerState _currentState;
 
         /// <summary>
-        /// 创建 Animancer 动画指令源。
+        /// 创建 Animancer 动画指令源
         /// </summary>
         /// <param name="animancer">角色使用的 Animancer 组件</param>
         public AnimationSource(AnimancerComponent animancer)
@@ -32,28 +32,15 @@ namespace SPCharacter.Core
         public float CurrentTime => _currentState != null ? _currentState.Time : 0f;
 
         /// <summary>
-        /// 使用 Transition Library 的过渡规则播放动画。
+        /// 使用 Transition Library 的过渡规则播放动画
         /// </summary>
-        /// <param name="animation">要播放的动画片段</param>
-        public void Play(SPAnimClip animation)
+        /// <param name="transition">要播放的 Transition 资源</param>
+        public void Play(TransitionAssetBase transition)
         {
-            if (!animation.IsValid) throw new ArgumentException("动画片段未设置有效的 Transition Asset。", nameof(animation));
+            if (transition == null || !transition.IsValid)
+                throw new ArgumentException("动画片段未设置有效的 Transition Asset", nameof(transition));
 
-            _currentState = _animancer.Play(animation.Transition);
+            _currentState = _animancer.Play(transition);
         }
-    }
-
-    /// <summary>
-    /// 自定义类型的动画片段
-    /// 隔离状态节点与具体动画系统使用的 Transition Asset 类型。
-    /// </summary>
-    [Serializable]
-    public struct SPAnimClip
-    {
-        [Tooltip("Animancer Transition Asset")]
-        public TransitionAssetBase Transition;
-
-        /// <summary>动画引用是否有效</summary>
-        public bool IsValid => Transition != null && Transition.IsValid;
     }
 }

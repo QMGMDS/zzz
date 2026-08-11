@@ -81,6 +81,9 @@ PrefabInstance:
       addedObject: {fileID: 8708201296505607928}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 871fdbbd55d54e649b91ebff2b898cd7, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 3410823371687733028}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 871fdbbd55d54e649b91ebff2b898cd7, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 9111725243560725266}
   m_SourcePrefab: {fileID: 100100000, guid: 871fdbbd55d54e649b91ebff2b898cd7, type: 3}
 --- !u!1 &3057414177469269289 stripped
@@ -103,6 +106,32 @@ MonoBehaviour:
   _Animator: {fileID: 8630552229864080873}
   _Transitions: {fileID: 11400000, guid: 49d64c2bbb5c33048ab010d99f94cb9d, type: 2}
   _ActionOnDisable: 0
+--- !u!143 &3410823371687733028
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3057414177469269289}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 1.6
+  m_Radius: 0.2
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0.8, z: 0}
 --- !u!114 &9111725243560725266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,8 +146,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animator: {fileID: 8630552229864080873}
   _animancer: {fileID: 8708201296505607928}
+  _characterController: {fileID: 3410823371687733028}
   _config: {fileID: 11400000, guid: aa2077d57f52aec42934e8ee132a4819, type: 2}
-  _directProvider: {fileID: 11400000, guid: c3dce5646939d5345bff43623f2c27cc, type: 2}
 --- !u!95 &8630552229864080873 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 871fdbbd55d54e649b91ebff2b898cd7, type: 3}

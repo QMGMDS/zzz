@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7917283576d2d1f44a7d8c27edfa49cb, type: 3}
   m_Name: Anbi_Idle
   m_EditorClassIdentifier: 
-  Id: Anbi_Idle
-  Animation:
-    Transition: {fileID: -8000220454170439355, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
-  IsLooping: 1
+  _id: Anbi_Idle
+  _isLooping: 0
+  _animation: {fileID: -8000220454170439355, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
   _rootMotionProfile: {fileID: 11400000, guid: 0d570fe5093d73f47b64ce6fe18fc870, type: 2}
+  _turnSpeedDegreesPerSecond: 720
+  _completionRotationDegrees: 0

@@ -13,9 +13,8 @@ MonoBehaviour:
   m_Name: Corin_RunLoop
   m_EditorClassIdentifier: 
   _id: Corin_RunLoop
-  _animation:
-    Transition: {fileID: -5263067374354594245, guid: 49d64c2bbb5c33048ab010d99f94cb9d, type: 2}
   _isLooping: 1
+  _animation: {fileID: -5263067374354594245, guid: 49d64c2bbb5c33048ab010d99f94cb9d, type: 2}
   _rootMotionProfile: {fileID: 11400000, guid: 4013fcab61b03b14183d44efb8957610, type: 2}
   _turnSpeedDegreesPerSecond: 720
   _completionRotationDegrees: 0

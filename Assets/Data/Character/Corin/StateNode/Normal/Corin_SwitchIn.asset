@@ -13,10 +13,8 @@ MonoBehaviour:
   m_Name: Corin_SwitchIn
   m_EditorClassIdentifier: 
   _id: Corin_SwitchIn
-  _animation:
-    Transition: {fileID: -4499868889951867726, guid: 49d64c2bbb5c33048ab010d99f94cb9d, type: 2}
   _isLooping: 0
-  _purpose: 1
+  _animation: {fileID: -5614522290179349341, guid: 49d64c2bbb5c33048ab010d99f94cb9d, type: 2}
   _rootMotionProfile: {fileID: 11400000, guid: 6184ce32d969d4c4b8449294bc345fb7, type: 2}
   _turnSpeedDegreesPerSecond: 0
   _completionRotationDegrees: 0

@@ -13,9 +13,8 @@ MonoBehaviour:
   m_Name: Corin_EvadeFrontEnd
   m_EditorClassIdentifier: 
   _id: Corin_EvadeFrontEnd
-  _animation:
-    Transition: {fileID: -2528184333203925380, guid: 49d64c2bbb5c33048ab010d99f94cb9d, type: 2}
   _isLooping: 0
+  _animation: {fileID: -2528184333203925380, guid: 49d64c2bbb5c33048ab010d99f94cb9d, type: 2}
   _rootMotionProfile: {fileID: 11400000, guid: a9d2e3e40043da84dac21e2247fed6b0, type: 2}
   _turnSpeedDegreesPerSecond: 720
   _completionRotationDegrees: 0

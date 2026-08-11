@@ -13,9 +13,8 @@ MonoBehaviour:
   m_Name: Corin_Attack_5
   m_EditorClassIdentifier: 
   _id: Corin_Attack_5
-  _animation:
-    Transition: {fileID: -6767258149849919529, guid: 49d64c2bbb5c33048ab010d99f94cb9d, type: 2}
   _isLooping: 0
+  _animation: {fileID: -6767258149849919529, guid: 49d64c2bbb5c33048ab010d99f94cb9d, type: 2}
   _rootMotionProfile: {fileID: 11400000, guid: b630379388f03ec4a9e9b04e8106715f, type: 2}
   _turnSpeedDegreesPerSecond: 0
   _completionRotationDegrees: 0

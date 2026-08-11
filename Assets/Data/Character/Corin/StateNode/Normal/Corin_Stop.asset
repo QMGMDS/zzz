@@ -13,9 +13,8 @@ MonoBehaviour:
   m_Name: Corin_Stop
   m_EditorClassIdentifier: 
   _id: Corin_Stop
-  _animation:
-    Transition: {fileID: -7138179480702012574, guid: 49d64c2bbb5c33048ab010d99f94cb9d, type: 2}
   _isLooping: 0
+  _animation: {fileID: -7138179480702012574, guid: 49d64c2bbb5c33048ab010d99f94cb9d, type: 2}
   _rootMotionProfile: {fileID: 11400000, guid: 809ba941e1c472f4a9908b689b6fca37, type: 2}
   _turnSpeedDegreesPerSecond: 720
   _completionRotationDegrees: 0

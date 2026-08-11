@@ -39,7 +39,8 @@ public static class GuardLint
         var json = args.Any(a => a == "--json");
         var failOnWarn = args.Any(a => a == "--fail-on-warn");
         var files = ResolveFiles(root, args);
-        var projectInfo = BuildProjectInfo(files);
+        var projectInfoFiles = ResolveProjectInfoFiles(root, files);
+        var projectInfo = BuildProjectInfo(projectInfoFiles);
         var violations = new List<Violation>();
 
         foreach (var file in files)
@@ -94,6 +95,19 @@ public static class GuardLint
             .Where(p => !IsExcluded(root, p))
             .OrderBy(p => p)
             .ToList();
+    }
+
+    private static List<string> ResolveProjectInfoFiles(string root, List<string> lintFiles)
+    {
+        var scanRoot = Directory.Exists(Path.Combine(root, "Assets")) ? Path.Combine(root, "Assets") : root;
+        if (!Directory.Exists(scanRoot)) return lintFiles;
+
+        var projectFiles = Directory.EnumerateFiles(scanRoot, "*.cs", SearchOption.AllDirectories)
+            .Where(p => !IsExcluded(root, p))
+            .OrderBy(p => p)
+            .ToList();
+
+        return projectFiles.Count == 0 ? lintFiles : projectFiles;
     }
 
     private static bool IsExcluded(string root, string path)
@@ -392,14 +406,14 @@ public static class GuardLint
             if (currentType == null || currentType.Kind != "interface")
                 continue;
 
-            var methodMatch = Regex.Match(line, @"^\s*(?!public|private|protected|internal)(?<type>[A-Za-z_]\w*(?:\s*<[^;=(){}]+>)?(?:\[\])?)\s+(?<name>[A-Za-z_]\w*)\s*\(");
+            var methodMatch = Regex.Match(line, @"^\s*(?:(?:public|abstract|virtual|sealed|static|extern|new)\s+)*(?<type>[A-Za-z_]\w*(?:\s*<[^;=(){}]+>)?(?:\[\])?)\s+(?<name>[A-Za-z_]\w*)\s*\(");
             if (methodMatch.Success)
             {
                 AddInterfaceMember(projectInfo, currentType.Name, methodMatch.Groups["name"].Value);
                 continue;
             }
 
-            var propertyMatch = Regex.Match(line, @"^\s*(?!public|private|protected|internal)(?<type>[A-Za-z_]\w*(?:\s*<[^;=(){}]+>)?(?:\[\])?)\s+(?<name>[A-Za-z_]\w*)\s*(?:\{|=>)");
+            var propertyMatch = Regex.Match(line, @"^\s*(?:(?:public|abstract|virtual|sealed|static|extern|new)\s+)*(?<type>[A-Za-z_]\w*(?:\s*<[^;=(){}]+>)?(?:\[\])?)\s+(?<name>[A-Za-z_]\w*)\s*(?:\{|=>)");
             if (propertyMatch.Success && !line.Contains("("))
             {
                 AddInterfaceMember(projectInfo, currentType.Name, propertyMatch.Groups["name"].Value);

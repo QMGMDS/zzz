@@ -1,129 +1,115 @@
-# 输入模块核心 API
+# 输入模块 API 速览
 
-> **适用场景**：下游系统获取玩家帧输入（移动轴/攻击/闪避/技能/切角色/大招按键）
-
-## 核心原则
-
-1. **只 Pull 不 Push**：输入模块每帧产出 `FrameRawInput`（原始）与 `ProcessedFrameInput`（后处理），外部自行拉取。输入模块不维护订阅者、不推送、不分发
-2. **经槽位 SO 取数据**：通过 `FrameInputProviderSO.Provider` 获取 `IFrameInputProvider`，禁止直接引用 Core 实现类
-3. **空源静默跳过**：`Provider` 为 null 时不抛异常，静默 return
-4. **守边界**：只引 `SPInput.Contract` + `SPInput.Wiring`，禁止引 `SPInput.Core` / `SPInput.Debug`
-
----
+> 适用场景：下游系统按帧读取玩家输入（移动、攻击、闪避、技能、切角色、大招）。
+> 边界约定：外部只允许引用 `SPInput.Contract` + `SPInput.Wiring`，不要直接引入 `SPInput.Core` / `SPInput.Debug`。
+> 读取原则：输入模块只提供 Pull，不做事件分发；下游每帧自行读取。
 
 ## 一、核心 API
 
-### 数据结构：FrameRawInput（原始 - 纯硬件事实）
-
-```csharp
-namespace SPInput.Contract
-{
-    public struct FrameRawInput
-    {
-        public ulong FrameIndex;
-        public Vector2 MoveAxisValue;       // WASD 移动轴（连续值）
-        public bool AttackPressed;           // 本帧按下边沿
-        public bool EvadePressed;
-        public bool SkillPressed;
-        public bool SwitchCharacterPressed;
-        public bool UltimatePressed;
-    }
-}
-```
-
-布尔字段均为 `WasPressedThisFrame` 语义（本帧按下边沿），非持续状态。
-
-### 数据结构：ProcessedFrameInput（后处理特供数据）
-
-```csharp
-namespace SPInput.Contract
-{
-    public struct ProcessedFrameInput
-    {
-        public ulong FrameIndex;
-        public ButtonInputState Attack;
-        public ButtonInputState Evade;
-        public ButtonInputState Skill;
-        public ButtonInputState SwitchCharacter;
-        public ButtonInputState Ultimate;
-        public Vector2 MoveDirection;   // 延时缓冲 + 归一化后的单位方向向量（无输入时为零向量）
-        public bool HasMoveInput;       // 是否存在有效移动输入（含归零缓冲期）
-    }
-
-    public struct ButtonInputState
-    {
-        public bool IsPressed;  // 本帧被按下（按下边沿）
-        public bool IsHeld;     // 被长按 - 持续按压时长超过阈值，松开即失效复位
-    }
-}
-```
-
-**按键形语义**：
-- `IsPressed` = 本帧被按下（与原始 `FrameRawInput` 同源的按下边沿）。
-- `IsHeld` = 本次持续按压时长已超过统一长按阈值，松开即归零并失效。
-- 所有按键形共用同一长按阈值（由 `InputProcessingConfigSO.HoldThreshold` 配置）。
-
-**轴输入形语义**：
-- `MoveDirection` = 延时缓冲后的方向，再归一化为单位向量。
-  - 本帧非零：直接采用并刷新缓冲计时。
-  - 本帧为零但归零缓冲期内（`ReleaseBuffer` 秒内）：沿用上一帧非零方向。
-  - 缓冲超时：冻结为零向量。
-- `HasMoveInput` = 本帧非零或处于归零缓冲期内时为 true，否则 false。
-
-### 访问接口：IFrameInputProvider
-
-```csharp
-namespace SPInput.Contract
-{
-    public interface IFrameInputProvider
-    {
-        FrameRawInput CurrentFrame { get; }         // 原始输入
-        ProcessedFrameInput CurrentProcessed { get; } // 后处理特供数据
-    }
-}
-```
-
-### 槽位 SO：FrameInputProviderSO
-
-```csharp
-namespace SPInput.Wiring
-{
-    public class FrameInputProviderSO : ScriptableObject
-    {
-        public IFrameInputProvider Provider { get; }   // 未注入时为 null
-        internal void Bind(IFrameInputProvider provider);
-        internal void Clear();
-    }
-}
-```
-
-### 命名空间引用
-
-```csharp
-using SPInput.Contract;   // FrameRawInput, ProcessedFrameInput, ButtonInputState, IFrameInputProvider
-using SPInput.Wiring;     // FrameInputProviderSO
-```
-
-两个都要引。不合并不妥协 - Contract 是稳定数据形状，Wiring 是可换接线机制，分立是架构核心。
-
----
-
-## 二、使用模式
-
-### 标准下游消费（以角色输入源为例）
+### 对外公开的命名空间
 
 ```csharp
 using SPInput.Contract;
 using SPInput.Wiring;
+```
+
+- `Contract`：稳定的数据结构与读取接口。
+- `Wiring`：槽位 SO 和接线胶水，负责把内部实现接到外部入口。
+
+### 数据结构：RawFrameInput
+
+```csharp
+public struct RawFrameInput
+{
+    public ulong FrameIndex { get; init; }
+    public Vector2 MoveAxisValue { get; init; }
+    public bool IsAttackPressed { get; init; }
+    public bool IsEvadePressed { get; init; }
+    public bool IsSkillPressed { get; init; }
+    public bool IsSwitchCharacterPressed { get; init; }
+    public bool IsUltimatePressed { get; init; }
+}
+```
+
+- 表示硬件输入的帧级事实。
+- 布尔值都是“本帧按下边沿”，不是持续按住。
+- 不包含死区、归一化、缓冲、长按等后处理。
+
+### 数据结构：ProcessedFrameInput / ButtonInputState
+
+```csharp
+public struct ProcessedFrameInput
+{
+    public ulong FrameIndex { get; init; }
+    public ButtonInputState Attack { get; init; }
+    public ButtonInputState Evade { get; init; }
+    public ButtonInputState Skill { get; init; }
+    public ButtonInputState SwitchCharacter { get; init; }
+    public ButtonInputState Ultimate { get; init; }
+    public Vector2 MoveDirection { get; init; }
+    public bool HasMoveInput { get; init; }
+}
+
+public struct ButtonInputState
+{
+    public bool IsPressed { get; init; }
+    public bool IsHeld { get; init; }
+}
+```
+
+- `IsPressed`：本帧按下边沿。
+- `IsHeld`：持续按压时间超过统一长按阈值后为真，松开即复位。
+- `MoveDirection`：经过归零缓冲后的方向，并归一化为单位向量。
+- `HasMoveInput`：本帧有有效输入，或仍处于归零缓冲期。
+
+### 读取接口：IProvideFrameInput
+
+```csharp
+public interface IProvideFrameInput
+{
+    RawFrameInput CurrentFrame { get; }
+    ProcessedFrameInput CurrentProcessed { get; }
+}
+```
+
+- 这是“读取契约”，不是采集器本体。
+- 外部只依赖这个接口，不直接依赖 `FrameInputCollector`。
+
+### 入口资产：FrameInputProviderSO
+
+- 外部通过 `FrameInputProviderSO.Provider` 获取 `IProvideFrameInput`。
+- `Provider` 可能为空；为空时应直接跳过，不要抛异常。
+- `Bind(...)` / `Clear()` 为 `internal`，仅供输入模块内部接线胶水使用。
+
+### 内部实现：FrameInputCollector / FrameInputWiring
+
+- `FrameInputCollector`：采集硬件输入，执行后处理，并实现 `IProvideFrameInput`。
+- `FrameInputWiring`：把 `FrameInputCollector` 注入到 `FrameInputProviderSO`。
+- 这两者属于模块内部实现，不是跨模块 API。
+
+### 后处理参数：ProcessedFrameConfigSO
+
+- `HoldThreshold`：统一长按阈值，控制所有按键形输入的 `IsHeld`。
+- `ReleaseBuffer`：轴输入归零缓冲时长，决定空档期是否沿用上一帧方向。
+- 外部不重复实现这些手感逻辑，直接消费 `CurrentProcessed`。
+
+## 二、使用模式
+
+### 标准消费方式
+
+```csharp
 using UnityEngine;
 
-public class ConsumerExample : MonoBehaviour
+using SPInput.Contract;
+using SPInput.Wiring;
+
+public sealed class InputConsumerExample : MonoBehaviour
 {
     [SerializeField] private FrameInputProviderSO _inputProviderSO;
 
     private void Update()
     {
-        var provider = _inputProviderSO != null ? _inputProviderSO.Provider : null;
+        IProvideFrameInput provider = _inputProviderSO != null ? _inputProviderSO.Provider : null;
         if (provider == null) return;
 
         ProcessedFrameInput input = provider.CurrentProcessed;
@@ -135,84 +121,68 @@ public class ConsumerExample : MonoBehaviour
             Debug.Log("攻击");
 
         if (input.Skill.IsHeld)
-            Debug.Log("技能长按蓄力");
+            Debug.Log("技能长按");
     }
 }
 ```
 
-### 减少显式类型名（可选）
+### 何时读 CurrentFrame，何时读 CurrentProcessed
 
-若私有方法需要传入输入数据，可传 `IFrameInputProvider` 而非 `ProcessedFrameInput`，省掉 `using SPInput.Contract`：
+- `CurrentFrame`：调试原始按键、分析底层输入、做特殊诊断时使用。
+- `CurrentProcessed`：正常玩法逻辑优先使用，角色、状态、技能判断都尽量走它。
 
-```csharp
-// 方法签名收接口而非 struct，调用侧用 var 推断
-private void Process(IFrameInputProvider provider)
-{
-    var input = provider.CurrentProcessed;   // var 推断，字段访问不需类型名可见
-    // ...
-}
-```
-
-### 空源保护
+### 推荐的空源保护
 
 ```csharp
-// Provider 可能为 null：接线胶水未放 / 未注入 / Collector 已销毁
-// 必须 null 保护，静默跳过
 var provider = _inputProviderSO?.Provider;
 if (provider == null) return;
 ```
 
-### 何时用原始 vs 后处理
+- `Provider` 为空通常意味着尚未接线、对象已销毁、或场景未就绪。
+- 这里应静默返回，不要把空源当成异常流程。
 
-- 用 `CurrentFrame`（原始）：需要硬件原始事实、自己做手感（极少，仅特殊调试）。
-- 用 `CurrentProcessed`（后处理）：常态 - 角色控制、状态机判断手感统一由输入模块托管。
+### 推荐的读取方式
 
----
+```csharp
+private void TickInput(IProvideFrameInput provider)
+{
+    var input = provider.CurrentProcessed;
+    // 直接消费，不重复做死区、归一化、防抖、长按判断
+}
+```
+
+- 输入模块已经完成统一处理。
+- 下游只关注“当前能不能用、是否按下、是否长按、方向是什么”。
+
+### 执行顺序
+
+```text
+FrameInputCollector 先采集 + 后处理
+        ↓
+FrameInputWiring 再注入 FrameInputProviderSO
+        ↓
+下游模块每帧 Pull Provider
+```
 
 ## 三、常见错误
 
 | 错误写法 | 正确写法 | 原因 |
-|---------|---------|------|
+|---|---|---|
 | `using SPInput.Core` | `using SPInput.Contract` + `using SPInput.Wiring` | Core 是实现层，外部禁引 |
-| `Provider.CurrentFrame` 无 null 检查 | `if (provider == null) return;` | Provider 可能为 null，必须静默跳过 |
-| `_inputProviderSO.Bind(...)` | 不调用 Bind | Bind/Clear 是 internal，只由接线胶水调 |
-| 在输入模块内加 `IInputFrameSink` / 推送 | 外部自行 Pull | 输入模块不做分发，分发交事件模块 |
-| 在输入模块内定义业务语义事件 | 事件定义放事件模块 | 输入模块只产硬件数据 + 手感后处理，不知业务 |
-| `UnityEngine.Input.GetAxis(...)` | `provider.CurrentFrame.MoveAxisValue` | 禁止旧 Input Manager，走新输入系统经模块产出 |
-| 在角色侧重复做死区/防抖/归一化 | 直接用 `CurrentProcessed` | 手感处理已还给输入模块，下游严禁重复 |
+| 直接引用 `FrameInputCollector` | 通过 `FrameInputProviderSO.Provider` 获取 `IProvideFrameInput` | 采集器不是项目级 API |
+| `provider.CurrentFrame` 不判空 | `if (provider == null) return;` | Provider 可能未注入或已销毁 |
+| 外部手调 `_inputProviderSO.Bind(...)` | 不调用 Bind | `Bind/Clear` 是内部接线入口 |
+| 在输入模块里做推送/订阅 | 外部自行 Pull | 输入模块只产输入，不做分发 |
+| 在输入模块里定义业务事件 | 业务事件放事件模块 | 输入模块只负责输入语义，不理解业务 |
+| 使用 `UnityEngine.Input.GetAxis(...)` | 使用 `provider.CurrentFrame.MoveAxisValue` | 项目约束是 Input System，不走旧 Input Manager |
+| 角色侧重复做死区、缓冲、长按 | 直接用 `CurrentProcessed` | 手感处理已在输入模块内统一完成 |
 
----
+## 四、交叉引用
 
-## 四、内部结构（外部禁引，仅供了解）
+| 相关文档 | 用途 |
+|---|---|
+| [project-module-boundaries.md](project-module-boundaries.md) | 项目级模块边界、`public` / `internal` 约定、跨模块引用规则 |
+| [camera-module-api.md](camera-module-api.md) | 摄像机模块 API；常与输入方向联动 |
+| [character-module-api.md](character-module-api.md) | 角色模块 API；通常直接消费 `CurrentProcessed` |
 
-| 层 | 命名空间 | 文件 | 职责 |
-|----|---------|------|------|
-| Contract | `SPInput.Contract` | `FrameRawInput.cs` | 原始帧数据 struct |
-| Contract | `SPInput.Contract` | `ProcessedFrameInput.cs` | 后处理帧数据 struct + ButtonInputState |
-| Contract | `SPInput.Contract` | `IFrameInputProvider.cs` | 访问接口（原始 + 后处理） |
-| Core | `SPInput.Core` | `FrameInputCollector.cs` | 采集器 + 后处理，实现接口，Awake 强校验 binding + processingConfig |
-| Core | `SPInput.Core` | `InputBindingSO.cs` | InputActionReference 绑定 SO |
-| Core | `SPInput.Core` | `InputProcessingConfigSO.cs` | 后处理参数配置 SO（长按阈值、归零缓冲） |
-| Wiring | `SPInput.Wiring` | `FrameInputProviderSO.cs` | 槽位 SO（运行时信箱） |
-| Wiring | `SPInput.Wiring` | `InputFrameWiring.cs` | 接线胶水，Bind/Clear |
-| Debug | `SPInput.Debug` | `FrameInputDebugger.cs` | 按键按下时 Debug.Log |
-
-执行时序：`FrameInputCollector [-400]` 采集+后处理 → `InputFrameWiring [-390]` 注入 → 下游 Pull。
-
-### 后处理可调参数（InputProcessingConfigSO）
-
-| 参数 | 字段 | Inspector Range | SO 缺省值 | 含义 |
-|------|------|-----------------|-----------|------|
-| 长按判定阈值 | `HoldThreshold` | [0, 2] s | 0.3 s | 按键持续按压超过此时长即长按；所有按键形共用 |
-| 归零缓冲时长 | `ReleaseBuffer` | [0, 0.5] s | 0.1 s | 轴输入归零后沿用上一帧方向的最长时长，补偿 A→D 空隙 |
-
-> SO 缺省值指 `InputProcessingConfigSO` 资产序列化字段的初值，可在 Inspector 调整。
-> `FrameInputCollector` 不做兜底：未配置 `InputProcessingConfigSO` 时，Awake 抛异常拒绝运行，与 `InputBindingSO` 漏配同处理。
-
----
-
-## 五、交叉引用
-
-| 相关文档 | 内容 |
-|---------|------|
-| 暂无 | 暂无 |
+> 建议顺序：先看 `project-module-boundaries.md`，再看输入、摄像机、角色三份模块文档。

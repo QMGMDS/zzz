@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7917283576d2d1f44a7d8c27edfa49cb, type: 3}
   m_Name: Anbi_WalkStart
   m_EditorClassIdentifier: 
-  Id: Anbi_WalkStart
-  Animation:
-    Transition: {fileID: 2712891228141345348, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
-  IsLooping: 0
+  _id: Anbi_WalkStart
+  _isLooping: 0
+  _animation: {fileID: 2712891228141345348, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
   _rootMotionProfile: {fileID: 11400000, guid: f720d90518694c24a8b000d423d2d5c5, type: 2}
+  _turnSpeedDegreesPerSecond: 720
+  _completionRotationDegrees: 0

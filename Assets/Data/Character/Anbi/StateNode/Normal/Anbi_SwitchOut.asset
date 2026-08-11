@@ -13,10 +13,8 @@ MonoBehaviour:
   m_Name: Anbi_SwitchOut
   m_EditorClassIdentifier: 
   _id: Anbi_SwitchOut
-  _animation:
-    Transition: {fileID: 1366228694077121358, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
   _isLooping: 0
-  _purpose: 2
+  _animation: {fileID: 1366228694077121358, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
   _rootMotionProfile: {fileID: 11400000, guid: 72acd545c9ba43b4c866290cc8888d39, type: 2}
   _turnSpeedDegreesPerSecond: 0
   _completionRotationDegrees: 0

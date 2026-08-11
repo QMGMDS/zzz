@@ -1,27 +1,47 @@
 ---
 name: unity-code-guard
-description: My-ZZZ 项目的整套代码审查机制（规则权威定义 + 硬门禁 + 软复核）。护栏内由本 skill 管，护栏外按最佳判断自由发挥、不要为迁就编码者而降级。改完 C# 脚本后必走本 skill 的门禁链路；用户说"跑一次软复核"时也由本 skill 处理。
+description: Unity C# 编辑硬门禁。用于 AI 编辑、审查、恢复或验证 Unity C# 脚本、Inspector 暴露字段、XML 注释（summary / inheritdoc）、生命周期与事件订阅时触发；用户要求运行代码门禁、硬门禁、lint.csx、软复核或 Unity 代码规则时也触发。激活后必须先运行随附机械检查脚本，再根据结果决定继续、修复或停止；编辑后必须再次运行检查。
 ---
 
-# unity-code-guard — 代码审查机制总路由
+# unity-code-guard
 
-本 skill 是 My-ZZZ 的**整套代码审查机制**：规则权威定义（护栏四域）+ 硬门禁（lint.csx 后置校验）+ 软复核（语义条目自检）。
+本 skill 是 Unity C# 编辑硬门禁，不是风格建议。
 
-护栏范围仅四域：命名、注释、Inspector 字段、生命周期与事件订阅。护栏之外（架构、程序集、异步方案、性能、对象池、热更新等）**不设本 skill 限制**——AI 按最佳判断自由选用更优写法，不要为"迁就编码者当前水平"而降级或回避高级写法。
+## 强制工作流
 
-## 触发点
+1. 定位 Unity 项目根目录
+   - 优先使用同时包含 `Assets/` 与 `ProjectSettings/` 的目录
+   - 如果找不到 Unity 项目根目录，则使用当前仓库根目录
+2. 编辑或恢复工作前，先运行机械门禁
+   - 命令：`dotnet script <本 skill 目录>/tools/lint/lint.csx -- <项目根目录>`
+   - 如果只需要检查指定文件，在命令末尾追加 `--files` 和文件路径
+3. 读取检查输出后再决定下一步
+   - `PASS`：允许继续任务
+   - `ERROR`：停止正常工作，先修复任务范围内的违规，再重新运行检查
+   - `WARN`：允许继续，但必须识别风险，并且不得新增同类风险
+4. 编辑 C# 文件后，必须再次运行同一机械门禁
+5. 门禁仍报告 `ERROR` 时，不得交付任务
+6. 如果项目原本已经存在无关错误，将其记录为基线，不得制造新错误
 
-- 写/改 C# 脚本后 → 走硬门禁链路（必走，不靠自觉）。
-- 用户说"跑一次软复核" → 走软复核分支。
+## 资源
 
-## 路由表（按需读 references/，不要一次全载）
+- 权威规则：`references/rules.md`
+- 门禁协议：`references/gate-protocol.md`
+- 软复核清单：`references/soft-review-checklist.md`
+- 机械检查脚本：`tools/lint/lint.csx`
 
-| 要做什么 | 读哪个 |
-|---|---|
-| 查规则的权威定义（命名/注释/Inspector/生命周期） | `references/rules.md` |
-| 跑硬门禁 / 读懂门禁链路与基线机制 | `references/gate-protocol.md` |
-| 软复核自检清单 | `references/soft-review-checklist.md` |
+## 失败处理
 
-## 边界说明
+- 不得用人工阅读替代机械门禁
+- 不得因为修改很小就跳过门禁
+- 不得通过削弱规则来压制门禁结果
+- 如果门禁无法运行，必须报告硬门禁不可用，并说明原因
+- 如果需要规则例外，必须先询问用户
 
-硬门禁的物理执行器是 `tools/lint/lint.csx`（基于 Roslyn AST 的 dotnet script，在仓库根级 `tools/lint/`，不在 skill 内）。本 skill 只描述**如何使用**它、门禁怎么走、违规怎么处理；不复制其实现。编译触发通过 UnitySkills REST（localhost:8090）直连。
+## 交付说明
+
+完成任务时，只报告以下内容：
+
+- 预检查是通过、失败，还是存在基线问题
+- 复检是否通过
+- 是否存在需要用户知道的剩余警告

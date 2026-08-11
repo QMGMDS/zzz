@@ -1,177 +1,182 @@
-# 摄像机模块核心 API
+# 摄像机模块 API 速览
 
-> **适用场景**：从输入模块方向计算摄像机坐标系下的世界移动方向、挂接相机跟随/坐标转换、排查方向不对问题
-> **模块边界**：外部只允许引 `SPCamera.Contract` + `SPCamera.Wiring`，禁止引 `SPCamera.Core`
+> 适用场景：下游模块按需做相机系方向转换，或请求摄像机切换跟随目标。
+> 边界约定：外部只允许引用 `SPCamera.Contract` + `SPCamera.Wiring`，不要直接引入 `SPCamera.Core`。
+> 使用原则：外部只拿 `Provider SO`，再通过 `Provider` 取接口；不要自己碰内部实现。
 
-## 模块总览
+## 一、核心 API
 
-```
-SmoothCameraTarget（跟随目标）   CameraMoveAxisConverter（坐标转换）
-       │                                    │
-       │                   CameraCoordinateConverterWiring ──→ CoordinateConverterProviderSO
-       │                                    │                   运行时信箱
-       │                                    │
-       ▼                                    ▼
-  Transform 平滑跟随                  InputTranslator pull 得到世界 XZ 目标方向
-```
-
-摄像机模块提供两项独立能力：
-1. **坐标转换**：将输入平面方向（x=右，y=前）转换为世界 XZ 目标方向（x=X，y=Z），消费方为角色模块 `InputTranslator`
-2. **平滑跟随**：挂载于 CameraLook 物体，持续平滑跟随角色 Transform
-
-两项能力解耦，互不依赖。
-
----
-
-## 一、Contract 层（外部可用）
-
-### 坐标转换接口：ICoordinateConverter
-
-```csharp
-namespace SPCamera.Contract
-{
-    public interface ICoordinateConverter
-    {
-        /// <summary>
-        /// 将输入平面方向转换为世界 XZ 目标方向。
-        /// </summary>
-        /// <param name="inputDirection">输入模块产出的平面方向（x=右，y=前，归一化单位向量）</param>
-        /// <returns>世界 XZ 目标方向，XY 分量分别对应世界 XZ 轴</returns>
-        Vector2 ConvertToWorldMoveDirection(Vector2 inputDirection);
-    }
-}
-```
-
-### 命名空间引用
-
-```csharp
-using SPCamera.Contract;   // ICoordinateConverter
-using SPCamera.Wiring;     // CoordinateConverterProviderSO
-```
-
----
-
-## 二、Wiring 层（外部可用）
-
-### 槽位 SO：CoordinateConverterProviderSO
-
-```csharp
-namespace SPCamera.Wiring
-{
-    [CreateAssetMenu(menuName = "SPCamera/Coordinate Converter Provider",
-                     fileName = "CoordinateConverterProvider")]
-    public class CoordinateConverterProviderSO : ScriptableObject
-    {
-        public ICoordinateConverter Provider { get; }   // 未注入时为 null
-        internal void Bind(ICoordinateConverter provider);
-        internal void Clear();
-    }
-}
-```
-
-`Provider` 为 null 时不抛异常，下游静默降级：`InputTranslator` 在坐标转换器为空时直通输入方向（不做相机系转换）。
-
----
-
-## 三、使用模式
-
-### 标准下游消费（以角色模块 InputTranslator 为例）
+### 对外公开的命名空间
 
 ```csharp
 using SPCamera.Contract;
 using SPCamera.Wiring;
-using UnityEngine;
+```
 
-public class ConsumerExample : MonoBehaviour
+- `Contract`：稳定的接口契约。
+- `Wiring`：槽位 SO 和接线入口，负责把内部实现暴露给外部。
+
+### 接口：IConvertCameraTransform
+
+```csharp
+public interface IConvertCameraTransform
 {
-    [SerializeField] private CoordinateConverterProviderSO _coordinateConverter;
-
-    private void Update()
-    {
-        ICoordinateConverter converter = _coordinateConverter?.Provider;
-        Vector2 inputDir = new Vector2(0f, 1f); // e.g. 输入向前
-
-        // 空源降级：converter 为 null 时直通
-        Vector2 worldDir = converter != null
-            ? converter.ConvertToWorldMoveDirection(inputDir)
-            : inputDir;
-
-        // worldDir.x → 世界 X, worldDir.y → 世界 Z
-    }
+    Vector2 ConvertCameraTransform(Vector2 inputDirection);
 }
 ```
 
-### 空源保护（重要）
+- 输入值是“角色输入方向”，不是世界方向。
+- `inputDirection.x` 表示输入右方向。
+- `inputDirection.y` 表示输入前方向。
+- 返回值是世界 XZ 平面方向。
+- 外部不重复实现相机朝向换算。
+
+### 入口资产：CameraTransformProviderSO
+
+- 外部通过 `CameraTransformProviderSO.Provider` 获取 `IConvertCameraTransform`。
+- `Provider` 可能为空；为空时应静默降级，不要抛异常。
+- `Provider` 为空通常表示尚未接线、对象已销毁，或场景未就绪。
+
+### 接口：ISetCameraFollowTarget
 
 ```csharp
-// Provider 可能为 null：接线胶水未放 / 未注入 / Converter 已销毁
-// InputTranslator 的降级策略：converter 为 null 时直通输入方向
-var converter = _coordinateConverter?.Provider;
-Vector2 worldDir = converter != null
-    ? converter.ConvertToWorldMoveDirection(input.MoveDirection)
-    : input.MoveDirection;
+public interface ISetCameraFollowTarget
+{
+    void SetCameraFollowTarget(Transform target);
+}
 ```
 
-### 场景接线步骤
+- 外部只提交希望跟随的 `Transform`。
+- 摄像机模块内部决定实际跟随方式。
+- 外部不要直接改摄像机位置、旋转或挂点。
 
-1. 相机根物体（持 yaw 者）挂 `CameraMoveAxisConverter`（参考系默认自身）
-2. 同一物体挂 `CameraCoordinateConverterWiring`，填入 Converter 引用和 ProviderSO 槽位
-3. 创建 `CoordinateConverterProvider` SO 资产
-4. 同一份 SO 填入所有消费者的 `_coordinateConverter` 槽位（如 `InputTranslator`）
+### 入口资产：CameraFollowTargetProviderSO
 
----
+- 外部通过 `CameraFollowTargetProviderSO.Provider` 获取 `ISetCameraFollowTarget`。
+- `Provider` 可能为空；为空时通常直接跳过这次请求。
+- 外部不直接调用摄像机内部跟随器实现。
 
-## 四、常见错误
+### 内部实现：Wiring 胶水
+
+- `CameraTransformWiring`、`CameraFollowTargetWiring` 之类的类型属于模块内部接线。
+- 它们负责把 `Core` 实现注入到 `Provider SO`。
+- 这些类型即使出现在 `SPCamera.Wiring` 命名空间，也不代表外部可以依赖。
+
+### 运行时空源约定
+
+`Provider SO` 是运行时信箱，不保证任何时刻都有值。
+
+常见原因：
+
+- 场景中缺少摄像机接线对象
+- 接线对象尚未完成 `Awake`
+- 接线对象没有配置对应 Provider SO
+- 外部模块引用了错误的 Provider SO 资产
+- 摄像机对象已销毁
+
+推荐处理：
+
+- 坐标转换 Provider 为空：直接返回输入方向
+- 跟随目标 Provider 为空：直接跳过请求
+- 不要临时查找 `SPCamera.Core` 组件绕过 Provider
+- 不要 fallback 到 `Camera.main` 自己复制实现
+
+## 二、使用模式
+
+### 标准调用：坐标转换
+
+```csharp
+[SerializeField] private CameraTransformProviderSO _cameraTransform;
+
+private Vector2 ToWorldMoveDirection(Vector2 inputDirection)
+{
+    IConvertCameraTransform converter = _cameraTransform == null
+        ? null
+        : _cameraTransform.Provider;
+
+    return converter == null
+        ? inputDirection
+        : converter.ConvertCameraTransform(inputDirection);
+}
+```
+
+- 适合角色模块把输入方向转成世界移动方向。
+- 适合 UI / 调试模块显示相机系输入方向。
+- 下游只消费结果，不关心摄像机内部算法。
+
+### 标准调用：切换跟随目标
+
+```csharp
+[SerializeField] private CameraFollowTargetProviderSO _cameraFollowTarget;
+
+public void SwitchFollowTarget(Transform target)
+{
+    ISetCameraFollowTarget setter = _cameraFollowTarget == null
+        ? null
+        : _cameraFollowTarget.Provider;
+
+    if (setter == null) return;
+    if (target == null) return;
+
+    setter.SetCameraFollowTarget(target);
+}
+```
+
+- 适合队伍模块切换当前上场角色。
+- 适合角色生成后设置初始跟随目标。
+- 适合过场或玩法逻辑请求摄像机跟随另一个目标。
+
+### 推荐的空源保护
+
+```csharp
+var provider = _cameraTransform?.Provider;
+if (provider == null) return;
+```
+
+```csharp
+var setter = _cameraFollowTarget?.Provider;
+if (setter == null) return;
+```
+
+- `Provider` 为空时应静默处理。
+- 不要把空源当成异常流程。
+
+### 场景接线顺序
+
+```text
+CameraWiring 先把 Core 实现注入 Provider SO
+        ↓
+下游模块每次按需 Pull Provider
+        ↓
+只调用 Contract 接口，不直接碰 Core
+```
+
+## 三、常见错误
 
 | 错误写法 | 正确写法 | 原因 |
-|---------|---------|------|
-| `Camera.main.transform.forward` | `transform.forward`（挂 yaw 物体上） | 不语义耦合 Camera.main，坐标转换只认 yaw，不知 main |
-| 零向量不做保护直接 `normalized` | `sqrMagnitude <= epsilon` 时直接 return Vector2.zero | 零向量归一化出 NaN |
-| 在输出方向做 `-forward` 翻转 | 只做纯坐标转换 | 角色面朝方向是角色侧的事，相机系不关心 |
+|---|---|---|
 | `using SPCamera.Core` | `using SPCamera.Contract` + `using SPCamera.Wiring` | Core 是实现层，外部禁引 |
-| 把 yaw 混入 SmoothCameraTarget 的位置平滑 | 两者解耦 — yaw 由父级/根物体持，Target 只做位置跟随 | 职责分离 |
-| 在角色侧用 `Camera.main` 自己做转换 | 经 ProviderSO → ICoordinateConverter 统一转换 | 避免散落重复逻辑 |
+| 直接引用 `CameraFollower` | 通过 `CameraFollowTargetProviderSO.Provider` 获取接口 | 跟随器不是项目级 API |
+| 直接调用跟随器 | `_cameraFollowTarget?.Provider?.SetCameraFollowTarget(target);` | 不跨模块调用 Core 实现 |
+| 用 `Camera.main` 转方向 | `_cameraTransform?.Provider?.ConvertCameraTransform(inputDirection)` | 方向规则应由摄像机模块统一处理 |
+| 不判空 Provider | `_cameraTransform.Provider.ConvertCameraTransform(...)` | Provider 可能未注入或已销毁 |
+| 依赖 Wiring 胶水 | `[SerializeField] private CameraTransformWiring _cameraWiring;` | `internal` 胶水不是外部 API |
+| 直接改摄像机位置 | `cameraTransform.position = ...` | 外部不接管摄像机实现细节 |
+| 复制方向算法 | 自己算 `Camera.main.transform.forward` | 会破坏统一规则，容易与模块逻辑不一致 |
 
----
+## 四、交叉引用
 
-## 五、内部结构（外部禁引，仅供了解）
+| 相关文档 | 用途 |
+|---|---|
+| [project-module-boundaries.md](project-module-boundaries.md) | 项目级模块边界、`public` / `internal` 约定、跨模块引用规则 |
+| [input-module-api.md](input-module-api.md) | 输入方向 `MoveDirection` 的来源与语义 |
+| [character-module-api.md](character-module-api.md) | 角色模块如何消费摄像机方向转换结果 |
 
-| 层 | 命名空间 | 文件 | 职责 |
-|----|---------|------|------|
-| Contract | `SPCamera.Contract` | `ICoordinateConverter.cs` | 坐标转换接口 |
-| Core | `SPCamera` | `CameraMoveAxisConverter.cs` | 转换实现 — 取参考系 yaw，投影 XZ 平面做方向旋转变换 |
-| Core | `SPCamera` | `SmoothCameraTarget.cs` | 平滑跟随 — 用 SmoothDamp 跟随目标 Transform |
-| Wiring | `SPCamera.Wiring` | `CoordinateConverterProviderSO.cs` | 槽位 SO（运行时信箱） |
-| Wiring | `SPCamera.Wiring` | `CameraCoordinateConverterWiring.cs` | 接线胶水，Awake Bind / OnDestroy Clear |
+> 建议顺序：先看 `project-module-boundaries.md`，再看输入、摄像机、角色三份模块文档。
 
-执行时序：输入模块采集 → `CameraCoordinateConverterWiring [-380]` 注入 → `InputTranslator` Pull（角色 `Update`）。
+### 边界提醒
 
-### 坐标转换实现细节
-
-```
-输入：Vector2 inputDirection（x=右，y=前，已归一化）
-算法：forward = Reference.forward 投影到 XZ（y=0），right = Reference.right 投影到 XZ（y=0）
-      world = forward * inputDirection.y + right * inputDirection.x
-输出：Vector2(x=world.x, y=world.z)，归一化单位方向
-```
-
-- `_reference` 槽位留空时默认使用自身 `transform`，可显式指定任意持 yaw 的节点
-- 输入为零向量（sqrMagnitude ≤ 1e-6）时直接返回零，不进行任何计算
-- 投影后方向为零（纯垂直向下/向上）时返回零，不抛异常
-
-### SmoothCameraTarget 实现细节
-
-```
-每帧 Update：_targetCharacter.position → 保持 y 不变 → Vector3.SmoothDamp
-参数：_smoothTime（默认 0.3s）、_maxSpeed（默认 40f/s）
-执行顺序：[DefaultExecutionOrder(-50)]
-```
-
----
-
-## 六、交叉引用
-
-| 相关文档 | 内容 |
-|---------|------|
-| [input-module-api.md](input-module-api.md) | `InputTranslator` 上游 — 帧输入数据形状（MoveDirection 语义） |
-| [character-module-api.md](character-module-api.md) | `InputTranslator` 所在模块 — 角色意图翻译 + 消费相机系方向 |
+- `SPCamera.Contract`：外部可依赖的接口契约。
+- `SPCamera.Wiring`：外部只依赖 `public` Provider SO。
+- `SPCamera.Core`：摄像机内部实现，外部禁引。
+- `internal` Wiring 胶水：模块内部接线细节，外部禁用。

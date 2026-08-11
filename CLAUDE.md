@@ -1,1 +1,0 @@
-- 使用 [AGENTS.md](./AGENTS.md)

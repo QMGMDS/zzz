@@ -13,10 +13,8 @@ MonoBehaviour:
   m_Name: Corin_SwitchOut
   m_EditorClassIdentifier: 
   _id: Corin_SwitchOut
-  _animation:
-    Transition: {fileID: -4499868889951867726, guid: 49d64c2bbb5c33048ab010d99f94cb9d, type: 2}
   _isLooping: 0
-  _purpose: 2
+  _animation: {fileID: -8403769771376170919, guid: 49d64c2bbb5c33048ab010d99f94cb9d, type: 2}
   _rootMotionProfile: {fileID: 11400000, guid: dd00de17eb4ef2e46b4112d2d54bebca, type: 2}
   _turnSpeedDegreesPerSecond: 0
   _completionRotationDegrees: 0

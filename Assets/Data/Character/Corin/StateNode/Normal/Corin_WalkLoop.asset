@@ -13,9 +13,8 @@ MonoBehaviour:
   m_Name: Corin_WalkLoop
   m_EditorClassIdentifier: 
   _id: Corin_WalkLoop
-  _animation:
-    Transition: {fileID: 5940149985229655286, guid: 49d64c2bbb5c33048ab010d99f94cb9d, type: 2}
   _isLooping: 1
+  _animation: {fileID: 5940149985229655286, guid: 49d64c2bbb5c33048ab010d99f94cb9d, type: 2}
   _rootMotionProfile: {fileID: 11400000, guid: d7607f7e19810b64c989dcf883a7ebfa, type: 2}
   _turnSpeedDegreesPerSecond: 1200
   _completionRotationDegrees: 0

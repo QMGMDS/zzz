@@ -1,29 +1,26 @@
-using SPInput.Contract;
 using UnityEngine;
+
+using SPInput.Contract;
 
 namespace SPInput.Wiring
 {
     /// <summary>
-    /// 帧输入提供者槽位 SO - 运行时信箱。
-    /// 下游在 Inspector 引用同一份 SO 资产，运行时从 <see cref="Provider"/> 取用。
-    /// 删除接线胶水后 Provider 为 null，下游空转不报错。
-    /// 约束：仅支持单采集器注入；重复 Bind 会在控制台告警。
+    /// 信箱 - 存储输入模块向外提供玩家帧输入数据
     /// </summary>
-    [CreateAssetMenu(menuName = "SPInput/Frame Input Provider", fileName = "FrameInputProvider")]
-    public class FrameInputProviderSO : ScriptableObject
+    [CreateAssetMenu(menuName = "SPInput/FrameInput Provider", fileName = "FrameInputProvider")]
+    public sealed class FrameInputProviderSO : ScriptableObject
     {
-        // 运行时注入，不序列化。下游只读。
-        private IFrameInputProvider _provider;
+        private IProvideFrameInput _provider;
 
-        /// <summary>当前注入的帧输入提供者；未注入时为 null。</summary>
-        public IFrameInputProvider Provider => _provider;
+        /// <summary>当前注入的帧输入采集器，未注入时为 null，供外部模块拿取</summary>
+        public IProvideFrameInput Provider => _provider;
 
         /// <summary>
-        /// 接线胶水专用 - 注入提供者。
-        /// 重复注入不同实例会告警，防止多实例串改。
+        /// 接线胶水专用 - 注入帧输入采集器
+        /// 重复注入不同实例会告警，防止多实例串改
         /// </summary>
-        /// <param name="provider">帧输入提供者，通常为 FrameInputCollector</param>
-        internal void Bind(IFrameInputProvider provider)
+        /// <param name="provider">帧输入采集器</param>
+        internal void Bind(IProvideFrameInput provider)
         {
             if (provider == null) return;
             if (_provider != null && !ReferenceEquals(_provider, provider))
@@ -35,7 +32,7 @@ namespace SPInput.Wiring
         }
 
         /// <summary>
-        /// 接线胶水专用 - 在提供者销毁时清空槽位，避免悬空引用。
+        /// 接线胶水专用 - 在采集器销毁时清空槽位，避免悬空引用
         /// </summary>
         internal void Clear() => _provider = null;
     }

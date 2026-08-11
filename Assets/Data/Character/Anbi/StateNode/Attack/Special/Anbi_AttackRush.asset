@@ -13,9 +13,8 @@ MonoBehaviour:
   m_Name: Anbi_AttackRush
   m_EditorClassIdentifier: 
   _id: Anbi_AttackRush
-  _animation:
-    Transition: {fileID: -7108528397668265645, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
   _isLooping: 0
+  _animation: {fileID: -7108528397668265645, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
   _rootMotionProfile: {fileID: 11400000, guid: c7c9a97a5658b3d4783169a57806c203, type: 2}
   _turnSpeedDegreesPerSecond: 0
   _completionRotationDegrees: 0

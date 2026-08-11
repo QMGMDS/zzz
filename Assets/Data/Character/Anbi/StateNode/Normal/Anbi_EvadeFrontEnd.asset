@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Anbi_EvadeFrontEnd
   m_EditorClassIdentifier: 
   _id: Anbi_EvadeFrontEnd
-  _animation:
-    Transition: {fileID: -7093065126396164137, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
   _isLooping: 0
+  _animation: {fileID: -7093065126396164137, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
   _rootMotionProfile: {fileID: 11400000, guid: 84668a6805282974191acd19ce9ac272, type: 2}
   _turnSpeedDegreesPerSecond: 0
+  _completionRotationDegrees: 0

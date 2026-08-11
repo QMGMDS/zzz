@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Anbi_RunStart
   m_EditorClassIdentifier: 
   _id: Anbi_RunStart
-  _animation:
-    Transition: {fileID: -6810285111288871216, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
   _isLooping: 0
+  _animation: {fileID: -6810285111288871216, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
   _rootMotionProfile: {fileID: 11400000, guid: 877b38b32c1dbc1409316b71c8031826, type: 2}
   _turnSpeedDegreesPerSecond: 720
+  _completionRotationDegrees: 0

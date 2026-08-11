@@ -13,9 +13,8 @@ MonoBehaviour:
   m_Name: Anbi_Attack_3_End
   m_EditorClassIdentifier: 
   _id: Anbi_Attack_3_End
-  _animation:
-    Transition: {fileID: 4594726399627986978, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
   _isLooping: 0
+  _animation: {fileID: 4594726399627986978, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
   _rootMotionProfile: {fileID: 11400000, guid: e681a72842abde14cbfae6f9bce4c1de, type: 2}
   _turnSpeedDegreesPerSecond: 0
   _completionRotationDegrees: 0

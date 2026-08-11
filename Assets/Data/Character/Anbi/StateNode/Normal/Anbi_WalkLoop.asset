@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Anbi_WalkLoop
   m_EditorClassIdentifier: 
   _id: Anbi_WalkLoop
-  _animation:
-    Transition: {fileID: -6753691415061833933, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
   _isLooping: 1
+  _animation: {fileID: -6753691415061833933, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
   _rootMotionProfile: {fileID: 11400000, guid: f6b4f13f32d67a348977dc85572eef86, type: 2}
   _turnSpeedDegreesPerSecond: 1200
+  _completionRotationDegrees: 0

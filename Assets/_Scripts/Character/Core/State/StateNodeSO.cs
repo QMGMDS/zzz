@@ -25,8 +25,6 @@ namespace SPCharacter.Core
         private RootMotionProfileSO _rootMotionProfile;
         [SerializeField, Min(0f), Tooltip("该状态每秒最大转向角度，单位为度/秒；0 表示不主动旋转")]
         private float _turnSpeedDegreesPerSecond = 720f;
-        [SerializeField, Tooltip("该状态动画完成时一次性施加的相对 Y 轴旋转角度，单位为度")]
-        private float _completionRotationDegrees;
 
         /// <summary>状态唯一标识</summary>
         public string Id => _id;
@@ -42,8 +40,5 @@ namespace SPCharacter.Core
 
         /// <summary>该状态每秒最大转向角度</summary>
         public float TurnSpeedDegreesPerSecond => _turnSpeedDegreesPerSecond;
-
-        /// <summary>该状态动画完成时一次性施加的相对 Y 轴旋转角度</summary>
-        public float CompletionRotationDegrees => _completionRotationDegrees;
     }
 }

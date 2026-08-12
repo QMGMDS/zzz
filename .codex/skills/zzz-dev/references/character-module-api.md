@@ -63,7 +63,6 @@ LateUpdate:
 | `Animation` | Animancer `TransitionAssetBase`，进入状态时播放。 |
 | `RootMotionProfile` | 离线烘焙累计本地位移；为空表示无根运动位移。 |
 | `TurnSpeedDegreesPerSecond` | 每秒最大转向角；`0` 表示不主动转向。 |
-| `CompletionRotationDegrees` | 离开该状态时一次性施加的相对 Y 轴旋转。 |
 
 新增动作优先新增 `StateNodeSO` + Animancer Transition，不新增 Animator Controller 状态；位移写在节点和 RootMotionProfile，不在外部脚本手推角色。
 

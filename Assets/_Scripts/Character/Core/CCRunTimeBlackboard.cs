@@ -56,15 +56,6 @@ namespace SPCharacter.Core
             StateVersion++;
         }
 
-        /// <summary>等待运动驱动器消费的状态结束相对 Y 轴旋转补偿，单位为度</summary>
-        public float PendingCompletionRotationDegrees { get; private set; }
-
-        /// <summary>写入状态结束时的一次性相对 Y 轴旋转补偿</summary>
-        public void PublishCompletionRotation(float rotationDegrees)
-        {
-            PendingCompletionRotationDegrees = rotationDegrees;
-        }
-
         #endregion
 
         #region AnimationDriver 写入
@@ -95,16 +86,6 @@ namespace SPCharacter.Core
 
         /// <summary>报告当前非循环动画已经完成</summary>
         public void ReportAnimationCompleted() => SetIntention(CCIntention.AnimationCompleted, true);
-
-        #endregion
-
-        #region MotionDriver 写入
-
-        /// <summary>清空已经应用的状态结束旋转补偿</summary>
-        public void ClearCompletionRotation()
-        {
-            PendingCompletionRotationDegrees = 0f;
-        }
 
         #endregion
 

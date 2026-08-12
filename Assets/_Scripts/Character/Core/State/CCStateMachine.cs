@@ -59,9 +59,6 @@ namespace SPCharacter.Core
             if (id == _currentStateId) // 同状态不转移
                 return;
 
-            StateNodeSO previousNode = _graph.NodesById[_currentStateId];
-            _blackboard.PublishCompletionRotation(previousNode.CompletionRotationDegrees);
-
             _currentStateId = id;
             PublishCurrentState();
         }

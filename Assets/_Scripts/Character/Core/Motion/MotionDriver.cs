@@ -47,19 +47,7 @@ namespace SPCharacter.Core
         /// </summary>
         public void RotationUpdate()
         {
-            ApplyCompletionRotation();
             ApplyContinuousRotation();
-        }
-
-        private void ApplyCompletionRotation()
-        {
-            float rotationDegrees = _blackboard.PendingCompletionRotationDegrees;
-            if (!Mathf.Approximately(rotationDegrees, 0f))
-            {
-                _bodyTransform.rotation *= Quaternion.Euler(0f, rotationDegrees, 0f);
-            }
-
-            _blackboard.ClearCompletionRotation();
         }
 
         private void ApplyContinuousRotation()

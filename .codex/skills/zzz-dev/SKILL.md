@@ -24,6 +24,7 @@ description: 让 AI 快速上手 My-ZZZ 项目各模块的 API。关键词：输
 | 摄像机模块 (Camera) | [references/camera-module-api.md](references/camera-module-api.md) | 输入方向转相机系世界移动方向、平滑跟随目标、坐标转换接线 |
 | 角色模块 (Character) | [references/character-module-api.md](references/character-module-api.md) | 读写角色控制器代码、搭状态节点/状态机配置、接意图供给源（玩家/AI）、排查动画/运动/时序问题 |
 | 事件总线 (Event) | [references/event-bus-api.md](references/event-bus-api.md) | 定义事实事件、发布/订阅事件、判断事件总线是否适合当前跨模块通信 |
+| 资源模块 (Resource) | [references/resource-module-api.md](references/resource-module-api.md) | 按资源键同步实例化/批量创建预制体、统一管理实例释放、配置资源目录与 Provider SO 接线 |
 
 > 后续模块（队伍、UI 等）的参考文档将在各自重构完成后追加至此表。
 

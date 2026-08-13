@@ -2,7 +2,7 @@
 
 > 适用场景：装配角色控制器、配置状态节点/转移规则、接入玩家或 AI 意图源、排查动画/运动/时序问题。
 > 边界约定：角色模块当前**没有稳定 public Contract API**；`Assets/_Scripts/Character/Contract` 为空，外部模块不要引用 `SPCharacter.Core`。
-> 使用原则：通过 Inspector 组装 `SPCC`、状态配置和模块内 Wiring；跨模块新增能力时先补 Contract + Provider SO。
+> 使用原则：通过 Inspector 组装 `SPCC`、状态配置和模块内 Wiring；跨模块新增能力时先补 Contract + 模块服务。
 
 ## 一、核心结构
 
@@ -138,8 +138,8 @@ AnimationCompleted @0.8 #10
   SPCC
     _animator / _animancer / _characterController / _config
   PlayerInputIntentionWiring
-    _inputProviderSO = 输入模块 FrameInputProviderSO
-    _cameraTransformProviderSO = 摄像机模块 CameraTransformProviderSO
+    ModuleServiceHub.Get<IProvideFrameInput>()
+    ModuleServiceHub.Get<IConvertCameraTransform>()
 ```
 
 `PlayerInputIntentionWiring` 当前映射：
@@ -149,7 +149,7 @@ AnimationCompleted @0.8 #10
 - `Attack.IsHeld` → `WantToHoldAttack`
 - `Evade.IsPressed` → `WantToEvade`
 
-Provider 空源约定：输入 Provider 为空则本帧不提交玩家意图；摄像机转换 Provider 为空则直接使用输入方向。
+空源约定：输入服务必选，`Start+` 直接取用；摄像机转换服务可选，为空则回退输入方向。
 
 ### 新增动作配置流程
 
@@ -168,28 +168,28 @@ Provider 空源约定：输入 Provider 为空则本帧不提交玩家意图；�
 - `IWriteIntention` 只能写控制意图，不能写 `AnimationCompleted`。
 - 每帧开始会先把移动方向清为 `Vector2.zero`。
 
-当前内置扩展只有 `PlayerInputIntentionWiring`。AI/队伍系统若要驱动角色，不要直接拿黑板；应先设计 `SPCharacter.Contract` + Provider SO，或在角色模块内新增专用 Wiring。
+当前内置扩展只有 `PlayerInputIntentionWiring`。AI/队伍系统若要驱动角色，不要直接拿黑板；应先设计 `SPCharacter.Contract` + 模块服务，或在角色模块内新增专用 Wiring。
 
 ## 四、常见错误
 
 | 错误写法 | 正确写法 | 原因 |
 |---|---|---|
-| 外部模块 `using SPCharacter.Core` | 等待/新增 `SPCharacter.Contract` + Provider SO | Core 是实现层，当前无 public 角色 API |
+| 外部模块 `using SPCharacter.Core` | 等待/新增 `SPCharacter.Contract` + 模块服务 | Core 是实现层，当前无 public 角色 API |
 | 直接改 `CCRunTimeBlackboard` | 通过角色模块内 Wiring 写意图 | 黑板只服务内部子系统 |
 | 用 Animator Controller / `SetTrigger` | `StateNodeSO` + Animancer Transition | 项目约束是 Animancer 按需播放 |
 | 开启 `Animator.applyRootMotion` | `RootMotionProfileSO` + `MotionDriver` | 根运动由烘焙曲线统一控制 |
 | 外部移动角色 Transform | 由 `MotionDriver` 执行位移 | 避免破坏状态/动画/运动时序 |
 | 外部写入 `AnimationCompleted` | 只由 `AnimationDriver` 自动报告 | 它不是控制意图 |
 | 角色侧重复读硬件输入 | 消费输入模块 `CurrentProcessed` | 输入手感已统一处理 |
-| 自己重算相机系方向 | 通过 `CameraTransformProviderSO.Provider` | 坐标转换属于摄像机模块能力 |
+| 自己重算相机系方向 | `ModuleServiceHub.Get<IConvertCameraTransform>()` | 坐标转换属于摄像机模块能力 |
 | 手改 `.asset` YAML 的意图整数 | 用 Inspector / Excel 导入 | 避免位掩码和 GUID 错配 |
 
 ## 五、交叉引用
 
 | 相关文档 | 用途 |
 |---|---|
-| [project-module-boundaries.md](project-module-boundaries.md) | 模块边界、Contract / Provider SO、事件总线与协调层规则 |
-| [input-module-api.md](input-module-api.md) | `FrameInputProviderSO` 与 `ProcessedFrameInput` 语义 |
+| [framework-core.md](framework-core.md) | 访问级别语义、Contract / 模块服务、事件总线 |
+| [input-module-api.md](input-module-api.md) | 输入服务 `IProvideFrameInput` 与 `ProcessedFrameInput` 语义 |
 | [camera-module-api.md](camera-module-api.md) | 输入方向转相机系世界方向、摄像机跟随目标接口 |
 
-> 建议顺序：先看 `project-module-boundaries.md`，再看输入、摄像机、角色三份模块文档。
+> 建议顺序：先看 `framework-core.md`，再看输入、摄像机、角色三份模块文档。

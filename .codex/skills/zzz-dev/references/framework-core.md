@@ -18,11 +18,21 @@
 
 ## 2. 两种模块通讯方式
 
-### 能力/状态借用：Contract 接口 + 模块服务
+### 能力/状态借用：Contract 接口 + 服务
 
 - 用于：读取当前状态/连续数据、调用目标模块的明确能力。
 - A 只依赖 B 的 Contract，不依赖 B 的 Core。
 - 没有返回值不代表是事件：`SetCameraFollowTarget(target)` 仍是能力调用。
+
+服务契约用标记接口区分作用域：
+
+| 契约形态 | 标记接口 | 注册/获取入口 | 键 |
+|---|---|---|---|
+| 模块级单例 | `IModuleService` | `ModuleServiceHub` | 契约类型 |
+| 实例级 | `IInstanceService` | `InstanceServiceHub` | 契约类型 + 实例 id |
+| 普通契约 | 无 | 不作为服务注册 | - |
+
+#### 模块级服务（ModuleServiceHub）
 
 时序约束：
 
@@ -64,6 +74,56 @@ public sealed class ExampleConsumer : MonoBehaviour
 - 必选服务（如输入 `IProvideFrameInput`）：`Get` 直接用，不判空。
 - 可选服务（如 `IConvertCameraTransform`）：`TryGet` 或判空做语义回退。
 
+#### 实例级服务（InstanceServiceHub）
+
+- 用于：同一契约存在多个实例，需要按实例路由（如按角色 id 请求切换）。
+- 契约接口继承 `IInstanceService`，注册/获取都带实例 id。
+- 实例 id 使用稳定字符串，当前单队伍下全局唯一即可。
+
+生命周期与语义：
+
+1. MonoBehaviour 实例服务在 `OnEnable` 注册、`OnDisable` 注销，由 `SetActive` 同步触发。
+2. 注册/获取/注销必须使用同一个契约接口类型作泛型参数，键才一致；用实现类注册会与契约查询不匹配。
+3. `Register` 遇到重复 id 报错并拒绝覆盖；`Unregister(id, instance)` 只注销该实例名下的条目，避免误删他人注册。
+4. `Get<T>(id)` 未注册返回 `null`，`TryGet<T>(id, out service)` 返回 `false`，由调用方做“不可用/不可切换”回退，Hub 不抛异常。
+5. 取用时自动清理已销毁的 Unity 对象，避免脏引用。
+
+```csharp
+// 契约：实例级服务接口
+public interface IExampleInstanceContract : IInstanceService
+{
+    void DoWork();
+}
+
+// 供方：实例服务在激活时注册、失活时注销
+internal sealed class ExampleInstanceService : MonoBehaviour, IExampleInstanceContract
+{
+    [SerializeField, Tooltip("实例 id")] private string _instanceId;
+
+    private void OnEnable()
+    {
+        InstanceServiceHub.Register<IExampleInstanceContract>(_instanceId, this);
+    }
+
+    private void OnDisable()
+    {
+        InstanceServiceHub.Unregister<IExampleInstanceContract>(_instanceId, this);
+    }
+}
+
+// 需方：在 Start 或之后按 id 取用
+public sealed class ExampleConsumer : MonoBehaviour
+{
+    [SerializeField, Tooltip("目标实例 id")] private string _targetId;
+
+    private void Start()
+    {
+        if (InstanceServiceHub.TryGet<IExampleInstanceContract>(_targetId, out IExampleInstanceContract service))
+            service.DoWork();
+    }
+}
+```
+
 ### 事实广播：事件总线
 
 - 用于：声明“某件事已发生”，低频、离散、完成语义或状态变化。
@@ -95,6 +155,6 @@ IDisposable subscription = EventBus.Subscribe(ExampleEvents.ExampleChanged, OnCh
 ## 3. 核心原则
 
 1. 模块是最大代码单位；未拆 asmdef 不代表没有边界。
-2. 跨模块只引用 `*.Contract` 与 `SPFramework.Service` 的 `ModuleServiceHub`；不引用 `Core`/`Debug`/`Editor`/`Wiring`。
-3. 要用别人的东西，走接口 + 模块服务；只宣布自己做完了事，走事件总线。
+2. 跨模块只引用 `*.Contract` 与 `SPFramework.Service` 的 `ModuleServiceHub`/`InstanceServiceHub`；不引用 `Core`/`Debug`/`Editor`/`Wiring`。
+3. 要用别人的东西，走接口 + 服务（模块级或实例级）；只宣布自己做完了事，走事件总线。
 4. 事件是事实不是命令；参数只补全事实（谁、前后变化、位置、时间、结果）。

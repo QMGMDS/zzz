@@ -58,6 +58,11 @@ namespace SPCharacter.Core
             if (node.TurnSpeedDegreesPerSecond <= 0f)
                 return;
 
+            // 无有效移动输入时保持当前朝向：
+            // Atan2(0, 0) 恒为 0，若继续转向会把角色拉向世界 +Z 方向
+            if (moveInput.sqrMagnitude <= 0f)
+                return;
+
             float targetYaw = Mathf.Atan2(moveInput.x, moveInput.y) * Mathf.Rad2Deg;
             float currentYaw = _bodyTransform.eulerAngles.y;
             float nextYaw = Mathf.MoveTowardsAngle(

@@ -10,11 +10,16 @@ namespace SPCharacter.Wiring
     /// <summary>
     /// 玩家输入意图胶水 - 将玩家后处理输入提交为角色意图
     /// </summary>
-    internal sealed class PlayerInputIntentionWiring : MonoBehaviour, ICCWiringExtension
+    internal sealed class PlayerInputIntentionWiring : MonoBehaviour, ICCWiringExtension, ICharacterInputGate
     {
+        private bool _isOperationLocked;
+
         /// <inheritdoc />
         public void UpdateWiring(CCWiringContext context, IWriteIntention writer)
         {
+            if (_isOperationLocked)
+                return;
+
             IProvideFrameInput provider = ModuleServiceHub.Get<IProvideFrameInput>();
 
             ProcessedFrameInput input = provider.CurrentProcessed;
@@ -27,6 +32,12 @@ namespace SPCharacter.Wiring
             CommitIf(writer, CCIntention.WantToAttack, input.Attack.IsPressed);
             CommitIf(writer, CCIntention.WantToHoldAttack, input.Attack.IsHeld);
             CommitIf(writer, CCIntention.WantToEvade, input.Evade.IsPressed);
+        }
+
+        /// <inheritdoc />
+        public void SetOperationLocked(bool isLocked)
+        {
+            _isOperationLocked = isLocked;
         }
 
         private Vector2 ConvertMoveDirection(Vector2 inputDirection)

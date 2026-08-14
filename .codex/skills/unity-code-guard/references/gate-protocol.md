@@ -16,20 +16,26 @@
 ## 命令
 
 ```powershell
-dotnet script <skill-root>\tools\lint\lint.csx -- <project-root>
+& <skill-root>\tools\lint\run-guard.ps1 <project-root>
 ```
 
 只检查指定文件：
 
 ```powershell
-dotnet script <skill-root>\tools\lint\lint.csx -- <project-root> --files Assets\Scripts\Player.cs Assets\Scripts\Enemy.cs
+& <skill-root>\tools\lint\run-guard.ps1 <project-root> --files Assets\_Scripts\Module\UI\PlayerHUD_Controller.cs Assets\_Scripts\Tools\RuntimeInitShim.cs
 ```
 
 把警告也当失败：
 
 ```powershell
-dotnet script <skill-root>\tools\lint\lint.csx -- <project-root> --fail-on-warn
+& <skill-root>\tools\lint\run-guard.ps1 <project-root> --fail-on-warn
 ```
+
+## 扫描范围
+
+- 默认只扫描 `<project-root>/Assets/_Scripts` 下的 `.cs` 文件，其他目录不扫描
+- 使用 `--files` 时只检查指定文件，接口信息仍从 `_Scripts` 全量收集
+- 第三方插件与资源目录不在扫描范围内
 
 ## 输出处理
 

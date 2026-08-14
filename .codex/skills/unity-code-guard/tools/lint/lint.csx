@@ -88,7 +88,7 @@ public static class GuardLint
             return listed.Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(p => p).ToList();
         }
 
-        var scanRoot = Directory.Exists(Path.Combine(root, "Assets")) ? Path.Combine(root, "Assets") : root;
+        var scanRoot = ResolveScanRoot(root);
         if (!Directory.Exists(scanRoot)) return new List<string>();
 
         return Directory.EnumerateFiles(scanRoot, "*.cs", SearchOption.AllDirectories)
@@ -99,7 +99,8 @@ public static class GuardLint
 
     private static List<string> ResolveProjectInfoFiles(string root, List<string> lintFiles)
     {
-        var scanRoot = Directory.Exists(Path.Combine(root, "Assets")) ? Path.Combine(root, "Assets") : root;
+        var scanRoot = ResolveScanRoot(root);
+
         if (!Directory.Exists(scanRoot)) return lintFiles;
 
         var projectFiles = Directory.EnumerateFiles(scanRoot, "*.cs", SearchOption.AllDirectories)
@@ -108,6 +109,13 @@ public static class GuardLint
             .ToList();
 
         return projectFiles.Count == 0 ? lintFiles : projectFiles;
+    }
+
+    private static string ResolveScanRoot(string root)
+    {
+        var scriptsRoot = Path.Combine(root, "Assets", "_Scripts");
+        if (Directory.Exists(scriptsRoot)) return scriptsRoot;
+        return Directory.Exists(Path.Combine(root, "Assets")) ? Path.Combine(root, "Assets") : root;
     }
 
     private static bool IsExcluded(string root, string path)
@@ -365,13 +373,11 @@ public static class GuardLint
         for (var i = index - 1; i >= 0; i--)
         {
             var text = lines[i].Trim();
-            if (text.StartsWith("[", StringComparison.Ordinal))
-            {
-                parts.Add(text);
-                continue;
-            }
-            if (text.Length == 0) continue;
-            break;
+            if (text.Length == 0) break;
+            var startsWithBracket = text.StartsWith("[", StringComparison.Ordinal);
+            var closesBracket = text.EndsWith("]", StringComparison.Ordinal);
+            if (!startsWithBracket && !closesBracket) break;
+            parts.Add(text);
         }
         return string.Join(" ", parts);
     }

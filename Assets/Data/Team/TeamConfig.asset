@@ -9,9 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1b2c3d4e5f600000000000000000007, type: 3}
-  m_Name: DefaultTeam
+  m_Script: {fileID: 11500000, guid: 605c63d3e57ecf145b7182b3eb8b4864, type: 3}
+  m_Name: TeamConfig
   m_EditorClassIdentifier: 
+  _slotCount: 2
+  _initialIndex: 0
   _slots:
-  - {fileID: 11400000, guid: a1b2c3d4e5f600000000000000000010, type: 2}
-  - {fileID: 11400000, guid: 2e043b804a6ffb84c94dcd9a85672aa6, type: 2}
+  - _characterId: Anbi
+    _resourceKey: Character_Player_Anbi
+  - _characterId: Corin
+    _resourceKey: Character_Player_Corin

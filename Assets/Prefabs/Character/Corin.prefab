@@ -85,6 +85,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 871fdbbd55d54e649b91ebff2b898cd7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 9111725243560725266}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 871fdbbd55d54e649b91ebff2b898cd7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1351869246584773832}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 871fdbbd55d54e649b91ebff2b898cd7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6563374502400358963}
   m_SourcePrefab: {fileID: 100100000, guid: 871fdbbd55d54e649b91ebff2b898cd7, type: 3}
 --- !u!1 &3057414177469269289 stripped
 GameObject:
@@ -148,6 +154,33 @@ MonoBehaviour:
   _animancer: {fileID: 8708201296505607928}
   _characterController: {fileID: 3410823371687733028}
   _config: {fileID: 11400000, guid: aa2077d57f52aec42934e8ee132a4819, type: 2}
+--- !u!114 &1351869246584773832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3057414177469269289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83a756756e26a324db792920c117d28c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6563374502400358963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3057414177469269289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28add92968c81bb46b4111ad2901fa2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _characterId: Corin
+  _switchInStateId: Corin_SwitchIn
+  _switchOutStateId: Corin_SwitchOut
 --- !u!95 &8630552229864080873 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 871fdbbd55d54e649b91ebff2b898cd7, type: 3}

@@ -445,6 +445,7 @@ MonoBehaviour:
     - {fileID: -8403769771376170919}
     - {fileID: -8374676061710434666}
     - {fileID: 1648298373991975202}
+    - {fileID: 6641962543110162532}
     _Modifiers:
     - _From: 4
       _To: 5
@@ -735,6 +736,34 @@ MonoBehaviour:
           _Callbacks: []
           _Names: []
         _Clip: {fileID: 1902599481753002793, guid: bc09439dcfe58fc4b895600cd44c3418, type: 3}
+        _NormalizedStartTime: NaN
+--- !u!114 &6641962543110162532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
+  m_Name: Corin_SwitchInEnd
+  m_EditorClassIdentifier: 
+  _Transition:
+    rid: 39035191696818177
+  references:
+    version: 2
+    RefIds:
+    - rid: 39035191696818177
+      type: {class: ClipTransition, ns: Animancer, asm: Kybernetik.Animancer}
+      data:
+        _FadeDuration: 0.25
+        _Speed: 1
+        _Events:
+          _NormalizedTimes: []
+          _Callbacks: []
+          _Names: []
+        _Clip: {fileID: 7112300684548684386, guid: bc09439dcfe58fc4b895600cd44c3418, type: 3}
         _NormalizedStartTime: NaN
 --- !u!114 &8254575637085400738
 MonoBehaviour:

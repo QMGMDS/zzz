@@ -38,6 +38,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a275c0c7dc97dea4694715a05e3c3170, type: 2}
   - {fileID: 11400000, guid: 4283c23052f2c9c48a3f44ddd63094a1, type: 2}
   - {fileID: 11400000, guid: 63e05fc9af0a318408b63a7e60d669e8, type: 2}
+  - {fileID: 11400000, guid: 5ab4dedb5bb993d44857d191cdf60264, type: 2}
   _rules:
   - _fromId: Anbi_Idle
     _toId: Anbi_WalkStart
@@ -72,14 +73,14 @@ MonoBehaviour:
     _condition:
       _required: 64
       _forbidden: 0
-    _priority: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Anbi_Idle
     _toId: Anbi_SwitchOut
     _condition:
       _required: 128
       _forbidden: 0
-    _priority: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Anbi_Stop
     _toId: Anbi_Idle
@@ -121,7 +122,7 @@ MonoBehaviour:
     _condition:
       _required: 128
       _forbidden: 0
-    _priority: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Anbi_WalkStart
     _toId: Anbi_Stop
@@ -156,7 +157,7 @@ MonoBehaviour:
     _condition:
       _required: 128
       _forbidden: 0
-    _priority: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Anbi_WalkLoop
     _toId: Anbi_Stop
@@ -184,7 +185,7 @@ MonoBehaviour:
     _condition:
       _required: 128
       _forbidden: 0
-    _priority: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Anbi_EvadeFront
     _toId: Anbi_EvadeFrontEnd
@@ -240,7 +241,7 @@ MonoBehaviour:
     _condition:
       _required: 128
       _forbidden: 0
-    _priority: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Anbi_EvadeBack
     _toId: Anbi_WalkStart
@@ -296,7 +297,7 @@ MonoBehaviour:
     _condition:
       _required: 128
       _forbidden: 0
-    _priority: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Anbi_RunStart
     _toId: Anbi_Stop
@@ -331,7 +332,7 @@ MonoBehaviour:
     _condition:
       _required: 128
       _forbidden: 0
-    _priority: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Anbi_RunLoop
     _toId: Anbi_Stop
@@ -366,7 +367,7 @@ MonoBehaviour:
     _condition:
       _required: 128
       _forbidden: 0
-    _priority: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Anbi_RunTurn
     _toId: Anbi_RunLoop
@@ -415,7 +416,7 @@ MonoBehaviour:
     _condition:
       _required: 128
       _forbidden: 0
-    _priority: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Anbi_Attack_2
     _toId: Anbi_Attack_2_End
@@ -457,7 +458,7 @@ MonoBehaviour:
     _condition:
       _required: 128
       _forbidden: 0
-    _priority: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Anbi_Attack_3
     _toId: Anbi_Attack_3_End
@@ -506,7 +507,7 @@ MonoBehaviour:
     _condition:
       _required: 128
       _forbidden: 0
-    _priority: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Anbi_Attack_4_Normal
     _toId: Anbi_Attack_1
@@ -548,7 +549,7 @@ MonoBehaviour:
     _condition:
       _required: 128
       _forbidden: 0
-    _priority: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Anbi_Attack_4_Prefect
     _toId: Anbi_Attack_1
@@ -590,7 +591,7 @@ MonoBehaviour:
     _condition:
       _required: 128
       _forbidden: 0
-    _priority: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Anbi_AttackRush
     _toId: Anbi_Idle
@@ -614,16 +615,37 @@ MonoBehaviour:
     _priority: 0
     _interruptPoint: 0.25
   - _fromId: Anbi_SwitchIn
+    _toId: Anbi_SwitchInEnd
+    _condition:
+      _required: 1
+      _forbidden: 0
+    _priority: 0
+    _interruptPoint: 0
+  - _fromId: Anbi_SwitchOut
+    _toId: Anbi_SwitchIn
+    _condition:
+      _required: 64
+      _forbidden: 0
+    _priority: 10
+    _interruptPoint: 0
+  - _fromId: Anbi_SwitchInEnd
     _toId: Anbi_Idle
     _condition:
       _required: 1
       _forbidden: 0
     _priority: 0
     _interruptPoint: 0
-  - _fromId: Anbi_SwitchIn
+  - _fromId: Anbi_SwitchInEnd
     _toId: Anbi_WalkStart
     _condition:
       _required: 2
       _forbidden: 0
     _priority: 0
-    _interruptPoint: 0.95
+    _interruptPoint: 0.3
+  - _fromId: Anbi_SwitchInEnd
+    _toId: Anbi_SwitchOut
+    _condition:
+      _required: 128
+      _forbidden: 0
+    _priority: 10
+    _interruptPoint: 0

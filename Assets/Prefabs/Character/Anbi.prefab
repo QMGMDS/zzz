@@ -88,6 +88,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b084e535d646a5b43a43bd417fb7c814, type: 3}
       insertIndex: -1
       addedObject: {fileID: 196243341088131891}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b084e535d646a5b43a43bd417fb7c814, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6176106173704455516}
   m_SourcePrefab: {fileID: 100100000, guid: b084e535d646a5b43a43bd417fb7c814, type: 3}
 --- !u!95 &3797184080396517389 stripped
 Animator:
@@ -168,5 +171,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83a756756e26a324db792920c117d28c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _inputProviderSO: {fileID: 11400000, guid: ab18c9343870cbd48a66f5cd119cc286, type: 2}
-  _cameraTransformProviderSO: {fileID: 11400000, guid: 1534d2c7aa8d0a1469568dde487ce95c, type: 2}
+--- !u!114 &6176106173704455516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7573280741493047501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28add92968c81bb46b4111ad2901fa2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _characterId: Anbi
+  _switchInStateId: Anbi_SwitchIn
+  _switchOutStateId: Anbi_SwitchOut

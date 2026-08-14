@@ -39,412 +39,621 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5736ab0d8fef40a49a4a00076e1ada88, type: 2}
   - {fileID: 11400000, guid: 1495f0d6d66edf2489e27fb752545673, type: 2}
   - {fileID: 11400000, guid: 431f39911b7cf6c42b144bb55d088646, type: 2}
+  - {fileID: 11400000, guid: f0e38dd2837561e40b67aece6e9685b9, type: 2}
   _rules:
   - _fromId: Corin_Idle
     _toId: Corin_WalkStart
     _condition:
       _required: 2
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Idle
     _toId: Corin_EvadeFront
     _condition:
       _required: 18
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Idle
     _toId: Corin_EvadeBack
     _condition:
       _required: 16
       _forbidden: 2
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Idle
     _toId: Corin_Attack_1
     _condition:
       _required: 4
       _forbidden: 0
+    _priority: 0
+    _interruptPoint: 0
+  - _fromId: Corin_Idle
+    _toId: Corin_SwitchIn
+    _condition:
+      _required: 64
+      _forbidden: 0
+    _priority: 10
+    _interruptPoint: 0
+  - _fromId: Corin_Idle
+    _toId: Corin_SwitchOut
+    _condition:
+      _required: 128
+      _forbidden: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Corin_Stop
     _toId: Corin_Idle
     _condition:
       _required: 1
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Stop
     _toId: Corin_WalkStart
     _condition:
       _required: 2
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Stop
     _toId: Corin_EvadeFront
     _condition:
       _required: 18
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Stop
     _toId: Corin_EvadeBack
     _condition:
       _required: 16
       _forbidden: 2
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Stop
     _toId: Corin_Attack_1
     _condition:
       _required: 4
       _forbidden: 0
+    _priority: 0
+    _interruptPoint: 0
+  - _fromId: Corin_Stop
+    _toId: Corin_SwitchOut
+    _condition:
+      _required: 128
+      _forbidden: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Corin_WalkStart
     _toId: Corin_Stop
     _condition:
       _required: 0
       _forbidden: 2
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_WalkStart
     _toId: Corin_WalkLoop
     _condition:
       _required: 3
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_WalkStart
     _toId: Corin_EvadeFront
     _condition:
       _required: 18
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_WalkStart
     _toId: Corin_Attack_1
     _condition:
       _required: 4
       _forbidden: 0
+    _priority: 0
+    _interruptPoint: 0
+  - _fromId: Corin_WalkStart
+    _toId: Corin_SwitchOut
+    _condition:
+      _required: 128
+      _forbidden: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Corin_WalkLoop
     _toId: Corin_Stop
     _condition:
       _required: 0
       _forbidden: 2
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_WalkLoop
     _toId: Corin_EvadeFront
     _condition:
       _required: 18
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_WalkLoop
     _toId: Corin_Attack_1
     _condition:
       _required: 4
       _forbidden: 0
+    _priority: 0
+    _interruptPoint: 0
+  - _fromId: Corin_WalkLoop
+    _toId: Corin_SwitchOut
+    _condition:
+      _required: 128
+      _forbidden: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Corin_EvadeFront
     _toId: Corin_EvadeFrontEnd
     _condition:
       _required: 1
       _forbidden: 2
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_EvadeFront
     _toId: Corin_RunStart
     _condition:
       _required: 3
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_EvadeFrontEnd
     _toId: Corin_Idle
     _condition:
       _required: 1
       _forbidden: 2
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_EvadeFrontEnd
     _toId: Corin_WalkStart
     _condition:
       _required: 2
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_EvadeFrontEnd
     _toId: Corin_EvadeFront
     _condition:
       _required: 18
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_EvadeFrontEnd
     _toId: Corin_EvadeBack
     _condition:
       _required: 16
       _forbidden: 2
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_EvadeFrontEnd
     _toId: Corin_Attack_1
     _condition:
       _required: 4
       _forbidden: 0
+    _priority: 0
+    _interruptPoint: 0
+  - _fromId: Corin_EvadeFrontEnd
+    _toId: Corin_SwitchOut
+    _condition:
+      _required: 128
+      _forbidden: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Corin_EvadeBack
     _toId: Corin_WalkStart
     _condition:
       _required: 3
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_EvadeBack
     _toId: Corin_EvadeBackEnd
     _condition:
       _required: 1
       _forbidden: 2
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_EvadeBackEnd
     _toId: Corin_Idle
     _condition:
       _required: 1
       _forbidden: 2
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_EvadeBackEnd
     _toId: Corin_WalkStart
     _condition:
       _required: 2
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_EvadeBackEnd
     _toId: Corin_EvadeFront
     _condition:
       _required: 18
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_EvadeBackEnd
     _toId: Corin_EvadeBack
     _condition:
       _required: 16
       _forbidden: 2
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_EvadeBackEnd
     _toId: Corin_Attack_1
     _condition:
       _required: 4
       _forbidden: 0
+    _priority: 0
+    _interruptPoint: 0
+  - _fromId: Corin_EvadeBackEnd
+    _toId: Corin_SwitchOut
+    _condition:
+      _required: 128
+      _forbidden: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Corin_RunStart
     _toId: Corin_Stop
     _condition:
       _required: 0
       _forbidden: 2
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_RunStart
     _toId: Corin_EvadeFront
     _condition:
       _required: 18
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_RunStart
     _toId: Corin_RunLoop
     _condition:
       _required: 3
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_RunStart
     _toId: Corin_AttackRush
     _condition:
       _required: 4
       _forbidden: 0
+    _priority: 0
+    _interruptPoint: 0
+  - _fromId: Corin_RunStart
+    _toId: Corin_SwitchOut
+    _condition:
+      _required: 128
+      _forbidden: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Corin_RunLoop
     _toId: Corin_Stop
     _condition:
       _required: 0
       _forbidden: 2
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_RunLoop
     _toId: Corin_EvadeFront
     _condition:
       _required: 18
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_RunLoop
     _toId: Corin_RunTurn
     _condition:
       _required: 32
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_RunLoop
     _toId: Corin_AttackRush
     _condition:
       _required: 4
       _forbidden: 0
+    _priority: 0
+    _interruptPoint: 0
+  - _fromId: Corin_RunLoop
+    _toId: Corin_SwitchOut
+    _condition:
+      _required: 128
+      _forbidden: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Corin_RunTurn
     _toId: Corin_RunLoop
     _condition:
       _required: 1
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Attack_1
     _toId: Corin_Attack_1_End
     _condition:
       _required: 1
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Attack_1
     _toId: Corin_Attack_2
     _condition:
       _required: 4
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0.5
   - _fromId: Corin_Attack_1_End
     _toId: Corin_Idle
     _condition:
       _required: 1
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Attack_1_End
     _toId: Corin_WalkStart
     _condition:
       _required: 2
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Attack_1_End
     _toId: Corin_Attack_1
     _condition:
       _required: 4
       _forbidden: 0
+    _priority: 0
+    _interruptPoint: 0
+  - _fromId: Corin_Attack_1_End
+    _toId: Corin_SwitchOut
+    _condition:
+      _required: 128
+      _forbidden: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Corin_Attack_2
     _toId: Corin_Attack_2_End
     _condition:
       _required: 1
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Attack_2
     _toId: Corin_Attack_3
     _condition:
       _required: 4
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0.5
   - _fromId: Corin_Attack_2_End
     _toId: Corin_Idle
     _condition:
       _required: 1
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Attack_2_End
     _toId: Corin_WalkStart
     _condition:
       _required: 2
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Attack_2_End
     _toId: Corin_Attack_1
     _condition:
       _required: 4
       _forbidden: 0
+    _priority: 0
+    _interruptPoint: 0
+  - _fromId: Corin_Attack_2_End
+    _toId: Corin_SwitchOut
+    _condition:
+      _required: 128
+      _forbidden: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Corin_Attack_3
     _toId: Corin_Attack_3_End
     _condition:
       _required: 1
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Attack_3
     _toId: Corin_Attack_4
     _condition:
       _required: 4
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0.5
   - _fromId: Corin_Attack_3_End
     _toId: Corin_Idle
     _condition:
       _required: 1
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Attack_3_End
     _toId: Corin_WalkStart
     _condition:
       _required: 2
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Attack_3_End
     _toId: Corin_Attack_1
     _condition:
       _required: 4
       _forbidden: 0
+    _priority: 0
+    _interruptPoint: 0
+  - _fromId: Corin_Attack_3_End
+    _toId: Corin_SwitchOut
+    _condition:
+      _required: 128
+      _forbidden: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Corin_Attack_4
     _toId: Corin_Attack_4_End
     _condition:
       _required: 1
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Attack_4
     _toId: Corin_Attack_5
     _condition:
       _required: 4
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0.8
   - _fromId: Corin_Attack_4_End
     _toId: Corin_Idle
     _condition:
       _required: 1
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Attack_4_End
     _toId: Corin_WalkStart
     _condition:
       _required: 2
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Attack_4_End
     _toId: Corin_Attack_1
     _condition:
       _required: 4
       _forbidden: 0
+    _priority: 0
+    _interruptPoint: 0
+  - _fromId: Corin_Attack_4_End
+    _toId: Corin_SwitchOut
+    _condition:
+      _required: 128
+      _forbidden: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Corin_Attack_5
     _toId: Corin_Attack_1
     _condition:
       _required: 4
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0.9
   - _fromId: Corin_Attack_5
     _toId: Corin_Attack_5_End
     _condition:
       _required: 1
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Attack_5_End
     _toId: Corin_Idle
     _condition:
       _required: 1
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Attack_5_End
     _toId: Corin_WalkStart
     _condition:
       _required: 2
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_Attack_5_End
     _toId: Corin_Attack_1
     _condition:
       _required: 4
       _forbidden: 0
+    _priority: 0
+    _interruptPoint: 0
+  - _fromId: Corin_Attack_5_End
+    _toId: Corin_SwitchOut
+    _condition:
+      _required: 128
+      _forbidden: 0
+    _priority: 10
     _interruptPoint: 0
   - _fromId: Corin_AttackRush
     _toId: Corin_AttackRush_End
     _condition:
       _required: 1
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_AttackRush_End
     _toId: Corin_Idle
     _condition:
       _required: 1
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_AttackRush_End
     _toId: Corin_WalkStart
     _condition:
       _required: 2
       _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_AttackRush_End
     _toId: Corin_Attack_1
     _condition:
       _required: 4
       _forbidden: 0
+    _priority: 0
+    _interruptPoint: 0
+  - _fromId: Corin_AttackRush_End
+    _toId: Corin_SwitchOut
+    _condition:
+      _required: 128
+      _forbidden: 0
+    _priority: 10
+    _interruptPoint: 0
+  - _fromId: Corin_SwitchIn
+    _toId: Corin_SwitchInEnd
+    _condition:
+      _required: 1
+      _forbidden: 0
+    _priority: 0
+    _interruptPoint: 0
+  - _fromId: Corin_SwitchOut
+    _toId: Corin_SwitchIn
+    _condition:
+      _required: 64
+      _forbidden: 0
+    _priority: 10
+    _interruptPoint: 0
+  - _fromId: Corin_SwitchInEnd
+    _toId: Corin_Idle
+    _condition:
+      _required: 1
+      _forbidden: 0
+    _priority: 0
+    _interruptPoint: 0
+  - _fromId: Corin_SwitchInEnd
+    _toId: Corin_WalkStart
+    _condition:
+      _required: 2
+      _forbidden: 0
+    _priority: 0
+    _interruptPoint: 0
+  - _fromId: Corin_SwitchInEnd
+    _toId: Corin_SwitchOut
+    _condition:
+      _required: 128
+      _forbidden: 0
+    _priority: 10
     _interruptPoint: 0

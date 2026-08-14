@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7917283576d2d1f44a7d8c27edfa49cb, type: 3}
+  m_Name: Anbi_SwitchInEnd
+  m_EditorClassIdentifier: 
+  _id: Anbi_SwitchInEnd
+  _isLooping: 0
+  _animation: {fileID: -1603560486424056927, guid: 1d337ba921b3cc143ab9e58647c950e1, type: 2}
+  _rootMotionProfile: {fileID: 11400000, guid: 0508f06d0f78f3c4c8f33bd84db87f76, type: 2}
+  _turnSpeedDegreesPerSecond: 0

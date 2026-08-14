@@ -13,8 +13,9 @@ description: Unity C# 编辑硬门禁。用于 AI 编辑、审查、恢复或验
    - 优先使用同时包含 `Assets/` 与 `ProjectSettings/` 的目录
    - 如果找不到 Unity 项目根目录，则使用当前仓库根目录
 2. 编辑或恢复工作前，先运行机械门禁
-   - 命令：`dotnet script <本 skill 目录>/tools/lint/lint.csx -- <项目根目录>`
+   - 命令：`& <本 skill 目录>/tools/lint/run-guard.ps1 <项目根目录>`
    - 如果只需要检查指定文件，在命令末尾追加 `--files` 和文件路径
+   - 默认只扫描 `<项目根目录>/Assets/_Scripts` 下的 `.cs` 文件，其他目录不扫描
 3. 读取检查输出后再决定下一步
    - `PASS`：允许继续任务
    - `ERROR`：停止正常工作，先修复任务范围内的违规，再重新运行检查

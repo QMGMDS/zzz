@@ -24,8 +24,9 @@ description: 让 AI 快速上手 My-ZZZ 项目各模块的 API。关键词：输
 | 摄像机模块 (Camera) | [references/camera-module-api.md](references/camera-module-api.md) | 输入方向转相机系世界移动方向、平滑跟随目标、坐标转换接线 |
 | 角色模块 (Character) | [references/character-module-api.md](references/character-module-api.md) | 读写角色控制器代码、搭状态节点/状态机配置、接意图供给源（玩家/AI）、排查动画/运动/时序问题 |
 | 资源模块 (Resource) | [references/resource-module-api.md](references/resource-module-api.md) | 按资源键同步实例化/批量创建预制体、统一管理实例释放、配置资源目录与模块服务接线 |
+| 队伍模块 (Team) | [references/team-module-api.md](references/team-module-api.md) | 读写队伍/切换相关代码、接入队伍服务、订阅队伍事件、排查切换时序与相机跟随 |
 
-> 后续模块（队伍、UI 等）的参考文档将在各自重构完成后追加至此表。
+> 后续模块（UI 等）的参考文档将在各自重构完成后追加至此表。
 
 
 

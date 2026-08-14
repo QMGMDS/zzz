@@ -1,8 +1,8 @@
 # 角色模块 API 速览
 
 > 适用场景：装配角色控制器、配置状态节点/转移规则、接入玩家或 AI 意图源、排查动画/运动/时序问题。
-> 边界约定：角色模块当前**没有稳定 public Contract API**；`Assets/_Scripts/Character/Contract` 为空，外部模块不要引用 `SPCharacter.Core`。
-> 使用原则：通过 Inspector 组装 `SPCC`、状态配置和模块内 Wiring；跨模块新增能力时先补 Contract + 模块服务。
+> 边界约定：外部模块只允许引用 `SPCharacter.Contract`（当前包含角色切换实例服务与完成事件），不要引用 `SPCharacter.Core`。
+> 使用原则：通过 Inspector 组装 `SPCC`、状态配置和模块内 Wiring；跨模块新增能力时先补 Contract + 服务（模块级或实例级）。
 
 ## 一、核心结构
 
@@ -16,7 +16,7 @@ using SPCharacter.Wiring;
 
 - `Core`：角色控制器、状态机、动画、运动、黑板、配置资产。
 - `Wiring`：模块内胶水组件，例如玩家输入到角色意图的接线。
-- `Contract`：已预留目录，但当前没有可供外部依赖的接口。
+- `Contract`：角色切换契约（`ICharacterSwitchService`）与切换完成事件。
 
 > `PlayerInputIntentionWiring` 也是 `internal`，属于角色自身装配，不是外部调用 API。
 
@@ -140,6 +140,8 @@ AnimationCompleted @0.8 #10
   PlayerInputIntentionWiring
     ModuleServiceHub.Get<IProvideFrameInput>()
     ModuleServiceHub.Get<IConvertCameraTransform>()
+  CharacterSwitchWiring（可切换角色）
+    _characterId / _switchInStateId / _switchOutStateId
 ```
 
 `PlayerInputIntentionWiring` 当前映射：
@@ -150,6 +152,29 @@ AnimationCompleted @0.8 #10
 - `Evade.IsPressed` → `WantToEvade`
 
 空源约定：输入服务必选，`Start+` 直接取用；摄像机转换服务可选，为空则回退输入方向。
+
+### 角色切换能力
+
+`CharacterSwitchWiring` 与 `SPCC` 同物体，实现实例级契约 `ICharacterSwitchService : IInstanceService`：
+
+- `OnEnable` 注册：`InstanceServiceHub.Register<ICharacterSwitchService>(_characterId, this)`
+- `OnDisable` 注销：`InstanceServiceHub.Unregister<ICharacterSwitchService>(_characterId, this)`
+- 激活即注册，退场完成 `SetActive(false)` 即注销；未激活/退场中的角色取不到服务
+
+队伍模块消费：
+
+```csharp
+if (InstanceServiceHub.TryGet<ICharacterSwitchService>(characterId, out ICharacterSwitchService service))
+{
+    service.BeginSwitchOut();
+    // 或 service.BeginSwitchIn(pose); service.SetOperationLocked(true);
+}
+```
+
+切换完成事实由事件广播：
+
+- `CharacterSwitchEvents.SwitchInCompleted` / `CharacterSwitchEvents.SwitchOutCompleted`
+- 负载带 `CharacterId`，队伍模块据此推进双锁
 
 ### 新增动作配置流程
 
@@ -168,13 +193,14 @@ AnimationCompleted @0.8 #10
 - `IWriteIntention` 只能写控制意图，不能写 `AnimationCompleted`。
 - 每帧开始会先把移动方向清为 `Vector2.zero`。
 
-当前内置扩展只有 `PlayerInputIntentionWiring`。AI/队伍系统若要驱动角色，不要直接拿黑板；应先设计 `SPCharacter.Contract` + 模块服务，或在角色模块内新增专用 Wiring。
+当前内置扩展只有 `PlayerInputIntentionWiring`。AI/队伍系统若要驱动角色，不要直接拿黑板；切换走 `SPCharacter.Contract` 的实例服务，其余意图源先补 Contract + 服务或在角色模块内新增专用 Wiring。
 
 ## 四、常见错误
 
 | 错误写法 | 正确写法 | 原因 |
 |---|---|---|
-| 外部模块 `using SPCharacter.Core` | 等待/新增 `SPCharacter.Contract` + 模块服务 | Core 是实现层，当前无 public 角色 API |
+| 外部模块 `using SPCharacter.Core` | 引用 `SPCharacter.Contract` + 实例服务/事件 | Core 是实现层，外部只依赖契约 |
+| 把切换服务当模块级服务注册 | `CharacterSwitchWiring` 在 OnEnable/OnDisable 自注册到 `InstanceServiceHub` | 多角色按 id 路由，不用 `ModuleServiceHub` |
 | 直接改 `CCRunTimeBlackboard` | 通过角色模块内 Wiring 写意图 | 黑板只服务内部子系统 |
 | 用 Animator Controller / `SetTrigger` | `StateNodeSO` + Animancer Transition | 项目约束是 Animancer 按需播放 |
 | 开启 `Animator.applyRootMotion` | `RootMotionProfileSO` + `MotionDriver` | 根运动由烘焙曲线统一控制 |
@@ -188,7 +214,7 @@ AnimationCompleted @0.8 #10
 
 | 相关文档 | 用途 |
 |---|---|
-| [framework-core.md](framework-core.md) | 访问级别语义、Contract / 模块服务、事件总线 |
+| [framework-core.md](framework-core.md) | 访问级别语义、Contract / 模块服务与实例服务、事件总线 |
 | [input-module-api.md](input-module-api.md) | 输入服务 `IProvideFrameInput` 与 `ProcessedFrameInput` 语义 |
 | [camera-module-api.md](camera-module-api.md) | 输入方向转相机系世界方向、摄像机跟随目标接口 |
 

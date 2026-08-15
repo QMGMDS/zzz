@@ -20,6 +20,8 @@ namespace SPFramework.Service
         /// <summary>
         /// 注册模块服务
         /// </summary>
+        /// <typeparam name="T">契约类型</typeparam>
+        /// <param name="service">服务实例 不可为空</param>
         public static void Register<T>(T service) where T : class, IModuleService
         {
             if (service == null)
@@ -39,39 +41,57 @@ namespace SPFramework.Service
         }
 
         /// <summary>
-        /// 获取模块服务，未注册时返回 null
+        /// 注销模块服务，仅当当前注册的正是该实例时生效
         /// </summary>
-        public static T Get<T>() where T : class, IModuleService
+        /// <typeparam name="T">契约类型 须与注册时一致</typeparam>
+        /// <param name="service">服务实例 不可为空</param>
+        public static void Unregister<T>(T service) where T : class, IModuleService
         {
+            if (service == null)
+                throw new ArgumentNullException(nameof(service));
+
             Type serviceType = typeof(T);
 
-            if (!ServiceDict.TryGetValue(serviceType, out IModuleService service))
-                return null;
-
-            if (IsDestroyed(service))
+            if (!ServiceDict.TryGetValue(serviceType, out IModuleService current))
             {
-                ServiceDict.Remove(serviceType);
-                return null;
+                Debug.LogWarning(
+                    $"[ModuleServiceHub] {serviceType.Name} 注销被忽略 - 该契约未注册服务，请检查注册与注销是否成对且契约类型一致");
+                return;
             }
 
-            return (T)service;
+            if (!ReferenceEquals(current, service))
+            {
+                Debug.LogWarning(
+                    $"[ModuleServiceHub] {serviceType.Name} 注销被忽略 - 当前注册 {current} 不是传入实例 {service}");
+                return;
+            }
+
+            ServiceDict.Remove(serviceType);
         }
 
         /// <summary>
         /// 尝试获取模块服务
         /// </summary>
+        /// <typeparam name="T">契约类型</typeparam>
+        /// <param name="service">获取到的服务 未注册或已销毁时为 null</param>
+        /// <returns>是否获取成功</returns>
         public static bool TryGet<T>(out T service) where T : class, IModuleService
         {
-            service = Get<T>();
-            return service != null;
-        }
+            service = null;
 
-        /// <summary>
-        /// 反注册模块服务
-        /// </summary>
-        public static bool Unregister<T>() where T : class, IModuleService
-        {
-            return ServiceDict.Remove(typeof(T));
+            Type serviceType = typeof(T);
+
+            if (!ServiceDict.TryGetValue(serviceType, out IModuleService raw))
+                return false;
+
+            if (IsDestroyed(raw))
+            {
+                ServiceDict.Remove(serviceType);
+                return false;
+            }
+
+            service = (T)raw;
+            return true;
         }
 
         /// <summary>

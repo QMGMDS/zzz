@@ -1,11 +1,11 @@
 using System;
 
-namespace SPFramework.Event.Internal
+namespace SPFramework.Event
 {
     /// <summary>
     /// 事件订阅句柄 - 负责执行一次性退订逻辑
     /// </summary>
-    internal sealed class EventSubscription : IDisposable
+    internal sealed class EventSubscriptionHandle : IDisposable
     {
         private Action _disposeAction;
         private bool _isDisposed;
@@ -14,7 +14,7 @@ namespace SPFramework.Event.Internal
         /// 创建订阅句柄
         /// </summary>
         /// <param name="disposeAction">退订动作</param>
-        public EventSubscription(Action disposeAction)
+        public EventSubscriptionHandle(Action disposeAction)
         {
             _disposeAction = disposeAction ?? throw new ArgumentNullException(nameof(disposeAction));
         }

@@ -38,6 +38,17 @@ namespace SPTeam.Core
         }
 
         /// <summary>
+        /// 尝试获取角色实例对象
+        /// </summary>
+        /// <param name="characterId">角色 Id</param>
+        /// <param name="instance">角色实例对象</param>
+        /// <returns>Id 是否已登记</returns>
+        public bool TryGetCharacterObject(string characterId, out GameObject instance)
+        {
+            return _characterObjects.TryGetValue(characterId, out instance);
+        }
+
+        /// <summary>
         /// 获取指定索引的角色实例对象
         /// </summary>
         /// <param name="index">角色索引</param>

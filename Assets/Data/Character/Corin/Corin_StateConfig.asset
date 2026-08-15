@@ -649,6 +649,13 @@ MonoBehaviour:
       _required: 2
       _forbidden: 0
     _priority: 0
+    _interruptPoint: 0.1
+  - _fromId: Corin_SwitchInEnd
+    _toId: Corin_Attack_1
+    _condition:
+      _required: 4
+      _forbidden: 0
+    _priority: 0
     _interruptPoint: 0
   - _fromId: Corin_SwitchInEnd
     _toId: Corin_SwitchOut

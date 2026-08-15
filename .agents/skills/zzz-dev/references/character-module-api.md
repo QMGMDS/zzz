@@ -1,15 +1,15 @@
 # 角色模块 API 速览
 
 > 适用场景：装配角色控制器、配置状态节点/转移规则、接入玩家或 AI 意图源、排查动画/运动/时序问题。
-> 边界约定：外部模块只允许引用 `SPCharacter.Contract`（当前包含角色切换实例服务与完成事件），不要引用 `SPCharacter.Core`。
+> 边界约定：外部模块只允许引用 `SPCharacter.Contract`（角色切换实例服务与切换完成事件），不要引用 `SPCharacter.Core`。
 > 使用原则：通过 Inspector 组装 `SPCC`、状态配置和模块内 Wiring；跨模块新增能力时先补 Contract + 服务（模块级或实例级）。
 
 ## 一、核心结构
 
-### 当前命名空间
+### 命名空间
 
 ```csharp
-// 当前仅角色模块内部使用
+// 仅角色模块内部使用
 using SPCharacter.Core;
 using SPCharacter.Wiring;
 ```
@@ -94,7 +94,7 @@ LateUpdate:
 | `WantToAttack` | 控制意图：攻击按下。 |
 | `WantToHoldAttack` | 控制意图：攻击长按。 |
 | `WantToEvade` | 控制意图：闪避按下。 |
-| `WantToTurn` / `WantToSwitchIn` / `WantToSwitchOut` | 预留控制意图，当前没有内置生产者。 |
+| `WantToTurn` / `WantToSwitchIn` / `WantToSwitchOut` | 无内置生产者，仅供外部意图源提交。 |
 
 ### Excel 导入状态矩阵
 
@@ -193,7 +193,7 @@ if (InstanceServiceHub.TryGet<ICharacterSwitchService>(characterId, out ICharact
 - `IWriteIntention` 只能写控制意图，不能写 `AnimationCompleted`。
 - 每帧开始会先把移动方向清为 `Vector2.zero`。
 
-当前内置扩展只有 `PlayerInputIntentionWiring`。AI/队伍系统若要驱动角色，不要直接拿黑板；切换走 `SPCharacter.Contract` 的实例服务，其余意图源先补 Contract + 服务或在角色模块内新增专用 Wiring。
+内置扩展为 `PlayerInputIntentionWiring`（玩家输入意图）与 `CharacterSwitchWiring`（切换执行）。AI/队伍系统若要驱动角色，不要直接拿黑板；切换走 `SPCharacter.Contract` 的实例服务，其余意图源先补 Contract + 服务或在角色模块内新增专用 Wiring。
 
 ## 四、常见错误
 

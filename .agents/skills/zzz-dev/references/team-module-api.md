@@ -2,7 +2,8 @@
 
 > 适用场景：读写队伍/切换相关代码、接入队伍服务、订阅队伍事件、排查切换时序与相机跟随问题。
 > 边界约定：外部模块只允许引用 `SPTeam.Contract`（模块级服务 `ITeamService` 与事件 `TeamEvents`），不要引用 `SPTeam.Core` / `SPTeam.Wiring`。
-> 架构定位：队伍是**编排型模块**——`Core` 只维护队伍数据（零外部依赖），所有跨模块协调（资源装配、角色切换、相机跟随、输入监听）集中在 `Wiring` 层。
+> 架构定位：队伍是**编排型模块**——`Core` 只维护队伍数据（零外部依赖），切换相关跨模块协调（角色切换、相机跟随、输入监听）集中在 `Wiring` 层。
+> 场景装配（资源实例化 → 名册移交 → 初始相机跟随）归编排层 `TeamAssemblyFlow`（SPFlow，见 framework-core.md 编排层章节），不属于本模块。
 
 ## 一、核心结构
 
@@ -18,9 +19,9 @@ using SPTeam.Wiring;
 
 | 层 | 内容 | 职责 |
 |---|---|---|
-| `Contract` | `ITeamService`、`TeamEvents` | 公开契约：切换请求 + 状态查询 + 事实广播 |
-| `Core` | `TeamService`（数据层）、`TeamRoster`、`TeamRosterEntry`、`TeamSwitchCoordinator`、`TeamConfigSO` | 只维护名册与双锁状态，零外部命名空间依赖 |
-| `Wiring` | `TeamWiring`（接线）、`TeamSwitchOrchestrator`（编排器） | 全部跨模块协调；编排器纯 C# 并实现 `ITeamService` |
+| `Contract` | `ITeamService`、`TeamEvents`、`TeamSlotPlan`、`TeamAssemblyEntry` | 公开契约：切换请求 + 状态查询 + 装配交接 + 事实广播 |
+| `Core` | `TeamService`（数据层）、`TeamRoster`、`TeamSwitchCoordinator`、`TeamConfigSO` | 只维护名册与双锁状态，零外部命名空间依赖 |
+| `Wiring` | `TeamWiring`（接线）、`TeamSwitchOrchestrator`（编排器） | 切换相关跨模块协调；编排器纯 C# 并实现 `ITeamService` |
 
 > 与 Camera/Input/Resource（被消费型）不同：队伍的服务实现位于 `Wiring` 层而非 `Core`。调用方无需感知，`ModuleServiceHub.Get<ITeamService>()` 拿到的就是编排器。
 
@@ -29,10 +30,13 @@ using SPTeam.Wiring;
 ```csharp
 public interface ITeamService : IModuleService
 {
-    string ActiveCharacterId { get; }   // 当前上场角色 Id
+    string ActiveCharacterId { get; }   // 当前上场角色 Id 名册未初始化时为空
     bool IsSwitching { get; }           // 切换双锁未全开时为真
     bool IsOperationLocked { get; }     // 目标入场完成前为真
-    bool TryRequestSwitch();            // 顺序切换下一个角色 成功返回 true
+    bool TryRequestSwitch();            // 顺序切换下一个角色 成功返回 true 未初始化返回 false
+    IReadOnlyList<TeamSlotPlan> GetSlotPlan();                        // 装配计划 含配置校验
+    void InitializeRoster(IReadOnlyList<TeamAssemblyEntry> entries);  // 移交装配结果
+    Transform GetCharacterTransform(string characterId);              // 实例变换 未初始化或 Id 不存在返回 null
 }
 ```
 
@@ -58,12 +62,13 @@ public interface ITeamService : IModuleService
   TeamWiring             // 接线胶水 _service 引用同物体 TeamService
     - Awake:  创建 TeamSwitchOrchestrator 并注册 ITeamService；缺 _service 抛异常
     - OnEnable/OnDisable: 订阅/退订角色切换完成事件与上场位姿应用事件
-    - Start:   装配角色（资源服务实例化）→ 初始相机跟随
     - Update:  轮询 IProvideFrameInput.SwitchCharacter.IsPressed → TryRequestSwitch
+  TeamAssemblyFlow       // 场景装配流程（SPFlow）同样挂在队伍根物体上
+    - Start:  读装配计划 GetSlotPlan → 资源实例化 → InitializeRoster 移交名册 → 初始相机跟随
 ```
 
-- 执行顺序：`TeamWiring` 与 `TeamService` 均为 `[DefaultExecutionOrder(-350)]`；输入服务 `-390`、资源/相机服务 `-380` 先注册，`Start` 取用安全。
-- 装配失败 fail fast：未配置资产、配置无效、角色实例化失败都会**抛异常**，不静默降级。
+- 执行顺序：`TeamWiring` 与 `TeamService` 均为 `[DefaultExecutionOrder(-350)]`；输入服务 `-390`、资源/相机服务 `-380` 先注册，`Start` 取用安全。装配流程在 `Start` 运行（所有 `Awake` 之后），`Update` 首次轮询切换时名册已就绪；未初始化期间 `TryRequestSwitch` 直接返回 false 兜底。
+- 装配失败 fail fast：配置校验前置（`GetSlotPlan` 先于实例化抛异常）；角色实例化失败由流程释放已建句柄后**抛异常**，不静默降级。
 - 实例化参数：`shouldActivateAfterCreate: false`，仅初始角色被激活；其余角色停留在实例化位置（队伍根位置）直到切换。
 
 ### TeamConfigSO（配置资产）
@@ -144,6 +149,7 @@ private void OnActiveChanged(TeamActiveCharacterChangedEvent payload) { /* 只�
 | 在 `Awake` 里 `Get<ITeamService>()` 并调用 | `Start` 及之后取用 | 服务注册在 `Awake`，装配在 `Start` |
 | `TryRequestSwitch` 后立即 `SetCameraFollowTarget` | 订阅 `SwitchInPoseApplied` 后切相机 | 落位是异步的，提前切会镜头偏移 |
 | 给 `TeamService`（Core）加跨模块逻辑 | 放 `TeamSwitchOrchestrator`（Wiring） | Core 保持纯数据，编排归 Wiring |
+| 在装配流程之外调用 `InitializeRoster` / 直接给 `TeamService` 传名册 | 装配统一走 `TeamAssemblyFlow` | 名册移交是装配流程步骤，模块只提供能力 |
 | 手改 `TeamConfig.asset` YAML | Inspector 配置 | 键类型为 string，避免序列化错配 |
 | 把切换请求发成事件 | 调用 `ITeamService.TryRequestSwitch()` | 事件是事实不是命令 |
 | 订阅 `TeamEvents` 后在回调里反查 `ActiveCharacterId` 做强一致判断 | 以事件负载为准 | 事件先于状态更新发布 |
@@ -152,7 +158,7 @@ private void OnActiveChanged(TeamActiveCharacterChangedEvent payload) { /* 只�
 
 | 相关文档 | 用途 |
 |---|---|
-| [framework-core.md](framework-core.md) | 访问级别语义、模块服务/实例服务、事件总线、编排型模块约定 |
+| [framework-core.md](framework-core.md) | 访问级别语义、模块服务/实例服务、事件总线、编排层（Flow）约定与启用判据 |
 | [character-module-api.md](character-module-api.md) | `ICharacterSwitchService` 实例服务与切换完成事件、状态意图 |
 | [input-module-api.md](input-module-api.md) | 切换按键输入 `ProcessedFrameInput.SwitchCharacter` |
 | [camera-module-api.md](camera-module-api.md) | `ISetCameraFollowTarget` 相机跟随能力 |

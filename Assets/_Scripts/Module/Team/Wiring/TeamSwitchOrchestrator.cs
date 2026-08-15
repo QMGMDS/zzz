@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -30,18 +31,18 @@ namespace SPTeam.Wiring
         }
 
         /// <inheritdoc />
-        public string ActiveCharacterId => _team.ActiveCharacterId;
+        public string ActiveCharacterId => _team.IsInitialized ? _team.ActiveCharacterId : null;
 
         /// <inheritdoc />
-        public bool IsSwitching => _team.IsSwitching;
+        public bool IsSwitching => _team.IsInitialized && _team.IsSwitching;
 
         /// <inheritdoc />
-        public bool IsOperationLocked => _team.IsOperationLocked;
+        public bool IsOperationLocked => _team.IsInitialized && _team.IsOperationLocked;
 
         /// <inheritdoc />
         public bool TryRequestSwitch()
         {
-            if (!_team.CanRequestSwitch)
+            if (!_team.IsInitialized || !_team.CanRequestSwitch)
                 return false;
 
             string previousCharacterId = _team.ActiveCharacterId;
@@ -71,12 +72,22 @@ namespace SPTeam.Wiring
             return true;
         }
 
-        /// <summary>
-        /// 应用初始相机跟随
-        /// </summary>
-        public void ApplyInitialCameraFollow()
+        /// <inheritdoc />
+        public IReadOnlyList<TeamSlotPlan> GetSlotPlan()
         {
-            SetCameraFollowTarget(_team.GetCharacterObject(_team.InitialCharacterId).transform);
+            return _team.GetSlotPlan();
+        }
+
+        /// <inheritdoc />
+        public void InitializeRoster(IReadOnlyList<TeamAssemblyEntry> entries)
+        {
+            _team.Initialize(entries);
+        }
+
+        /// <inheritdoc />
+        public Transform GetCharacterTransform(string characterId)
+        {
+            return _team.GetCharacterTransform(characterId);
         }
 
         /// <summary>

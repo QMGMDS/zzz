@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -7,14 +6,13 @@ using SPCharacter.Contract;
 using SPFramework.Event;
 using SPFramework.Service;
 using SPInput.Contract;
-using SPResource.Contract;
 using SPTeam.Contract;
 using SPTeam.Core;
 
 namespace SPTeam.Wiring
 {
     /// <summary>
-    /// 队伍接线胶水 - 装配队伍数据层、注册切换编排器并转交外部信号
+    /// 队伍接线胶水 - 创建切换编排器、注册队伍服务并转交外部信号
     /// </summary>
     [DefaultExecutionOrder(-350)]
     internal sealed class TeamWiring : MonoBehaviour
@@ -54,12 +52,6 @@ namespace SPTeam.Wiring
             _switchOutSubscription = null;
         }
 
-        private void Start()
-        {
-            AssembleRoster();
-            _orchestrator.ApplyInitialCameraFollow();
-        }
-
         private void Update()
         {
             IProvideFrameInput provider = ModuleServiceHub.Get<IProvideFrameInput>();
@@ -70,42 +62,6 @@ namespace SPTeam.Wiring
         private void OnDestroy()
         {
             ModuleServiceHub.Unregister<ITeamService>();
-        }
-
-        private void AssembleRoster()
-        {
-            TeamConfigSO config = _service.Config;
-            if (config == null)
-                throw new InvalidOperationException($"{name}: 未配置队伍资产");
-
-            IInstantiateResource provider = ModuleServiceHub.Get<IInstantiateResource>();
-            var entries = new List<TeamRosterEntry>(config.Slots.Count);
-
-            foreach (TeamCharacterSlot slot in config.Slots)
-            {
-                ResourceLoadResult result = provider.Instantiate(new ResourceLoadRequest(
-                    new ResourceKey(slot.ResourceKey),
-                    parent: transform,
-                    worldPosition: transform.position,
-                    worldRotation: transform.rotation,
-                    shouldActivateAfterCreate: false));
-
-                if (!result.IsSuccess)
-                {
-                    ReleaseEntries(entries);
-                    throw new InvalidOperationException($"{name}: 角色 {slot.CharacterId} 实例化失败");
-                }
-
-                entries.Add(new TeamRosterEntry(slot.CharacterId, result.Instance, result.Handle.Release));
-            }
-
-            _service.Initialize(entries);
-        }
-
-        private static void ReleaseEntries(IReadOnlyList<TeamRosterEntry> entries)
-        {
-            foreach (TeamRosterEntry entry in entries)
-                entry.Release();
         }
 
         private void OnSwitchInPoseApplied(CharacterSwitchInPoseAppliedEvent payload)

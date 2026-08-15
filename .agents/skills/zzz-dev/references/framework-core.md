@@ -1,16 +1,17 @@
 # 框架核心：访问级别与模块通讯
 
-> 模块关系与通讯总则。涉及跨模块引用、命名空间、事件总线、模块服务接线时加载。
+> 模块关系与通讯总则。涉及跨模块引用、命名空间、事件总线、模块服务接线、编排层（Flow）设计时加载。
 
 ## 1. 跨模块引用位置约束（硬性约定）
 
-跨模块交流统一由 **Wiring 胶水层** 承载；`Core` 层禁止引用任何外部模块命名空间（含其 `Contract`）以及框架 `SPFramework.Service` / `SPFramework.Event`。
+跨模块交流统一由 **Wiring 胶水层** 承载，跨模块顺序业务流程由 **编排层**（第 2 节）承载；`Core` 层禁止引用任何外部模块命名空间（含其 `Contract`）以及框架 `SPFramework.Service` / `SPFramework.Event`。
 
 | 层 | 允许引用的命名空间 | 职责 |
 |---|---|---|
 | `Contract` | 自身模块 + 框架事件/服务类型（`EventKey`、`IModuleService`、`IInstanceService`） | 定义对外 API 与事件，不含实现 |
 | `Core` | 自身模块 + `UnityEngine` / 第三方库 | 纯实现与业务逻辑，零外部模块引用 |
 | `Wiring` | 自身模块（`Contract` + `Core`）+ 外部模块 `Contract` + 框架 `SPFramework.Service` / `SPFramework.Event` | 服务注册/注销、事件订阅/转发、外部动作执行 |
+| `Flow`（编排层） | 任意模块 `Contract` + 框架 `SPFramework.Service` / `SPFramework.Event` | 跨模块顺序业务流程组装；不归属任何模块、不做三层结构，见第 2 节 |
 
 Core 需要外部能力（资源实例化、其他模块服务、外部事实）时的做法：
 
@@ -21,7 +22,45 @@ Core 需要外部能力（资源实例化、其他模块服务、外部事实）
 
 先例：Character 模块的 `ICCWiringExtension` —— Core 定义意图写入端口，`PlayerInputIntentionWiring` 在 Wiring 层读取输入并提交。
 
-## 2. 访问级别语义
+## 2. 编排层（Flow）
+
+> 编排层与"编排型模块"并存：属于某模块业务能力的跨模块协调留在该模块 `Wiring`（编排型模块，见 team-module-api.md）；不属于任何模块的跨模块顺序流程放编排层（现有实现：`TeamAssemblyFlow`）。二者取舍见"启用判据"。
+
+### 定性
+
+编排层承载不属于任何模块的跨模块顺序业务流程（例如场景装配 `TeamAssemblyFlow`、演出序列）：引用各模块 Contract 按顺序驱动，自身没有需要封装的业务不变量。它因此**不是模块**——不适用 Contract/Core/Wiring 三层结构，不要求内部方法锁死；允许是纯 C# 类或 MonoBehaviour。
+
+### 引用权限
+
+等同 Wiring 级，且不被任何模块反向引用：
+
+| 允许 | 禁止 |
+| --- | --- |
+| 任意模块 `*.Contract`、`ModuleServiceHub` / `InstanceServiceHub`、`EventBus`、`SPFramework.Service` / `SPFramework.Event` | 任何模块的 `Core` / `Debug` / `Editor` / `Wiring` |
+| — | 被任何模块（含 Contract/Core/Wiring）反向引用 |
+| — | Flow 之间互相调用（保持扁平） |
+
+### 约束
+
+1. **依赖方向单向**：Flow → 模块，模块不得引用 Flow。
+2. **唯一允许的内部状态是流程进度**（当前步骤、重试计数、阶段标记）；业务实体数据归模块持有，Flow 只保存服务引用或实例 id，不保存业务数据副本。
+3. **不新增通信机制**：取能力/状态走 Contract + 服务 Hub；等"某件事已发生"订阅 EventBus 事实事件；顺序流程用代码顺序表达，禁止用事件总线发命令串流程。
+4. **生命周期**：明确入口（`Start`/`Play`）与终止语义（完成 / 取消 / 失败），终止时清理事件订阅与占用资源；Flow 不注册为模块服务——它是服务的调用者，不是服务本身。
+5. **命名与目录**：统一 `XxxFlow` 命名，目录 `Assets/_Scripts/Flow/`，命名空间 `SPFlow`。
+
+### 启用判据
+
+出现任一信号，把逻辑从模块 Wiring/Core 迁入 Flow：
+
+1. **复用**：同一段顺序逻辑被 ≥2 个模块或流程需要 → 提取为 Flow；
+2. **场景专属时机**：只属于本场景的"何时调谁、按什么顺序、失败怎么办"，不是任何模块的领域能力（如场景装配、演出序列）；
+3. **反信号（不得迁入）**：逻辑需要读写某模块内部数据、保证该模块自身一致性 → 属于模块 Core。
+
+### 迁移附带决策
+
+提取 Flow 可能改变原契约归属（如某模块服务暴露的流程能力迁出后，契约由 Flow 实现还是收缩模块 API），提取前先决策契约归属，避免"模块不得引用 Flow"与旧契约冲突。
+
+## 3. 访问级别语义
 
 | 写法 | 本项目语义 |
 |---|---|
@@ -35,7 +74,7 @@ Core 需要外部能力（资源实例化、其他模块服务、外部事实）
 - `internal` 成员只用于 `public` 类型中限制接线/绑定入口，例如模块服务的注册入口。
 - 不要为了跨模块调用把 `internal` 改成 `public`，应先设计正式入口。
 
-## 3. 两种模块通讯方式
+## 4. 两种模块通讯方式
 
 ### 能力/状态借用：Contract 接口 + 服务
 
@@ -97,7 +136,7 @@ internal sealed class ExampleConsumerWiring : MonoBehaviour
 
 - 用于：同一契约存在多个实例，需要按实例路由（如按角色 id 请求切换）。
 - 契约接口继承 `IInstanceService`，注册/获取都带实例 id。
-- 实例 id 使用稳定字符串，当前单队伍下全局唯一即可。
+- 实例 id 使用稳定字符串，单队伍下全局唯一即可。
 
 生命周期与语义：
 
@@ -172,9 +211,10 @@ IDisposable subscription = EventBus.Subscribe(ExampleEvents.ExampleChanged, OnCh
 - 事件名用事实（`ActiveCharacterChanged`），不用命令（`RequestSwitchCharacter`）；Payload 只放事实上下文。
 - `EventBus.Clear()` 清空全部订阅，用于测试与运行复位。
 
-## 4. 核心原则
+## 5. 核心原则
 
 1. 模块是最大代码单位；未拆 asmdef 不代表没有边界。
-2. 跨模块引用只发生在 Wiring 层：`Core` 禁止引用外部模块命名空间（含其 `Contract`）与框架 `SPFramework.Service`/`SPFramework.Event`；Wiring 跨模块只引用 `*.Contract` 与 `SPFramework.Service`/`SPFramework.Event`；任何层都不引用其他模块的 `Core`/`Debug`/`Editor`/`Wiring`。
+2. 跨模块引用只发生在 Wiring 层与编排层：`Core` 禁止引用外部模块命名空间（含其 `Contract`）与框架 `SPFramework.Service`/`SPFramework.Event`；Wiring 跨模块只引用 `*.Contract` 与 `SPFramework.Service`/`SPFramework.Event`；编排层（第 2 节）引用权限等同 Wiring 且不被任何模块反向引用；任何层都不引用其他模块的 `Core`/`Debug`/`Editor`/`Wiring`。
 3. 要用别人的东西，走接口 + 服务（模块级或实例级）；只宣布自己做完了事，走事件总线。
 4. 事件是事实不是命令；参数只补全事实（谁、前后变化、位置、时间、结果）。
+5. 跨模块顺序业务流程按第 2 节的启用判据决定归属：不属于任何模块的归编排层（`XxxFlow`）；属于某模块业务能力的按编排型模块留在该模块 Wiring；不得堆进任何模块的 Core。

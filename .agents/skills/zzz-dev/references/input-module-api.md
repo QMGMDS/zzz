@@ -1,22 +1,33 @@
-# 输入模块 API 速览
+# 输入模块 API
 
-> 适用场景：下游系统按帧读取玩家输入（移动、攻击、闪避、技能、切角色、大招）。
-> 边界约定：外部只允许引用 `SPInput.Contract`，通过 `ModuleServiceHub.Get<IProvideFrameInput>()` 获取输入；不要直接引入 `SPInput.Core` / `SPInput.Wiring` / `SPInput.Debug`。
-> 读取原则：输入模块只提供 Pull，不做事件分发；下游每帧自行读取。
+## 一、模块概述
 
-## 一、核心 API
+输入模块（`Module.SPInput` 程序集）对外提供一项能力：读取当前帧的玩家输入。能力以**模块级服务**形式注册到 `ModuleServiceHub`，契约定义在 `SPInput.Contract` 命名空间：
 
-### 对外公开的命名空间
+| 契约接口 | 能力 |
+| --- | --- |
+| `IProvideFrameInput` | 提供当前帧的玩家输入，分原始输入与后处理输入两份数据 |
+
+边界约定：外部只允许引用 `SPInput.Contract`，通过 `ModuleServiceHub.TryGet` 获取服务；`SPInput.Core` 与 `SPInput.Wiring` 中的类型均为 `internal`，编译期对外不可见。
+
+### IProvideFrameInput
 
 ```csharp
-using SPFramework.Service;
-using SPInput.Contract;
+public interface IProvideFrameInput : IModuleService
+{
+    RawFrameInput CurrentFrame { get; }
+    ProcessedFrameInput CurrentProcessed { get; }
+}
 ```
 
-- `Contract`：稳定的数据结构与读取接口。
-- `Wiring`：模块内接线胶水，负责把采集器注册到 `ModuleServiceHub`，外部不引用。
+- `CurrentFrame`：原始输入，纯硬件事实汇报，无任何手感处理。
+- `CurrentProcessed`：后处理输入，在原始数据基础上做了手感加工（长按判定、归零缓冲、方向归一化）。
 
-### 数据结构：RawFrameInput
+两份数据均为值类型，构造期定稿后只读，下游不可修改；每帧刷新一次，读取到的总是当前帧数据。按需要的加工深度二选一即可。
+
+方向约定：本文档中所有平面方向（`MoveAxisValue`、`MoveDirection`）的 `x` 分量表示右方向，`y` 分量表示前方向。
+
+### RawFrameInput
 
 ```csharp
 public struct RawFrameInput
@@ -31,11 +42,11 @@ public struct RawFrameInput
 }
 ```
 
-- 表示硬件输入的帧级事实。
-- 布尔值都是“本帧按下边沿”，不是持续按住。
-- 不包含死区、归一化、缓冲、长按等后处理。
+- `FrameIndex`：采集器每帧递增的帧计数，可用于判断数据是否已刷新。
+- `MoveAxisValue`：移动轴原始读值，未做死区过滤与归一化。
+- 各 `IsXxxPressed`：按键的按下边沿，仅按键落下的那一帧为 `true`。
 
-### 数据结构：ProcessedFrameInput / ButtonInputState
+### ProcessedFrameInput
 
 ```csharp
 public struct ProcessedFrameInput
@@ -49,7 +60,19 @@ public struct ProcessedFrameInput
     public Vector2 MoveDirection { get; init; }
     public bool HasMoveInput { get; init; }
 }
+```
 
+- 各按键为 `ButtonInputState`：
+  - `IsPressed`：按下边沿，与原始输入同源。
+  - `IsHeld`：持续按压时长已超过长按阈值，松开即失效并复位。
+- `MoveDirection`：经归零缓冲并归一化的单位方向向量；无输入时为零向量。松键后的一小段缓冲期内仍输出最后的非零方向。
+- `HasMoveInput`：本帧是否存在有效移动输入（轴非零，或处于归零缓冲期内）；为 `false` 时 `MoveDirection` 必为零向量。
+
+### ButtonInputState
+
+`ButtonInputState` 与 `ProcessedFrameInput` 定义于同一文件（`Contract/Data/ProcessedFrameInput.cs`，命名空间 `SPInput.Contract`）：
+
+```csharp
 public struct ButtonInputState
 {
     public bool IsPressed { get; init; }
@@ -57,124 +80,54 @@ public struct ButtonInputState
 }
 ```
 
-- `IsPressed`：本帧按下边沿。
-- `IsHeld`：持续按压时间超过统一长按阈值后为真，松开即复位。
-- `MoveDirection`：经过归零缓冲后的方向，并归一化为单位向量。
-- `HasMoveInput`：本帧有有效输入，或仍处于归零缓冲期。
+- `IsPressed`：本帧被按下（按下边沿，与原始 `RawFrameInput` 同源）。
+- `IsHeld`：被长按——持续按压时长已超过长按判定阈值，松开即失效并复位。
 
-### 读取接口：IProvideFrameInput
+## 二、API 调用示例
 
-```csharp
-public interface IProvideFrameInput
-{
-    RawFrameInput CurrentFrame { get; }
-    ProcessedFrameInput CurrentProcessed { get; }
-}
-```
+获取服务统一使用 `ModuleServiceHub.TryGet`。服务未注册或已销毁时返回 `false` 且 `out` 结果为 `null`，调用方必须自行降级，不可默认服务必然可用。
 
-- 这是“读取契约”，不是采集器本体。
-- 外部只依赖这个接口，不直接依赖 `FrameInputCollector`。
-
-### 获取服务：ModuleServiceHub
-
-- 外部通过 `ModuleServiceHub.Get<IProvideFrameInput>()` 获取输入服务。
-- 输入是必选服务，`Start` 或之后直接取用，不判空。
-- `Register/Unregister` 由输入模块 `FrameInputWiring` 在 `Awake/OnDestroy` 维护，外部不要手调。
-
-### 内部实现：FrameInputCollector / FrameInputWiring
-
-- `FrameInputCollector`：采集硬件输入，执行后处理，并实现 `IProvideFrameInput`。
-- `FrameInputWiring`：把 `FrameInputCollector` 注册到 `ModuleServiceHub`。
-- 这两者属于模块内部实现，不是跨模块 API。
-
-### 后处理参数：ProcessedFrameConfigSO
-
-- `HoldThreshold`：统一长按阈值，控制所有按键形输入的 `IsHeld`。
-- `ReleaseBuffer`：轴输入归零缓冲时长，决定空档期是否沿用上一帧方向。
-- 外部不重复实现这些手感逻辑，直接消费 `CurrentProcessed`。
-
-## 二、使用模式
-
-### 标准消费方式
+### 读取后处理帧输入
 
 ```csharp
-using UnityEngine;
-
 using SPFramework.Service;
 using SPInput.Contract;
 
-public sealed class InputConsumerExample : MonoBehaviour
+if (ModuleServiceHub.TryGet<IProvideFrameInput>(out IProvideFrameInput provider))
 {
-    private void Update()
-    {
-        IProvideFrameInput provider = ModuleServiceHub.Get<IProvideFrameInput>();
+    ProcessedFrameInput input = provider.CurrentProcessed;
 
-        ProcessedFrameInput input = provider.CurrentProcessed;
-
-        if (input.HasMoveInput)
-            Debug.Log($"移动方向: {input.MoveDirection}");
-
-        if (input.Attack.IsPressed)
-            Debug.Log("攻击");
-
-        if (input.Skill.IsHeld)
-            Debug.Log("技能长按");
-    }
+    Vector2 moveDirection = input.HasMoveInput ? input.MoveDirection : Vector2.zero;
+    bool attackPressed = input.Attack.IsPressed; // 本帧攻击按下边沿
+    bool attackHeld = input.Attack.IsHeld;       // 攻击键是否已构成长按
 }
+// 服务缺失时跳过本次读取
 ```
 
-### 何时读 CurrentFrame，何时读 CurrentProcessed
-
-- `CurrentFrame`：调试原始按键、分析底层输入、做特殊诊断时使用。
-- `CurrentProcessed`：正常玩法逻辑优先使用，角色、状态、技能判断都尽量走它。
-
-### 时序约束
-
-- 输入是必选服务；在 `Start` 或之后取用，无需判空。
-- 禁止在 `Awake` 取服务，此时注册尚未完成。
-
-### 推荐的读取方式
+### 读取原始帧输入
 
 ```csharp
-private void TickInput(IProvideFrameInput provider)
+using SPFramework.Service;
+using SPInput.Contract;
+
+if (ModuleServiceHub.TryGet<IProvideFrameInput>(out IProvideFrameInput provider))
 {
-    var input = provider.CurrentProcessed;
-    // 直接消费，不重复做死区、归一化、防抖、长按判断
+    RawFrameInput raw = provider.CurrentFrame;
+
+    Vector2 rawAxis = raw.MoveAxisValue;    // 未加工的移动轴读值
+    bool evadePressed = raw.IsEvadePressed; // 本帧闪避按下边沿
 }
+// 服务缺失时跳过本次读取
 ```
 
-- 输入模块已经完成统一处理。
-- 下游只关注“当前能不能用、是否按下、是否长按、方向是什么”。
+## 三、反例
 
-### 执行顺序
-
-```text
-FrameInputCollector 先采集 + 后处理
-        ↓
-FrameInputWiring 再注册到 ModuleServiceHub
-        ↓
-下游模块每帧 Get<IProvideFrameInput>()
-```
-
-## 三、常见错误
-
-| 错误写法 | 正确写法 | 原因 |
-|---|---|---|
-| `using SPInput.Core` | `using SPInput.Contract` + `using SPFramework.Service` | Core 是实现层，外部禁引 |
-| 直接引用 `FrameInputCollector` | `ModuleServiceHub.Get<IProvideFrameInput>()` | 采集器不是项目级 API |
-| 在 `Awake` 里取输入服务 | 在 `Start` 或之后取用 | `Awake` 早于注册，可能取到空 |
-| 外部手调 `ModuleServiceHub.Register/Unregister` | 不调用 | 注册/反注册由输入模块 Wiring 维护 |
-| 在输入模块里做推送/订阅 | 外部自行 Pull | 输入模块只产输入，不做分发 |
-| 在输入模块里定义业务事件 | 业务事件放事件模块 | 输入模块只负责输入语义，不理解业务 |
-| 使用 `UnityEngine.Input.GetAxis(...)` | 使用 `provider.CurrentFrame.MoveAxisValue` | 项目约束是 Input System，不走旧 Input Manager |
-| 角色侧重复做死区、缓冲、长按 | 直接用 `CurrentProcessed` | 手感处理已在输入模块内统一完成 |
-
-## 四、交叉引用
-
-| 相关文档 | 用途 |
-|---|---|
-| [framework-core.md](framework-core.md) | 访问级别语义、模块通讯方式、核心原则 |
-| [camera-module-api.md](camera-module-api.md) | 摄像机模块 API；常与输入方向联动 |
-| [character-module-api.md](character-module-api.md) | 角色模块 API；通常直接消费 `CurrentProcessed` |
-
-> 建议顺序：先看 `framework-core.md`，再看输入、摄像机、角色三份模块文档。
+| 反例 | 正确做法 |
+| --- | --- |
+| 引用 `SPInput.Core` / `SPInput.Wiring` 中的类型 | 只引用 `SPInput.Contract`，经 `ModuleServiceHub` 获取接口 |
+| 使用旧输入管理器（`Input.GetAxis`、`Input.GetKey` 等）自行读取硬件输入 | 借用 `IProvideFrameInput` 读取帧输入 |
+| 自行启用 InputAction 重复采集玩家输入 | 借用 `IProvideFrameInput`，采集由模块内部统一完成 |
+| 需要手感输入时，基于 `CurrentFrame` 自行重复实现长按判定、归零缓冲 | 直接读取 `CurrentProcessed` 的后处理结果 |
+| 不判空直接调用服务，默认其必然可用 | 用 `TryGet` 获取，失败时按上文示例降级 |
+| 长期缓存服务接口并假设其永久有效 | 服务随模块内部的注册/注销生命周期变动，每次按需 `TryGet` |
+| 缓存帧数据跨帧使用 | 帧输入只描述当前帧，每帧按需重新读取 |

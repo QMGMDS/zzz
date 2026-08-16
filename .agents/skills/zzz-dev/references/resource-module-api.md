@@ -1,255 +1,140 @@
-# 资源模块 API 速览
+# 资源加载模块 API
 
-> 适用场景：按资源键同步实例化预制体、批量创建实例、统一管理实例的创建与释放。
-> 边界约定：外部只允许引用 `SPResource.Contract`，通过 `ModuleServiceHub.Get<IInstantiateResource>()` 获取资源服务；不要直接引入 `SPResource.Core` / `SPResource.Wiring`。
-> 使用原则：外部通过 `ModuleServiceHub.Get<IInstantiateResource>()` 取服务，同步调用拿结果；实例释放统一走 `IResourceHandle.Release()`。
+## 一、模块概述
 
-## 一、核心 API
+资源加载模块（`Module.SPResource` 程序集）对外提供一项能力：根据资源键同步实例化预制体。能力以**模块级服务**形式注册到 `ModuleServiceHub`，契约定义在 `SPResource.Contract` 命名空间：
 
-### 对外公开的命名空间
+| 契约接口 | 能力 |
+| --- | --- |
+| `IInstantiateResource` | 根据资源键同步实例化预制体，产出实例与释放委托 |
 
-```csharp
-using SPFramework.Service;
-using SPResource.Contract;
-```
+边界约定：外部只允许引用 `SPResource.Contract`，通过 `ModuleServiceHub.TryGet` 获取服务；`SPResource.Core` 与 `SPResource.Wiring` 中的类型均为 `internal`，编译期对外不可见。
 
-- `Contract`：稳定的能力接口与只读数据结构。
-- `Wiring`：模块内接线胶水，负责把 `ResourceLoadService` 注册到 `ModuleServiceHub`，外部禁依赖。
+失败语义：实例化不抛异常、不写日志，成功与否与失败原因全部由 `ResourceInstantiateResult` 承载。
 
-### 能力接口：IInstantiateResource
+### IInstantiateResource
 
 ```csharp
-public interface IInstantiateResource
+public interface IInstantiateResource : IModuleService
 {
-    ResourceLoadResult Instantiate(ResourceLoadRequest request);
-    IReadOnlyList<ResourceLoadResult> InstantiateBatch(IReadOnlyList<ResourceLoadRequest> requests);
+    ResourceInstantiateResult Instantiate(ResourceKey key, Transform parent = null, bool activate = true);
+    ResourceInstantiateResult Instantiate(ResourceKey key, Vector3 worldPosition, Quaternion worldRotation, Transform parent = null, bool activate = true);
 }
 ```
 
-- 这是**同步**实例化能力，不是异步资源/Addressables 下载。
-- `Instantiate`：按请求创建一个预制体实例。
-- `InstantiateBatch`：按请求列表批量创建，结果顺序与请求一致；传入 `null` 返回空数组。
+- 第一个重载：保持预制体自身姿态创建实例（预制体的局部位置与旋转原样保留）；`parent` 留空时实例位于场景根。
+- 第二个重载：以指定世界位姿创建实例。
+- `activate` 传 `false` 时实例创建后即处于未激活状态，激活时机由调用方控制。
 
-### 资源键：ResourceKey
+### ResourceKey
 
 ```csharp
+[Serializable]
 public struct ResourceKey : IEquatable<ResourceKey>
 {
     public string Value { get; }
     public bool IsValid { get; }
+    public ResourceKey(string value);
 }
 ```
 
-- `Value` 是资源定位键字符串，需要与目录中的 Key **完全一致**。
-- 比较采用 `StringComparison.Ordinal`，区分大小写。
-- `IsValid` 表示键非空，`new ResourceKey("Enemy/Melee")` 即有效键。
+- 从字符串构造，如 `new ResourceKey("Prop.Chest")`。
+- 键与资源目录条目按字符串精确匹配，区分大小写。
+- 空键不会抛异常，实例化返回 `InvalidKey` 失败结果。
 
-### 请求：ResourceLoadRequest
+### ResourceInstantiateResult
 
 ```csharp
-public readonly struct ResourceLoadRequest
+public readonly struct ResourceInstantiateResult
 {
-    public ResourceKey Key { get; }
-    public Transform Parent { get; }
-    public Vector3 WorldPosition { get; }
-    public Quaternion WorldRotation { get; }
-    public bool ShouldActivateAfterCreate { get; }
-}
-```
-
-构造签名：
-
-```csharp
-new ResourceLoadRequest(
-    ResourceKey key,
-    Transform parent,
-    Vector3 worldPosition,
-    Quaternion worldRotation,
-    bool shouldActivateAfterCreate = true)
-```
-
-- `Parent`、`WorldPosition`、`WorldRotation` 对应 `Object.Instantiate(prefab, pos, rot, parent)` 的世界坐标语义。
-- `ShouldActivateAfterCreate` 默认 `true`，创建后立即激活。
-
-### 结果：ResourceLoadResult
-
-```csharp
-public readonly struct ResourceLoadResult
-{
-    public ResourceKey Key { get; }
-    public bool IsSuccess { get; }
     public GameObject Instance { get; }
-    public IResourceHandle Handle { get; }
-    public string ErrorMessage { get; }
+    public ResourceInstantiateError Error { get; }
+    public Action Release { get; }
+    public bool IsSuccess { get; }
 }
 ```
 
-- `IsSuccess == false` 时 `Instance` / `Handle` 为 `null`，原因在 `ErrorMessage`。
-- 失败不抛异常，调用方靠 `IsSuccess` 走控制流。
+- 成功时：`Instance` 为产出的实例，`Error` 为 `None`，`Release` 为释放委托。
+- 失败时：`Instance` 与 `Release` 均为 `null`，读 `Error` 获得失败原因。
+- `Release` 用于销毁该实例，重复调用安全；实例若已被其他途径销毁，`Release` 静默跳过。
+- 结果只能由模块签发，构造入口对外不可见，消费方只读。
 
-### 释放句柄：IResourceHandle
+### ResourceInstantiateError
 
 ```csharp
-public interface IResourceHandle
+public enum ResourceInstantiateError
 {
-    ResourceKey Key { get; }
-    GameObject Instance { get; }
-    bool IsReleased { get; }
-    void Release();
+    None,                // 无错误 - 实例化成功
+    InvalidKey,          // 资源键为空
+    KeyNotFound,         // 资源目录中不存在该资源键
+    InstantiateFailed,   // 实例化过程发生异常
+    ServiceUnavailable,  // 资源主入口未接线或已销毁
 }
 ```
 
-- `Release()` 会销毁实例：运行期走 `Destroy`，编辑器走 `DestroyImmediate`。
-- 谁持有句柄，谁负责释放；重复调用 `Release()` 无副作用（有 `IsReleased` 保护）。
+## 二、API 调用示例
 
-### 获取服务：IInstantiateResource
+获取服务统一使用 `ModuleServiceHub.TryGet`。服务未注册或已销毁时返回 `false` 且 `out` 结果为 `null`，调用方必须自行降级，不可默认服务必然可用。
 
-- 外部通过 `ModuleServiceHub.Get<IInstantiateResource>()` 获取资源加载服务。
-- 返回可能为 `null`；为空时静默返回，不要抛异常。
-- `Register/Unregister` 由 `ResourceLoaderWiring` 维护，外部不要手调。
-
-### 内部实现：Core 与 Wiring 胶水
-
-- `ResourceLoadService`：`internal` MonoBehaviour，实现 `IInstantiateResource`，通过目录把键解析为预制体后实例化。
-- `ResourceCatalogSO`：`internal` ScriptableObject，保存「资源键 → 预制体」映射。
-- `ResourceLoaderWiring`：`internal` 接线胶水，`[DefaultExecutionOrder(-380)]`，在 `Awake` 把 `ResourceLoadService` 注册到 `ModuleServiceHub`，`OnDestroy` 反注册。
-- 以上都属于模块内部实现，不是跨模块 API。
-
-### 运行时空源约定
-
-`ModuleServiceHub.Get<IInstantiateResource>()` 返回 `null` 通常表示尚未接线、注册对象已销毁、场景未就绪。外部应静默降级，不要临时查找 `SPResource.Core` 组件绕过服务。
-
-## 二、使用模式
-
-### 编辑期装配
-
-1. 通过 `Create > SPResource > Resource Catalog` 创建目录资产，填充「资源键 → 预制体」条目。
-2. 场景中放一个挂 `ResourceLoadService` 的对象，指定目录；再放一个挂 `ResourceLoaderWiring` 的对象，指定 Service。
-
-### 标准调用：单个实例化
+### 实例化并持有释放委托
 
 ```csharp
-using UnityEngine;
-
 using SPFramework.Service;
 using SPResource.Contract;
 
-public sealed class ResourceConsumerExample : MonoBehaviour
+if (ModuleServiceHub.TryGet<IInstantiateResource>(out IInstantiateResource resource))
 {
-    [SerializeField] private string _prefabKey = "Enemy/Melee";
-
-    private IResourceHandle _handle;
-
-    private void Start()
-    {
-        IInstantiateResource provider = ModuleServiceHub.Get<IInstantiateResource>();
-        if (provider == null) return;
-
-        var request = new ResourceLoadRequest(
-            new ResourceKey(_prefabKey),
-            parent: transform,
-            worldPosition: transform.position,
-            worldRotation: Quaternion.identity);
-
-        ResourceLoadResult result = provider.Instantiate(request);
-        if (!result.IsSuccess)
-        {
-            // 模块已播报失败原因，这里只做本侧兜底
-            return;
-        }
-
-        _handle = result.Handle; // 持有句柄，负责释放
-    }
-
-    private void OnDestroy()
-    {
-        _handle?.Release();
-    }
-}
-```
-
-### 标准调用：批量实例化
-
-```csharp
-var requests = new[]
-{
-    new ResourceLoadRequest(new ResourceKey("Enemy/Melee"), null, Vector3.zero, Quaternion.identity),
-    new ResourceLoadRequest(new ResourceKey("Enemy/Ranged"), null, Vector3.zero, Quaternion.identity),
-};
-
-IReadOnlyList<ResourceLoadResult> results = provider.InstantiateBatch(requests);
-
-foreach (ResourceLoadResult result in results)
-{
+    ResourceInstantiateResult result = resource.Instantiate(new ResourceKey("Prop.Chest"), parent);
     if (result.IsSuccess)
     {
-        _handles.Add(result.Handle);
+        GameObject instance = result.Instance;
+        Action release = result.Release; // 持有以备销毁
     }
+}
+// 服务缺失时跳过本次实例化
+```
+
+### 以指定世界位姿实例化，并保持未激活
+
+```csharp
+using SPFramework.Service;
+using SPResource.Contract;
+
+if (ModuleServiceHub.TryGet<IInstantiateResource>(out IInstantiateResource resource))
+{
+    ResourceInstantiateResult result = resource.Instantiate(
+        new ResourceKey("Prop.Chest"), spawnPosition, spawnRotation, parent, activate: false);
+    // 之后由调用方自行决定何时 SetActive(true)
 }
 ```
 
-- 结果顺序与请求顺序一致。
-- 逐条失败不影响其它条目，失败项 `IsSuccess == false`。
-
-### 释放实例
+### 按失败原因分支处理
 
 ```csharp
-_handle?.Release();
-_handle = null;
+if (!result.IsSuccess)
+{
+    if (result.Error == ResourceInstantiateError.KeyNotFound)
+    {
+        // 目录中不存在该键，按需降级
+    }
+    // 其余原因（InvalidKey / InstantiateFailed / ServiceUnavailable）同理可按需区分
+}
 ```
 
-- 实例销毁统一走句柄，不要直接 `Destroy(result.Instance)`。
-- 句柄只在本次实例化内有效，释放后不要再访问 `Instance`。
-
-### 推荐的空源保护
+### 销毁实例
 
 ```csharp
-IInstantiateResource provider = ModuleServiceHub.Get<IInstantiateResource>();
-if (provider == null) return;
+release?.Invoke(); // 重复调用安全，实例已销毁时静默跳过
 ```
 
-- 空源不是异常流程，直接跳过即可。
+## 三、反例
 
-### 场景接线顺序
-
-```text
-ResourceLoaderWiring.Awake 先把 ResourceLoadService 注册到 ModuleServiceHub
-        ↓
-下游模块每次按需 Get<IInstantiateResource>()
-        ↓
-只调用 IInstantiateResource 接口，不直接碰 Core
-```
-
-- 接线发生在 `Awake`（执行顺序 -380），调用方建议在 `Start` 或之后获取服务，或始终判空。
-
-## 三、常见错误
-
-| 错误写法 | 正确写法 | 原因 |
-|---|---|---|
-| `using SPResource.Core` | `using SPResource.Contract` + `using SPFramework.Service` | Core 是实现层，外部禁引 |
-| 直接引用 `ResourceLoadService` | `ModuleServiceHub.Get<IInstantiateResource>()` | Service 不是项目级 API |
-| `provider.Instantiate(...)` 前不判空 | `if (provider == null) return;` | 服务可能未注册或已销毁 |
-| 手调 `ModuleServiceHub.Register/Unregister` | 不调用 | 注册/反注册由 ResourceLoaderWiring 维护 |
-| 失败后再补一条 `Debug.LogWarning(result.ErrorMessage)` | 只处理控制流，模块已播报失败原因 | 避免重复刷日志、职责越界 |
-| 直接 `Destroy(result.Instance)` | `result.Handle.Release()` | 释放生命周期由句柄统一管理 |
-| 不保存 `result.Handle` | 持有句柄并在生命周期结束时 `Release` | 不释放会导致实例残留 |
-| 在 `Awake` 里假定服务已就绪 | 在 `Start` 或之后取，并判空 | 接线胶水在 Awake 执行顺序 -380 注册 |
-| 键大小写或字符串与目录不一致 | `new ResourceKey("Enemy/Melee")` 精确匹配 | 目录按 Ordinal 区分大小写匹配 |
-
-## 四、交叉引用
-
-| 相关文档 | 用途 |
-|---|---|
-| [framework-core.md](framework-core.md) | 访问级别语义、Contract / 模块服务、事件总线 |
-| [input-module-api.md](input-module-api.md) | 模块服务空源约定的同类参考 |
-| [camera-module-api.md](camera-module-api.md) | 标准「接口 + 模块服务」调用范式参考 |
-
-> 建议顺序：先看 `framework-core.md`，再按需看各模块文档。
-
-### 边界提醒
-
-- `SPResource.Contract`：外部可依赖的接口契约。
-- `SPResource.Wiring`：模块内 `internal` 接线胶水，外部禁用。
-- `SPResource.Core`：资源加载内部实现，外部禁引。
-- `ResourceLoaderWiring`：`internal` 接线胶水，外部禁用。
-- `SPFramework.Service`：通过 `ModuleServiceHub` 获取资源服务。
+| 反例 | 正确做法 |
+| --- | --- |
+| 引用 `SPResource.Core` / `SPResource.Wiring` 中的类型 | 只引用 `SPResource.Contract`，经 `ModuleServiceHub` 获取接口 |
+| 绕过模块自行持有预制体引用调用 `Instantiate`，或用 `Resources.Load` 等自搭加载路径 | 借用 `IInstantiateResource` 按资源键实例化 |
+| 不判空直接调用服务，默认其必然可用 | 用 `TryGet` 获取，失败时按上文示例降级 |
+| 长期缓存服务接口并假设其永久有效 | 服务随模块内部的注册/注销生命周期变动，每次按需 `TryGet` |
+| 不判 `IsSuccess` 就使用 `Instance` 或 `Release`（失败时二者均为 `null`） | 先判 `IsSuccess`，需要区分原因时按 `Error` 枚举分支 |
+| 用 `Object.Destroy` 直接销毁模块产出的实例 | 调用结果的 `Release` 委托 |
+| 试图自行构造 `ResourceInstantiateResult` | 结果只能由模块签发，消费方只读 |

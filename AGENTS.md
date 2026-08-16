@@ -8,7 +8,7 @@
 - 渲染管线：URP。写渲染/材质/后处理相关代码前先确认走 URP API，不要用 Built-in 管线写法。
 - 关键约束：用 Input System（不要用旧 Input Manager 的 `Input.GetAxis` 等）；动画用 Animancer 的按需播放 API（不要 Mecanim Animator + Animator Controller 状态机）。
 - 其余包：Cinemachine、TextMeshPro、Timeline。
-- 脚本根目录：Assets/_Scripts，下分 Camera、Character、Effects、Event、Input、Team、UI 等子目录。
+- 脚本根目录：`Assets/_Scripts`。
 
 ## 代码审查
 

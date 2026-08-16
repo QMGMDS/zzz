@@ -1,221 +1,148 @@
-# 角色模块 API 速览
+# 角色模块 API
 
-> 适用场景：装配角色控制器、配置状态节点/转移规则、接入玩家或 AI 意图源、排查动画/运动/时序问题。
-> 边界约定：外部模块只允许引用 `SPCharacter.Contract`（角色切换实例服务与切换完成事件），不要引用 `SPCharacter.Core`。
-> 使用原则：通过 Inspector 组装 `SPCC`、状态配置和模块内 Wiring；跨模块新增能力时先补 Contract + 服务（模块级或实例级）。
+## 一、模块概述
 
-## 一、核心结构
+角色模块（`Module.SPCharacter` 程序集）对外提供一项**实例级服务**与三组事实广播，契约定义在 `SPCharacter.Contract` 命名空间：
 
-### 命名空间
+| 契约 | 形式 | 能力 |
+| --- | --- | --- |
+| `ICharacterSwitchSession` | 实例级服务 | 驱动单个可切换角色的上场/退场切换会话、设置该角色的玩家操作锁 |
+| `CharacterEvents.SwitchInPoseApplied` | 事件 | 角色上场位姿已应用 |
+| `CharacterEvents.SwitchInCompleted` | 事件 | 角色上场动画完成 |
+| `CharacterEvents.SwitchOutCompleted` | 事件 | 角色退场动画完成 |
 
-```csharp
-// 仅角色模块内部使用
-using SPCharacter.Core;
-using SPCharacter.Wiring;
-```
+边界约定：外部只允许引用 `SPCharacter.Contract`；服务经 `InstanceServiceHub.TryGet<T>(id, out T)` 按角色 Id 获取，事件经 `EventBus.Subscribe` 订阅。`SPCharacter.Core` 与 `SPCharacter.Wiring` 中的类型均为 `internal`，编译期对外不可见。
 
-- `Core`：角色控制器、状态机、动画、运动、黑板、配置资产。
-- `Wiring`：模块内胶水组件，例如玩家输入到角色意图的接线。
-- `Contract`：角色切换契约（`ICharacterSwitchService`）与切换完成事件。
-
-> `PlayerInputIntentionWiring` 也是 `internal`，属于角色自身装配，不是外部调用 API。
-
-### Root 组件：SPCC
-
-`SPCC` 挂在角色根对象上，要求同对象具备：
-
-- `Animator`：骨骼/Avatar 入口；不要用 Animator Controller 状态机。
-- `AnimancerComponent`：实际动画播放入口。
-- `CharacterController`：运动落位入口。
-- `CCStateConfigSO`：该角色状态图配置。
-
-运行时：`SPCC.Start` 会关闭 `Animator.applyRootMotion`，创建黑板、状态机、动画驱动、运动驱动和 Wiring 扩展管线。`SPCC` 只做装配和时序，不写具体玩法逻辑。
-
-### 固定帧时序
-
-```text
-Update:
-  Wiring 写入本帧意图
-  StateMachine 判断转移
-  ResetIntentions 清空本帧控制意图
-  AnimationDriver 播放新状态动画
-
-LateUpdate:
-  AnimationDriver 回写动画进度 / 报告非循环动画完成
-  MotionDriver 更新朝向
-  MotionDriver 按 RootMotionProfile 位移
-```
-
-- 玩家/AI 控制意图只保留一帧。
-- `AnimationCompleted` 由动画层在 `LateUpdate` 写入，供下一帧状态机消费。
-- 位移统一由 `MotionDriver` 调用 `CharacterController.Move`；外部不要直接移动角色根对象。
-
-## 二、配置资产
-
-### StateNodeSO
-
-创建菜单：`SPCharacter/State/StateNode`
-
-| 字段 | 含义 |
-|---|---|
-| `Id` | 状态唯一标识；同一 `CCStateConfigSO` 内必须唯一。 |
-| `IsLooping` | 循环状态不会自动产生 `AnimationCompleted`。 |
-| `Animation` | Animancer `TransitionAssetBase`，进入状态时播放。 |
-| `RootMotionProfile` | 离线烘焙累计本地位移；为空表示无根运动位移。 |
-| `TurnSpeedDegreesPerSecond` | 每秒最大转向角；`0` 表示不主动转向。 |
-
-新增动作优先新增 `StateNodeSO` + Animancer Transition，不新增 Animator Controller 状态；位移写在节点和 RootMotionProfile，不在外部脚本手推角色。
-
-### CCStateConfigSO
-
-创建菜单：`SPCharacter/State/CCStateConfig`
-
-- `EntryId`：入口状态 Id。
-- `Nodes`：该角色全部状态节点。
-- `Rules`：状态转移规则。
-
-运行时会校验：`Nodes` 非空、`EntryId` 存在、`Node.Id` 非空且不重复、`Rule.FromId/ToId` 均指向已配置节点。
-
-### 状态转移规则
-
-`StateTransitionRule` 由意图位掩码驱动：
-
-- `Required`：必须全部为 1。
-- `Forbidden`：必须全部为 0。
-- `InterruptPoint`：来源动画归一化进度达到该值后才允许转移，范围 `0..1`。
-- `Priority`：数值越大越优先；同优先级按配置顺序判断。
-
-可用意图：
-
-| 意图 | 来源/用途 |
-|---|---|
-| `AnimationCompleted` | 动画层自动写入，表示当前非循环动画完成。 |
-| `WantToMove` | 控制意图：希望移动。 |
-| `WantToAttack` | 控制意图：攻击按下。 |
-| `WantToHoldAttack` | 控制意图：攻击长按。 |
-| `WantToEvade` | 控制意图：闪避按下。 |
-| `WantToTurn` / `WantToSwitchIn` / `WantToSwitchOut` | 无内置生产者，仅供外部意图源提交。 |
-
-### Excel 导入状态矩阵
-
-`CCStateConfigSO` Inspector 提供“从 Excel 导入状态转移规则（.xlsx）”。
-
-```text
-A1 空置；B1.. 写 To 状态 Id
-A2.. 写 From 状态 Id
-交叉单元格写条件；空白或 None 表示无转移
-```
-
-单元格示例：
-
-```text
-WantToMove
-WantToMove+!WantToAttack
-AnimationCompleted @0.8 #10
-```
-
-- `+` 组合条件；`!` 表示 forbidden。
-- `@` 设置 `InterruptPoint`；`#` 设置 `Priority`，放在单元格末尾。
-- 意图名称大小写敏感，使用 `CCIntention` 精确枚举名。
-
-### RootMotionProfileSO
-
-创建菜单：`SPCharacter/Motion/RootMotionProfile`
-
-- Inspector 选择 `AnimationClip` 后点击“从 AnimationClip 烘焙位移曲线”。
-- 资产记录动画本地 X/Z 的**累计位移曲线**。
-- 运行时用“当前采样 - 上帧采样”得到本帧位移，再按角色朝向转到世界空间并 `CharacterController.Move`。
-
-## 三、使用模式
-
-### 玩家角色装配
-
-```text
-角色根 GameObject:
-  Animator
-  AnimancerComponent
-  CharacterController
-  SPCC
-    _animator / _animancer / _characterController / _config
-  PlayerInputIntentionWiring
-    ModuleServiceHub.Get<IProvideFrameInput>()
-    ModuleServiceHub.Get<IConvertCameraTransform>()
-  CharacterSwitchWiring（可切换角色）
-    _characterId / _switchInStateId / _switchOutStateId
-```
-
-`PlayerInputIntentionWiring` 当前映射：
-
-- `CurrentProcessed.MoveDirection` → 可选相机坐标转换 → `SetMoveAxis` + `WantToMove`
-- `Attack.IsPressed` → `WantToAttack`
-- `Attack.IsHeld` → `WantToHoldAttack`
-- `Evade.IsPressed` → `WantToEvade`
-
-空源约定：输入服务必选，`Start+` 直接取用；摄像机转换服务可选，为空则回退输入方向。
-
-### 角色切换能力
-
-`CharacterSwitchWiring` 与 `SPCC` 同物体，实现实例级契约 `ICharacterSwitchService : IInstanceService`：
-
-- `OnEnable` 注册：`InstanceServiceHub.Register<ICharacterSwitchService>(_characterId, this)`
-- `OnDisable` 注销：`InstanceServiceHub.Unregister<ICharacterSwitchService>(_characterId, this)`
-- 激活即注册，退场完成 `SetActive(false)` 即注销；未激活/退场中的角色取不到服务
-
-队伍模块消费：
+### ICharacterSwitchSession（实例级服务）
 
 ```csharp
-if (InstanceServiceHub.TryGet<ICharacterSwitchService>(characterId, out ICharacterSwitchService service))
+public interface ICharacterSwitchSession : IInstanceService
 {
-    service.BeginSwitchOut();
-    // 或 service.BeginSwitchIn(pose); service.SetOperationLocked(true);
+    void BeginSwitchOut();
+    void BeginSwitchIn(Pose pose);
+    void SetOperationLocked(bool isLocked);
 }
 ```
 
-切换完成事实由事件广播：
+每个可切换角色实例以自身角色 Id 为注册键自注册；会话随角色实例启用而注册、随禁用而注销，实例未激活或已销毁时 `TryGet` 失败。
 
-- `CharacterSwitchEvents.SwitchInCompleted` / `CharacterSwitchEvents.SwitchOutCompleted`
-- 负载带 `CharacterId`，队伍模块据此推进双锁
+- `BeginSwitchOut()`：请求角色播放退场动画。请求为异步语义——调用返回仅代表请求已受理，模块择机进入退场状态，退场动画播放完成时广播 `Character.SwitchOutCompleted`。
+- `BeginSwitchIn(Pose pose)`：请求角色落位到 `pose` 并播放上场动画。模块先应用落位（落位完成时广播 `Character.SwitchInPoseApplied`），再进入上场状态；上场动画播放完成时广播 `Character.SwitchInCompleted`。
+- `SetOperationLocked(bool isLocked)`：设置该角色的玩家操作锁。锁定期间角色不响应玩家操作输入，传入 `false` 解锁后恢复。
 
-### 新增动作配置流程
+行为约定：
 
-1. 创建或复用 Animancer Transition 资产。
-2. 创建 `StateNodeSO`，填写唯一 `Id`、动画、循环标记、转向速度。
-3. 需要位移时创建 `RootMotionProfileSO` 并从 AnimationClip 烘焙。
-4. 把节点加入 `CCStateConfigSO.Nodes`，再通过 `Rules` 或 Excel 状态矩阵添加转移。
-5. 检查打断点、优先级、循环状态和 `AnimationCompleted` 语义。
+- 三个方法均为"请求-广播"式异步语义，调用返回不代表动作完成，完成与否以对应事件为准。
+- 同一次会话内，上场/退场完成事件各自只广播一次，不重复。
+- 请求可重复发起：`BeginSwitchIn` 以最新一次的位姿为准；`BeginSwitchOut` 重复调用无额外效果。
 
-### 意图源扩展边界
+### 事件
 
-角色模块内部扩展通过 `ICCWiringExtension.UpdateWiring(CCWiringContext, IWriteIntention)` 写入意图。
+```csharp
+public static class CharacterEvents
+{
+    // 事件标识名："Character.SwitchInPoseApplied"
+    public static readonly EventKey<CharacterSwitchInPoseAppliedEvent> SwitchInPoseApplied;
 
-- 扩展组件必须和 `SPCC` 在同一个 GameObject 上；管线通过 `GetComponents<MonoBehaviour>()` 收集。
-- 执行顺序等于组件顺序；禁用组件会被跳过。
-- `IWriteIntention` 只能写控制意图，不能写 `AnimationCompleted`。
-- 每帧开始会先把移动方向清为 `Vector2.zero`。
+    // 事件标识名："Character.SwitchInCompleted"
+    public static readonly EventKey<CharacterSwitchInCompletedEvent> SwitchInCompleted;
 
-内置扩展为 `PlayerInputIntentionWiring`（玩家输入意图）与 `CharacterSwitchWiring`（切换执行）。AI/队伍系统若要驱动角色，不要直接拿黑板；切换走 `SPCharacter.Contract` 的实例服务，其余意图源先补 Contract + 服务或在角色模块内新增专用 Wiring。
+    // 事件标识名："Character.SwitchOutCompleted"
+    public static readonly EventKey<CharacterSwitchOutCompletedEvent> SwitchOutCompleted;
+}
 
-## 四、常见错误
+public readonly struct CharacterSwitchInPoseAppliedEvent
+{
+    public CharacterSwitchInPoseAppliedEvent(string characterId);
+    public string CharacterId { get; } // 完成落位的角色 Id
+}
 
-| 错误写法 | 正确写法 | 原因 |
-|---|---|---|
-| 外部模块 `using SPCharacter.Core` | 引用 `SPCharacter.Contract` + 实例服务/事件 | Core 是实现层，外部只依赖契约 |
-| 把切换服务当模块级服务注册 | `CharacterSwitchWiring` 在 OnEnable/OnDisable 自注册到 `InstanceServiceHub` | 多角色按 id 路由，不用 `ModuleServiceHub` |
-| 直接改 `CCRunTimeBlackboard` | 通过角色模块内 Wiring 写意图 | 黑板只服务内部子系统 |
-| 用 Animator Controller / `SetTrigger` | `StateNodeSO` + Animancer Transition | 项目约束是 Animancer 按需播放 |
-| 开启 `Animator.applyRootMotion` | `RootMotionProfileSO` + `MotionDriver` | 根运动由烘焙曲线统一控制 |
-| 外部移动角色 Transform | 由 `MotionDriver` 执行位移 | 避免破坏状态/动画/运动时序 |
-| 外部写入 `AnimationCompleted` | 只由 `AnimationDriver` 自动报告 | 它不是控制意图 |
-| 角色侧重复读硬件输入 | 消费输入模块 `CurrentProcessed` | 输入手感已统一处理 |
-| 自己重算相机系方向 | `ModuleServiceHub.Get<IConvertCameraTransform>()` | 坐标转换属于摄像机模块能力 |
-| 手改 `.asset` YAML 的意图整数 | 用 Inspector / Excel 导入 | 避免位掩码和 GUID 错配 |
+public readonly struct CharacterSwitchInCompletedEvent
+{
+    public CharacterSwitchInCompletedEvent(string characterId);
+    public string CharacterId { get; } // 完成上场的角色 Id
+}
 
-## 五、交叉引用
+public readonly struct CharacterSwitchOutCompletedEvent
+{
+    public CharacterSwitchOutCompletedEvent(string characterId);
+    public string CharacterId { get; } // 完成退场的角色 Id
+}
+```
 
-| 相关文档 | 用途 |
-|---|---|
-| [framework-core.md](framework-core.md) | 访问级别语义、Contract / 模块服务与实例服务、事件总线 |
-| [input-module-api.md](input-module-api.md) | 输入服务 `IProvideFrameInput` 与 `ProcessedFrameInput` 语义 |
-| [camera-module-api.md](camera-module-api.md) | 输入方向转相机系世界方向、摄像机跟随目标接口 |
+事件语义：
 
-> 建议顺序：先看 `framework-core.md`，再看输入、摄像机、角色三份模块文档。
+- `Character.SwitchInPoseApplied`：角色已落位到上场位姿。此刻角色已处于上场位置，但上场动画尚未完成；需要在"新角色已就位"这一时机响应的订阅方应订阅本事件，而不是等待上场完成。
+- `Character.SwitchInCompleted`：角色上场动画播放完成。
+- `Character.SwitchOutCompleted`：角色退场动画播放完成，该角色的退场流程至此结束。
+
+时序约定：对同一角色的同一次上场，`SwitchInPoseApplied` 必先于 `SwitchInCompleted` 广播。
+
+## 二、API 调用示例
+
+实例级服务统一使用 `InstanceServiceHub.TryGet<T>(id, out T)` 获取，`id` 为角色 Id。服务未注册（角色实例未激活或已销毁）时返回 `false` 且 `out` 结果为 `null`，调用方必须自行降级，不可默认服务必然可用。
+
+### 请求角色上场/退场
+
+```csharp
+using UnityEngine;
+
+using SPCharacter.Contract;
+using SPFramework.Service;
+
+// 请求目标角色落位并上场
+if (InstanceServiceHub.TryGet<ICharacterSwitchSession>(targetId, out ICharacterSwitchSession target))
+    target.BeginSwitchIn(new Pose(spawnPosition, spawnRotation));
+// 服务缺失时跳过本次请求
+
+// 请求当前角色退场
+if (InstanceServiceHub.TryGet<ICharacterSwitchSession>(currentId, out ICharacterSwitchSession current))
+    current.BeginSwitchOut();
+```
+
+### 锁定/解锁玩家操作
+
+```csharp
+using SPCharacter.Contract;
+using SPFramework.Service;
+
+if (InstanceServiceHub.TryGet<ICharacterSwitchSession>(characterId, out ICharacterSwitchSession session))
+    session.SetOperationLocked(true); // 锁定；传入 false 解锁
+```
+
+### 订阅角色切换事实
+
+```csharp
+using System;
+
+using SPCharacter.Contract;
+using SPFramework.Event;
+
+private IDisposable _switchInCompletedSubscription;
+
+private void OnEnable()
+    => _switchInCompletedSubscription = EventBus.Subscribe(CharacterEvents.SwitchInCompleted, OnSwitchInCompleted);
+
+private void OnDisable()
+{
+    _switchInCompletedSubscription?.Dispose();
+    _switchInCompletedSubscription = null;
+}
+
+private void OnSwitchInCompleted(CharacterSwitchInCompletedEvent payload)
+{
+    string characterId = payload.CharacterId; // 完成上场的角色 Id
+}
+```
+
+## 三、反例
+
+| 反例 | 正确做法 |
+| --- | --- |
+| 引用 `SPCharacter.Core` / `SPCharacter.Wiring` 中的类型 | 只引用 `SPCharacter.Contract`，经 `InstanceServiceHub` 获取会话接口 |
+| 用模块级 `ModuleServiceHub.TryGet` 获取角色切换会话 | 该契约为**实例级**服务，用 `InstanceServiceHub.TryGet(id, out ...)` 按角色 Id 获取 |
+| 调用 `BeginSwitchIn` / `BeginSwitchOut` 后立即假定动作已完成 | 异步语义，完成与否以 `SwitchInCompleted` / `SwitchOutCompleted` 事件为准 |
+| 直接修改角色实例的 `Transform` 来模拟上场落位 | 调用 `BeginSwitchIn(pose)`，落位与上场动画由模块内部完成 |
+| 假定角色会话必然可用，不处理 `TryGet` 失败 | 会话随角色实例启用/禁用而注册/注销，每次按需 `TryGet` 并处理失败 |
+| 长期缓存会话接口并假设其永久有效 | 会话随实例生命周期变动，每次按需 `TryGet` |
+| 订阅事件后不持有句柄或忘记 `Dispose` | 持有 `IDisposable` 句柄，并在失效时成对 `Dispose` |

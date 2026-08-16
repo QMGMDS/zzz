@@ -53,43 +53,6 @@ namespace SPFramework.Service
         }
 
         /// <summary>
-        /// 获取实例服务，未注册或已销毁时返回 null
-        /// </summary>
-        public static T Get<T>(string id) where T : class, IInstanceService
-        {
-            TryGet(id, out T service);
-            return service;
-        }
-
-        /// <summary>
-        /// 尝试获取实例服务
-        /// </summary>
-        /// <param name="id">实例 id</param>
-        /// <param name="service">获取到的实例服务 未注册时为 null</param>
-        /// <returns>是否获取成功</returns>
-        public static bool TryGet<T>(string id, out T service) where T : class, IInstanceService
-        {
-            service = null;
-
-            if (id == null)
-                return false;
-
-            var key = (typeof(T), id);
-
-            if (!ServiceDict.TryGetValue(key, out IInstanceService raw))
-                return false;
-
-            if (IsDestroyed(raw))
-            {
-                ServiceDict.Remove(key);
-                return false;
-            }
-
-            service = (T)raw;
-            return true;
-        }
-
-        /// <summary>
         /// 注销实例服务，仅当 id 当前注册的正是该实例时生效
         /// </summary>
         /// <param name="id">实例 id</param>
@@ -117,6 +80,34 @@ namespace SPFramework.Service
                 return false;
 
             ServiceDict.Remove(key);
+            return true;
+        }
+
+        /// <summary>
+        /// 尝试获取实例服务
+        /// </summary>
+        /// <param name="id">实例 id</param>
+        /// <param name="service">获取到的实例服务 未注册时为 null</param>
+        /// <returns>是否获取成功</returns>
+        public static bool TryGet<T>(string id, out T service) where T : class, IInstanceService
+        {
+            service = null;
+
+            if (id == null)
+                return false;
+
+            var key = (typeof(T), id);
+
+            if (!ServiceDict.TryGetValue(key, out IInstanceService raw))
+                return false;
+
+            if (IsDestroyed(raw))
+            {
+                ServiceDict.Remove(key);
+                return false;
+            }
+
+            service = (T)raw;
             return true;
         }
 

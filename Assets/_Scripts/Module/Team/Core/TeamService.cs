@@ -3,12 +3,10 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-using SPTeam.Contract;
-
 namespace SPTeam.Core
 {
     /// <summary>
-    /// 队伍数据层 - 维护队伍名册与切换状态 不参与任何跨模块协调
+    /// 队伍数据层 - 持有名册与切换状态机 向接线胶水提供切换判定与状态转换入口
     /// </summary>
     [DefaultExecutionOrder(-350)]
     internal sealed class TeamService : MonoBehaviour
@@ -17,58 +15,46 @@ namespace SPTeam.Core
         [SerializeField, Tooltip("队伍配置资产 包含角色槽位与初始上场索引")]
         private TeamConfigSO _config;
 
+        [Header("切换兜底")]
+        [SerializeField, Range(1f, 30f), Tooltip("切换会话超时时间 单位秒 超时未完成则强制收尾")]
+        private float _switchTimeout = 5f;
+
         private TeamRoster _roster;
         private TeamSwitchCoordinator _coordinator;
         private bool _isInitialized;
 
+        /// <summary>切换会话超时时间 单位秒</summary>
+        public float SwitchTimeout => _switchTimeout;
+
         /// <summary>名册是否已初始化 - 初始化前不响应切换请求与状态查询</summary>
         public bool IsInitialized => _isInitialized;
-
-        /// <summary>按切换顺序排列的角色 Id 列表</summary>
-        public IReadOnlyList<string> OrderedCharacterIds => _roster.OrderedCharacterIds;
 
         /// <summary>当前上场角色 Id</summary>
         public string ActiveCharacterId => _coordinator.ActiveCharacterId;
 
-        /// <summary>是否处于切换中 - 切换双锁未全开时为真</summary>
-        public bool IsSwitching => _coordinator.IsSwitchLocked;
+        /// <summary>切换锁 - 切换会话存续期间为真</summary>
+        public bool IsSwitchLocked => _coordinator.IsSwitchLocked;
 
-        /// <summary>是否锁定玩家操作 - 目标入场完成前为真</summary>
+        /// <summary>操作锁 - 目标入场完成前为真</summary>
         public bool IsOperationLocked => _coordinator.IsOperationLocked;
 
-        /// <summary>当前是否允许发起切换</summary>
-        public bool CanRequestSwitch => _coordinator.CanRequestSwitch;
+        /// <summary>待退场角色 Id - 无切换时为空</summary>
+        public string SwitchOutCharacterId => _coordinator.SwitchOutCharacterId;
 
         /// <summary>待入场角色 Id - 无切换时为空</summary>
         public string SwitchInCharacterId => _coordinator.SwitchInCharacterId;
 
+        /// <summary>当前是否允许发起切换 - 含初始化与内部状态判定</summary>
+        public bool CanRequestSwitch => _isInitialized && _coordinator.CanRequestSwitch;
+
         /// <summary>
-        /// 获取队伍装配计划 - 校验配置后返回按切换顺序排列的槽位清单
+        /// 获取队伍槽位清单 - 校验配置后返回
         /// </summary>
-        /// <returns>槽位清单 配置无效时抛出异常</returns>
-        public IReadOnlyList<TeamSlotPlan> GetSlotPlan()
+        /// <returns>按切换顺序排列的槽位清单</returns>
+        public IReadOnlyList<TeamCharacterSlot> GetSlots()
         {
             ValidateConfig();
-
-            var plans = new List<TeamSlotPlan>(_config.Slots.Count);
-
-            foreach (TeamCharacterSlot slot in _config.Slots)
-                plans.Add(new TeamSlotPlan(slot.CharacterId, slot.ResourceKey));
-
-            return plans;
-        }
-
-        /// <summary>
-        /// 获取指定角色的实例变换
-        /// </summary>
-        /// <param name="characterId">角色 Id</param>
-        /// <returns>角色实例变换 名册未初始化或 Id 不存在时返回 null</returns>
-        public Transform GetCharacterTransform(string characterId)
-        {
-            if (_roster == null || !_roster.TryGetCharacterObject(characterId, out GameObject instance))
-                return null;
-
-            return instance.transform;
+            return _config.Slots;
         }
 
         /// <summary>
@@ -88,6 +74,17 @@ namespace SPTeam.Core
         public GameObject GetCharacterObject(string characterId)
         {
             return _roster.GetCharacterObject(characterId);
+        }
+
+        /// <summary>
+        /// 尝试获取角色实例对象
+        /// </summary>
+        /// <param name="characterId">角色 Id</param>
+        /// <param name="instance">角色实例对象</param>
+        /// <returns>Id 是否已登记</returns>
+        public bool TryGetCharacterObject(string characterId, out GameObject instance)
+        {
+            return _roster.TryGetCharacterObject(characterId, out instance);
         }
 
         /// <summary>
@@ -122,26 +119,34 @@ namespace SPTeam.Core
         }
 
         /// <summary>
-        /// 初始化队伍数据 - 登记装配结果并激活初始角色 配置无效时抛出异常
+        /// 强制完成当前切换会话 - 超时兜底用
         /// </summary>
-        /// <param name="entries">角色装配结果列表 必须与装配计划一一对应</param>
-        public void Initialize(IReadOnlyList<TeamAssemblyEntry> entries)
+        public void ForceCompleteSession()
+        {
+            _coordinator.ForceCompleteSession();
+        }
+
+        /// <summary>
+        /// 初始化队伍数据 - 登记装配结果并激活初始角色
+        /// </summary>
+        /// <param name="characters">角色移交列表 必须与队伍配置槽位一一对应</param>
+        public void Initialize(IReadOnlyList<TeamCharacterHandover> characters)
         {
             ValidateConfig();
 
-            if (entries == null || entries.Count != _config.Slots.Count)
+            if (characters == null || characters.Count != _config.Slots.Count)
                 throw new InvalidOperationException($"{name}: 装配结果数量与队伍配置不符");
 
-            for (int i = 0; i < entries.Count; i++)
+            for (int i = 0; i < characters.Count; i++)
             {
-                if (!string.Equals(entries[i].CharacterId, _config.Slots[i].CharacterId, StringComparison.Ordinal))
+                if (!string.Equals(characters[i].CharacterId, _config.Slots[i].CharacterId, StringComparison.Ordinal))
                     throw new InvalidOperationException($"{name}: 装配结果顺序与队伍配置不符");
             }
 
             _roster = new TeamRoster();
 
-            foreach (TeamAssemblyEntry entry in entries)
-                _roster.Register(entry.CharacterId, entry.Instance, entry.Release);
+            foreach (TeamCharacterHandover character in characters)
+                _roster.Register(character.CharacterId, character.Instance, character.Release);
 
             _coordinator = new TeamSwitchCoordinator(_roster.OrderedCharacterIds, _config.InitialIndex);
             _roster.GetCharacterObjectAt(_config.InitialIndex).SetActive(true);
@@ -162,5 +167,33 @@ namespace SPTeam.Core
             // 装配失败时名册可能未创建 资源释放仍需兜底
             _roster?.Release();
         }
+    }
+
+    /// <summary>
+    /// 角色移交项 - Core 内部登记名册用的单个角色实例
+    /// </summary>
+    internal sealed class TeamCharacterHandover
+    {
+        /// <summary>
+        /// 创建角色移交项
+        /// </summary>
+        /// <param name="characterId">角色唯一标识</param>
+        /// <param name="instance">角色实例对象</param>
+        /// <param name="release">释放实例的委托</param>
+        public TeamCharacterHandover(string characterId, GameObject instance, Action release)
+        {
+            CharacterId = characterId;
+            Instance = instance;
+            Release = release;
+        }
+
+        /// <summary>角色唯一标识</summary>
+        public string CharacterId { get; }
+
+        /// <summary>角色实例对象</summary>
+        public GameObject Instance { get; }
+
+        /// <summary>释放实例的委托</summary>
+        public Action Release { get; }
     }
 }

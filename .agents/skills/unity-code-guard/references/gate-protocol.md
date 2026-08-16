@@ -1,58 +1,46 @@
-# 硬门禁执行协议
+# 门禁执行协议
 
-## 目标
-
-让 AI 在继续工作前先获得机械检查结果，再根据结果决定是否继续、修复或停止
+> 本文件定义硬门禁的执行顺序、调用方式、基线规则与禁止行为。
+> 适用范围：`<项目根>/Assets/_Scripts` 下的 `.cs` 文件；其他目录不扫描。
 
 ## 执行顺序
 
-1. 运行预检查
-2. 读取输出
-3. 判断是否继续
-4. 执行任务内修改
-5. 运行复检
-6. 只有复检无 `ERROR` 才交付
-
-## 命令
-
-```powershell
-& <skill-root>\tools\lint\run-guard.ps1 <project-root>
+```
+入口判定 → 预检查 → 读输出 → 判断 → 修改 → 复检 → 复检无 ERROR 才算通过
 ```
 
-只检查指定文件：
+1. **入口判定**：确认本轮改动是否包含 `Assets/_Scripts` 下的 `.cs` 文件；不包含则不走本门禁。
+2. **预检查**：编辑或恢复工作前，先运行机械门禁（命令见下）。
+3. **读输出**：
+   - `PASS`：允许继续任务
+   - `ERROR`：停止正常工作，无需用户确认，自行修复任务范围内的违规
+   - `WARN`：允许继续，但必须识别风险，且不得新增同类风险
+4. **修改**：修复时按 `references/rules.md` 路由表加载对应主题文档，按规则条目修复；不得为过检而删有效代码、降级命名或删注释。
+5. **复检**：修复完成后从第 1 步入口处回走一遍门禁；仍报告 `ERROR` 时不得交付。
+
+## 调用形式
 
 ```powershell
-& <skill-root>\tools\lint\run-guard.ps1 <project-root> --files Assets\_Scripts\Module\UI\PlayerHUD_Controller.cs Assets\_Scripts\Tools\RuntimeInitShim.cs
+& <本 skill 目录>/tools/lint/run-guard.ps1 <项目根目录>
+& <本 skill 目录>/tools/lint/run-guard.ps1 <项目根目录> --files Assets\_Scripts\Module\UI\PlayerHUD_Controller.cs ...
+& <本 skill 目录>/tools/lint/run-guard.ps1 <项目根目录> --fail-on-warn
 ```
 
-把警告也当失败：
-
-```powershell
-& <skill-root>\tools\lint\run-guard.ps1 <project-root> --fail-on-warn
-```
-
-## 扫描范围
-
-- 默认只扫描 `<project-root>/Assets/_Scripts` 下的 `.cs` 文件，其他目录不扫描
-- 使用 `--files` 时只检查指定文件，接口信息仍从 `_Scripts` 全量收集
-- 第三方插件与资源目录不在扫描范围内
-
-## 输出处理
-
-- `PASS`：继续工作
-- `ERROR`：必须修复或停止
-- `WARN`：允许继续，但不得新增同类风险
+- 默认只扫描 `<项目根目录>/Assets/_Scripts` 下的 `.cs` 文件。
+- `--files`：只检查指定文件，但接口信息仍从 `_Scripts` 全量收集（用于 inheritdoc 资格判定）。
+- `--fail-on-warn`：WARN 也视为失败。
+- 退出码：`0` 通过；`1` 有 ERROR（或 `--fail-on-warn` 时有 WARN）；`2` 用法错误。
 
 ## 基线规则
 
-- 如果预检查已有错误，先判断是否在本次任务范围内
-- 任务范围内的错误必须修复
-- 任务范围外的错误记为基线，不得扩大
-- 复检结果不得比预检查更差
+- 任务范围内的错误必须修复。
+- 任务范围外已存在的错误记为基线，不得扩大。
+- 复检结果不得比预检更差（错误数、警告数均不得增加）。
 
 ## 禁止行为
 
-- 禁止未运行机械检查就继续修改 C# 文件
-- 禁止只读规则文件不跑脚本
-- 禁止把脚本失败解释为通过
-- 禁止为了通过检查而删除有效代码、降级命名或移除必要注释
+- 未运行脚本就修改 C# 代码。
+- 只读规则文档不运行脚本。
+- 把脚本运行失败解释为通过；门禁无法运行时必须报告"硬门禁不可用"并说明原因。
+- 为通过检查删除有效代码、降级命名或删除注释。
+- 用人工阅读替代机械门禁。

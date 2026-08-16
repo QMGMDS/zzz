@@ -1,0 +1,19 @@
+{
+    "name": "Module.SPTeam",
+    "rootNamespace": "",
+    "references": [
+        "GUID:d327843e5867b3b4fabfaccbbeca4d70",
+        "GUID:b0b39a9b437cf8e488616cb8252e71a4",
+        "GUID:06c348f555d47b647b161d6056f01a09",
+        "GUID:778080f34bcceb047a3726e571c66bca"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

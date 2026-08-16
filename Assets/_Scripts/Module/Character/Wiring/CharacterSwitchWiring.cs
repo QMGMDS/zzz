@@ -10,9 +10,9 @@ using SPFramework.Service;
 namespace SPCharacter.Wiring
 {
     /// <summary>
-    /// 角色切换胶水 - 接收切换请求并驱动状态意图与落位
+    /// 角色切换接线胶水 - 实现切换会话契约，经胶水扩展窗口提交切换意图并广播切换事实
     /// </summary>
-    internal sealed class CharacterSwitchWiring : MonoBehaviour, ICCWiringExtension, ICharacterSwitchService
+    internal sealed class CharacterSwitchWiring : MonoBehaviour, ICCWiringExtension, ICharacterSwitchSession
     {
         [Header("切换配置")]
         [SerializeField, Tooltip("角色唯一标识 用于切换路由")]
@@ -36,18 +36,21 @@ namespace SPCharacter.Wiring
 
         private void Awake()
         {
+            if (string.IsNullOrWhiteSpace(_characterId))
+                throw new InvalidOperationException($"{name}: 未设置角色唯一标识");
+
             _characterController = GetComponent<CharacterController>();
             _inputGate = GetComponent<ICharacterInputGate>();
         }
 
         private void OnEnable()
         {
-            InstanceServiceHub.Register<ICharacterSwitchService>(_characterId, this);
+            InstanceServiceHub.Register<ICharacterSwitchSession>(_characterId, this);
         }
 
         private void OnDisable()
         {
-            InstanceServiceHub.Unregister<ICharacterSwitchService>(_characterId, this);
+            InstanceServiceHub.Unregister<ICharacterSwitchSession>(_characterId, this);
         }
 
         /// <inheritdoc />
@@ -114,7 +117,7 @@ namespace SPCharacter.Wiring
                     ApplySwitchInPose();
                     _hasAppliedSwitchInPose = true;
                     EventBus.Publish(
-                        CharacterSwitchEvents.SwitchInPoseApplied,
+                        CharacterEvents.SwitchInPoseApplied,
                         new CharacterSwitchInPoseAppliedEvent(_characterId));
                 }
 
@@ -124,6 +127,7 @@ namespace SPCharacter.Wiring
 
         private void ApplySwitchInPose()
         {
+            // 传送前禁用 CharacterController 避免启用状态下瞬移产生的穿插修正
             if (_characterController != null)
                 _characterController.enabled = false;
 
@@ -142,7 +146,7 @@ namespace SPCharacter.Wiring
                 _hasReportedSwitchInCompleted = true;
                 _hasPendingSwitchIn = false;
                 EventBus.Publish(
-                    CharacterSwitchEvents.SwitchInCompleted,
+                    CharacterEvents.SwitchInCompleted,
                     new CharacterSwitchInCompletedEvent(_characterId));
                 return;
             }
@@ -154,7 +158,7 @@ namespace SPCharacter.Wiring
                 _hasReportedSwitchOutCompleted = true;
                 _hasPendingSwitchOut = false;
                 EventBus.Publish(
-                    CharacterSwitchEvents.SwitchOutCompleted,
+                    CharacterEvents.SwitchOutCompleted,
                     new CharacterSwitchOutCompletedEvent(_characterId));
             }
         }

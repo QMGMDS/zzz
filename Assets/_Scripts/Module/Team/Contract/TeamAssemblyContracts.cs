@@ -35,7 +35,7 @@ namespace SPTeam.Contract
         /// <summary>
         /// 创建装配结果项
         /// </summary>
-        /// <param name="characterId">角色唯一标识</param>
+        /// <param name="characterId">角色唯一标识 与角色实例服务 Id 一致</param>
         /// <param name="instance">角色实例对象</param>
         /// <param name="release">释放实例的委托</param>
         public TeamAssemblyEntry(string characterId, GameObject instance, Action release)

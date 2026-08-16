@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-using SPFramework.Event.Internal;
-
 namespace SPFramework.Event
 {
     /// <summary>
@@ -35,7 +33,7 @@ namespace SPFramework.Event
             SubscriptionEntry entry = new SubscriptionEntry(handler);
             entries.Add(entry);
 
-            return new EventSubscription(() => Remove(eventKey, entry)); // 隐式转成 IDisposable
+            return new EventSubscriptionHandle(() => Remove(eventKey, entry)); // 隐式转成 IDisposable
         }
 
         /// <summary>

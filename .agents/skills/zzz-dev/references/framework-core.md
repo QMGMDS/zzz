@@ -1,220 +1,238 @@
-# 框架核心：访问级别与模块通讯
+# 代码架构
 
-> 模块关系与通讯总则。涉及跨模块引用、命名空间、事件总线、模块服务接线、编排层（Flow）设计时加载。
+## 一、文件结构一览
 
-## 1. 跨模块引用位置约束（硬性约定）
+```text
+Assets/
+└── _Scripts/                        # 项目开发代码统一放在该目录下
+    ├── Framework/                   # 通讯层（SPFramework 程序集）
+    │   ├── Service/                 # 接口服务：ModuleServiceHub / InstanceServiceHub
+    │   └── Event/                   # 事件广播：EventBus / EventKey
+    │
+    ├── Module/                      # 模块层
+    │   ├── Camera/                  # 摄像机模块（Module.SPCamera 程序集）
+    │   ├── Character/               # 角色模块（Module.SPCharacter 程序集）
+    │   ├── Effects/                 # 空占位目录，尚无模块代码
+    │   ├── Input/                   # 输入模块（Module.SPInput 程序集）
+    │   ├── Resource/                # 资源加载模块（Module.SPResource 程序集）
+    │   ├── Team/                    # 队伍模块（Module.SPTeam 程序集）
+    │   └── UI/                      # 空占位目录，尚无模块代码
+    │
+    ├── Flow/                        # 编排层（SPFlow 程序集）
+    │
+    └── Tools/                       # 与业务无关的通用工具（SPTools 程序集）
+```
 
-跨模块交流统一由 **Wiring 胶水层** 承载，跨模块顺序业务流程由 **编排层**（第 2 节）承载；`Core` 层禁止引用任何外部模块命名空间（含其 `Contract`）以及框架 `SPFramework.Service` / `SPFramework.Event`。
+本项目共分三层：
 
-| 层 | 允许引用的命名空间 | 职责 |
-|---|---|---|
-| `Contract` | 自身模块 + 框架事件/服务类型（`EventKey`、`IModuleService`、`IInstanceService`） | 定义对外 API 与事件，不含实现 |
-| `Core` | 自身模块 + `UnityEngine` / 第三方库 | 纯实现与业务逻辑，零外部模块引用 |
-| `Wiring` | 自身模块（`Contract` + `Core`）+ 外部模块 `Contract` + 框架 `SPFramework.Service` / `SPFramework.Event` | 服务注册/注销、事件订阅/转发、外部动作执行 |
-| `Flow`（编排层） | 任意模块 `Contract` + 框架 `SPFramework.Service` / `SPFramework.Event` | 跨模块顺序业务流程组装；不归属任何模块、不做三层结构，见第 2 节 |
+- **通讯层**：提供模块间的交流手段。模块与外部交流必须通过该层指定的两种方式——**接口服务** 和 **事件广播**，禁止绕过该层直接引用其他模块的实现。
+- **模块层**：模块是本项目中最大的代码单位。每个模块对应一个独立程序集（`Module.SPXXX`），以程序集边界加访问级别约定共同构成模块间的硬性隔离。
+- **编排层**：不含任何具体实现逻辑，仅负责模块的编排创建和纯协调性管理。
 
-Core 需要外部能力（资源实例化、其他模块服务、外部事实）时的做法：
+## 二、访问级别语义
 
-1. Core 内定义**内部端口接口**，签名只使用自身/`UnityEngine` 类型，不得出现外部 Contract 类型。
-2. Wiring 实现该端口（适配器），在实现内引用外部 `Contract` 并调用 Hub / `EventBus`。
-3. Wiring 在 `Awake` 注入端口，Core 在 `Start` 使用（遵守"服务调用必须在 Start 或之后"）。
-4. 订阅外部模块事件属于跨模块交流，订阅与转发必须位于 Wiring；处理逻辑留在 Core。
+本项目对 C# 访问级别有严格的语义约定，读写代码时必须按下表理解：
 
-先例：Character 模块的 `ICCWiringExtension` —— Core 定义意图写入端口，`PlayerInputIntentionWiring` 在 Wiring 层读取输入并提交。
+| 写法                                           | 本项目语义                                          |
+| ---------------------------------------------- | --------------------------------------------------- |
+| `public` 类型                                  | 项目级共享 API，改动需考虑跨模块影响                |
+| `internal` 类型                                | 模块内部实现，外部不得引用                          |
+| `internal` 类型中的 `public` 成员              | 仅模块内部公开，不是项目 API                        |
+| `internal` 类型中的 `private`/`protected` 成员 | 类型自身实现或继承扩展点                            |
+| `internal` 类型中的 `internal` 成员            | 禁止，重复语义，改为 `public`/`private`/`protected` |
+| `public` 类型中的非 `public` 成员              | 内部实现或接线钩子，不作为跨模块 API                |
 
-## 2. 编排层（Flow）
+要点：
 
-> 编排层与"编排型模块"并存：属于某模块业务能力的跨模块协调留在该模块 `Wiring`（编排型模块，见 team-module-api.md）；不属于任何模块的跨模块顺序流程放编排层（现有实现：`TeamAssemblyFlow`）。二者取舍见"启用判据"。
+- `internal` 的作用域是程序集，即整个模块；因此 `internal` 类型内部的成员无需、也不允许再标注 `internal`。
+- 全部 `public` 类型的集合即项目的对外 API 面，只应出现在通讯层与各模块的 Contract/ 中。
+- 豁免：`Tools/` 下与业务无关、需挂载到场景的通用工具组件（如 `RuntimeFrameRateController` 这类 `public` MonoBehaviour）允许保持 `public`，其 `public` 是 Unity 组件挂载所需，不属于跨模块 API 面。
 
-### 定性
+## 三、模块层
 
-编排层承载不属于任何模块的跨模块顺序业务流程（例如场景装配 `TeamAssemblyFlow`、演出序列）：引用各模块 Contract 按顺序驱动，自身没有需要封装的业务不变量。它因此**不是模块**——不适用 Contract/Core/Wiring 三层结构，不要求内部方法锁死；允许是纯 C# 类或 MonoBehaviour。
+```text
+Module/                            # 单个模块的目录结构（SPXXX 为模块名，如 SPCamera）
+├── Module.SPXXX.asmdef            # 模块程序集定义：一个模块有且仅有一个程序集
+├── Contract/                      # 对外契约：服务接口、事件标识、事件负载与共享数据类型，命名空间为 SPXXX.Contract
+├── Core/                          # 核心实现：模块的全部业务逻辑，命名空间为 SPXXX.Core
+└── Wiring/                        # 接线胶水：实现契约、注册服务、收发事件并转发给 Core，命名空间为 SPXXX.Wiring
+```
 
-### 引用权限
+`Contract/`、`Core/`、`Wiring/` 内允许按需再建子目录（如 `Contract/Event/`、`Contract/Data/`、`Core/Config/`、`Core/Editor/`、`Core/Expansion/`），命名空间仍归属所属层（如 `SPXXX.Contract`、`SPXXX.Core`），上述访问级别规则不变。
 
-等同 Wiring 级，且不被任何模块反向引用：
+硬性规则：
 
-| 允许 | 禁止 |
-| --- | --- |
-| 任意模块 `*.Contract`、`ModuleServiceHub` / `InstanceServiceHub`、`EventBus`、`SPFramework.Service` / `SPFramework.Event` | 任何模块的 `Core` / `Debug` / `Editor` / `Wiring` |
-| — | 被任何模块（含 Contract/Core/Wiring）反向引用 |
-| — | Flow 之间互相调用（保持扁平） |
+1. Contract/ 下的类型一律 `public`；Core/ 与 Wiring/ 下的类型一律 `internal`。
+2. 借助程序集隔离，其他模块在编译期只能看到本模块 Contract/ 中的 `public` 类型——Contract 即模块的唯一对外可见面。
+3. 跨模块交流代码只能写在 Wiring/ 中，且必须作为 `internal` 类型依附于某一个具体模块。Wiring/ 只允许引用其他模块的 Contract 命名空间，禁止引用其 Core 与 Wiring（二者因 `internal` 在编译期本就不可见）。
+4. Core/ 不感知其他模块的存在，不直接参与跨模块交流；一切对外能力均由 Wiring/ 实现 Contract 接口、再把调用转发给 Core。
+5. 若一段跨模块协调逻辑不适合依附于任何单一模块，应上升至编排层，而不是随意挑选一个模块收容。
 
-### 约束
+## 四、编排层
 
-1. **依赖方向单向**：Flow → 模块，模块不得引用 Flow。
-2. **唯一允许的内部状态是流程进度**（当前步骤、重试计数、阶段标记）；业务实体数据归模块持有，Flow 只保存服务引用或实例 id，不保存业务数据副本。
-3. **不新增通信机制**：取能力/状态走 Contract + 服务 Hub；等"某件事已发生"订阅 EventBus 事实事件；顺序流程用代码顺序表达，禁止用事件总线发命令串流程。
-4. **生命周期**：明确入口（`Start`/`Play`）与终止语义（完成 / 取消 / 失败），终止时清理事件订阅与占用资源；Flow 不注册为模块服务——它是服务的调用者，不是服务本身。
-5. **命名与目录**：统一 `XxxFlow` 命名，目录 `Assets/_Scripts/Flow/`，命名空间 `SPFlow`。
+编排层（Flow/）承载"不属于任何单一模块"的跨模块业务流程，例如按固定顺序装配一支队伍、驱动一次牵涉多个模块的演出。
 
-### 启用判据
+规则：
 
-出现任一信号，把逻辑从模块 Wiring/Core 迁入 Flow：
+1. **只编排，不实现**：流程中需要的具体能力一律通过通讯层向模块借取（接口服务）或等待模块通知（事件广播），编排层自身不实现业务逻辑。
+2. 编排层可以引用各模块的 Contract 命名空间；与 Wiring 同理，禁止触碰任何模块的内部实现。
+3. 归属判据：一段协调逻辑若能明确归属于某个模块（由该模块主导，其他模块仅提供能力），应放在该模块的 Wiring/；只有当它同时牵涉多个模块且无天然归属时，才放入编排层。
 
-1. **复用**：同一段顺序逻辑被 ≥2 个模块或流程需要 → 提取为 Flow；
-2. **场景专属时机**：只属于本场景的"何时调谁、按什么顺序、失败怎么办"，不是任何模块的领域能力（如场景装配、演出序列）；
-3. **反信号（不得迁入）**：逻辑需要读写某模块内部数据、保证该模块自身一致性 → 属于模块 Core。
+## 五、通讯层
 
-### 迁移附带决策
+选用判据（先判语义，再选通道）：
 
-提取 Flow 可能改变原契约归属（如某模块服务暴露的流程能力迁出后，契约由 Flow 实现还是收缩模块 API），提取前先决策契约归属，避免"模块不得引用 Flow"与旧契约冲突。
+- **接口服务 = 能力借用**：借用方明确认识被借用方，主动拿取接口来使用（请求-响应、状态查询）。
+- **事件广播 = 事实通知**：发布方与订阅方互不认识。发布方仅发布已发生的离散事实，订阅方按需订阅；禁止把事件总线当作命令通道（即用事件驱使对方"去做某事"）。
 
-## 3. 访问级别语义
+### 接口服务
 
-| 写法 | 本项目语义 |
-|---|---|
-| `public` 类型 | 项目级共享 API，改动需考虑跨模块影响 |
-| `internal` 类型 | 模块内部实现，外部不得引用 |
-| `internal` 类型中的 `public` 成员 | 仅模块内部公开，不是项目 API |
-| `internal` 类型中的 `private`/`protected` 成员 | 类型自身实现或继承扩展点 |
-| `internal` 类型中的 `internal` 成员 | 禁止，重复语义，改为 `public`/`private`/`protected` |
-| `public` 类型中的非 `public` 成员 | 内部实现或接线钩子，不作为跨模块 API |
+接口服务分两级，契约接口须继承对应的标记接口：
 
-- `internal` 成员只用于 `public` 类型中限制接线/绑定入口，例如模块服务的注册入口。
-- 不要为了跨模块调用把 `internal` 改成 `public`，应先设计正式入口。
+| 级别   | 标记接口          | 服务中心            | 注册键             | 适用场景                             |
+| ------ | ----------------- | ------------------- | ------------------ | ------------------------------------ |
+| 模块级 | `IModuleService`  | `ModuleServiceHub`  | 契约类型           | 全项目唯一的能力，如摄像机坐标转换   |
+| 实例级 | `IInstanceService`| `InstanceServiceHub`| 契约类型 + 实例 id | 同类多实例的能力，按 id 寻址         |
 
-## 4. 两种模块通讯方式
+生命周期纪律：注册与注销必须成对出现，两级服务统一在 `OnEnable` 中注册、在 `OnDisable` 中注销，注销时调用对应服务中心的 `Unregister`（模块级按契约类型寻址，实例级按契约类型 + 实例 id 寻址）。
 
-### 能力/状态借用：Contract 接口 + 服务
+服务中心的防御语义（写 Wiring 时需知晓）：
 
-- 用于：读取当前状态/连续数据、调用目标模块的明确能力。
-- A 只依赖 B 的 Contract，不依赖 B 的 Core。
-- 没有返回值不代表是事件：`SetCameraFollowTarget(target)` 仍是能力调用。
+- 模块级 `Register`：同一契约已被其他存活实例注册时，输出 `LogWarning` 并以新实例覆盖。
+- 模块级 `Unregister`：仅当当前注册的正是传入实例时才移除；契约未注册或实例不匹配时输出 `LogWarning` 并忽略本次注销。
+- 实例级 `Register`：返回 `bool`；同一契约 + id 已被其他存活实例占用时输出 `LogError`、保留现有实例并返回 `false`（同实例重复注册或顶替已销毁实例视为成功，返回 `true`）。
+- 实例级 `Unregister`：同样校验实例身份，仅身份匹配时移除并返回 `true`。
 
-服务契约用标记接口区分作用域：
+允许"依赖未接线则不注册"的条件注册惯例：Wiring 的 Core 依赖（如 `_main`、`_collector`）未在 Inspector 接好线时，`OnEnable` 可跳过注册、`OnDisable` 对应跳过注销，服务方法内部做空源降级；此时该契约对外表现为"服务未注册"，消费方按 `TryGet` 失败路径自行降级即可。
 
-| 契约形态 | 标记接口 | 注册/获取入口 | 键 |
-|---|---|---|---|
-| 模块级单例 | `IModuleService` | `ModuleServiceHub` | 契约类型 |
-| 实例级 | `IInstanceService` | `InstanceServiceHub` | 契约类型 + 实例 id |
-| 普通契约 | 无 | 不作为服务注册 | - |
+使用示例（摄像机模块，模块级服务）：
 
-#### 模块级服务（ModuleServiceHub）
-
-时序约束：
-
-1. 服务注册必须在 `Awake`（早于 `Start`）。
-2. 服务调用必须在 `Start` 或之后，禁止在 `Awake` 取服务。
-3. 满足以上两条时，`Get<I...>()` 在稳定运行窗口内可直接使用，不判空。
+1）在 Contract/ 中定义契约（`public`，继承 `IModuleService`）：
 
 ```csharp
-// 供方：模块内 Wiring 在 Awake 注册
-[DefaultExecutionOrder(-380)]
-internal sealed class ExampleWiring : MonoBehaviour
+// Module/Camera/Contract/IConvertCameraTransform.cs
+namespace SPCamera.Contract
 {
-    [SerializeField] private ExampleService _service; // 模块内 Core 实现
-
-    private void Awake()
+    /// <summary>
+    /// 转换行为 - 平面方向与摄像机坐标系相关联，产出世界 XZ 方向
+    /// </summary>
+    public interface IConvertCameraTransform : IModuleService
     {
-        ModuleServiceHub.Register<IExampleContract>(_service);
-    }
-
-    private void OnDestroy()
-    {
-        ModuleServiceHub.Unregister<IExampleContract>();
-    }
-}
-
-// 需方：取用服务属跨模块交流，须在 Wiring 层；在 Start 或之后取用，不判空
-internal sealed class ExampleConsumerWiring : MonoBehaviour
-{
-    private void Start()
-    {
-        IExampleContract service = ModuleServiceHub.Get<IExampleContract>();
-        service.DoWork();
+        /// <summary>
+        /// 将平面方向关联摄像机，产出世界 XZ 方向
+        /// </summary>
+        /// <param name="inputDirection">输入模块产出的平面方向</param>
+        /// <returns>世界 XZ 方向</returns>
+        Vector2 ConvertCameraTransform(Vector2 inputDirection);
     }
 }
 ```
 
-必选 vs 可选：
-
-- 必选服务（如输入 `IProvideFrameInput`）：`Get` 直接用，不判空。
-- 可选服务（如 `IConvertCameraTransform`）：`TryGet` 或判空做语义回退。
-
-#### 实例级服务（InstanceServiceHub）
-
-- 用于：同一契约存在多个实例，需要按实例路由（如按角色 id 请求切换）。
-- 契约接口继承 `IInstanceService`，注册/获取都带实例 id。
-- 实例 id 使用稳定字符串，单队伍下全局唯一即可。
-
-生命周期与语义：
-
-1. MonoBehaviour 实例服务在 `OnEnable` 注册、`OnDisable` 注销，由 `SetActive` 同步触发。
-2. 注册/获取/注销必须使用同一个契约接口类型作泛型参数，键才一致；用实现类注册会与契约查询不匹配。
-3. `Register` 遇到重复 id 报错并拒绝覆盖；`Unregister(id, instance)` 只注销该实例名下的条目，避免误删他人注册。
-4. `Get<T>(id)` 未注册返回 `null`，`TryGet<T>(id, out service)` 返回 `false`，由调用方做“不可用/不可切换”回退，Hub 不抛异常。
-5. 取用时自动清理已销毁的 Unity 对象，避免脏引用。
+2）在 Wiring/ 中实现契约并注册（`internal`，调用转发给 Core 主入口；以下为节选，实际代码另含 `[DefaultExecutionOrder]` 执行顺序标注与 `_main` 未接线时的空源降级）：
 
 ```csharp
-// 契约：实例级服务接口
-public interface IExampleInstanceContract : IInstanceService
+// Module/Camera/Wiring/CameraTransformWiring.cs
+namespace SPCamera.Wiring
 {
-    void DoWork();
-}
-
-// 供方：实例服务在激活时注册、失活时注销
-internal sealed class ExampleInstanceService : MonoBehaviour, IExampleInstanceContract
-{
-    [SerializeField, Tooltip("实例 id")] private string _instanceId;
-
-    private void OnEnable()
+    /// <summary>
+    /// 相机坐标转换接线胶水 - 实现坐标转换契约并注册到模块服务中心，调用转发给摄像机主入口
+    /// </summary>
+    internal sealed class CameraTransformWiring : MonoBehaviour, IConvertCameraTransform
     {
-        InstanceServiceHub.Register<IExampleInstanceContract>(_instanceId, this);
-    }
+        [SerializeField] private SPCameraMain _main; // Core 主入口
 
-    private void OnDisable()
-    {
-        InstanceServiceHub.Unregister<IExampleInstanceContract>(_instanceId, this);
-    }
-}
+        private void OnEnable()
+            => ModuleServiceHub.Register<IConvertCameraTransform>(this);
 
-// 需方：取用服务属跨模块交流，须在 Wiring 层；在 Start 或之后按 id 取用
-internal sealed class ExampleConsumerWiring : MonoBehaviour
-{
-    [SerializeField, Tooltip("目标实例 id")] private string _targetId;
+        private void OnDisable()
+            => ModuleServiceHub.Unregister<IConvertCameraTransform>(this);
 
-    private void Start()
-    {
-        if (InstanceServiceHub.TryGet<IExampleInstanceContract>(_targetId, out IExampleInstanceContract service))
-            service.DoWork();
+        /// <inheritdoc />
+        public Vector2 ConvertCameraTransform(Vector2 inputDirection)
+            => _main.ConvertCameraTransform(inputDirection);
     }
 }
 ```
 
-### 事实广播：事件总线
-
-- 用于：声明“某件事已发生”，低频、离散、完成语义或状态变化。
-- 发布者只声明事实，订阅者自行响应，总线只负责分发；无订阅者时发布方仍成立。
-
-用法（命名空间 `SPFramework.Event`）：
+3）消费方按需获取（仅引用 `SPCamera.Contract`，服务缺失时自行降级）：
 
 ```csharp
-// 事件定义放目标模块 Contract/Events
-public static class ExampleEvents
-{
-    public static readonly EventKey<ExampleChangedEvent> ExampleChanged =
-        new EventKey<ExampleChangedEvent>("Example.State.ExampleChanged");
-}
-
-public readonly struct ExampleChangedEvent { /* 只放事实上下文 */ }
-
-// 发布：状态提交后
-EventBus.Publish(ExampleEvents.ExampleChanged, new ExampleChangedEvent(...));
-
-// 订阅：返回 IDisposable，生命周期结束退订
-IDisposable subscription = EventBus.Subscribe(ExampleEvents.ExampleChanged, OnChanged);
+// Module/Character/Wiring/PlayerInputIntentionWiring.cs（节选）
+Vector2 moveDirection = ModuleServiceHub.TryGet<IConvertCameraTransform>(out IConvertCameraTransform converter)
+    ? converter.ConvertCameraTransform(inputDirection)
+    : inputDirection;                                  // 服务未注册时降级为原始输入方向
 ```
 
-- `OnEnable` 订阅必须在 `OnDisable` 退订；纯 C# 类在 `Dispose` 退订。
-- 订阅外部模块事件属跨模块交流，须位于 Wiring 层；发布自身 Contract 事件可在 Core。
-- 事件名用事实（`ActiveCharacterChanged`），不用命令（`RequestSwitchCharacter`）；Payload 只放事实上下文。
-- `EventBus.Clear()` 清空全部订阅，用于测试与运行复位。
+要点：消费方拿取的只是 Contract 接口，对实现细节零感知；两级服务中心统一以 `TryGet` 获取服务，服务未注册或已销毁时返回 `false` 且 `out` 结果为 `null`，消费方需自行决定降级策略，不可默认服务必然可用。
 
-## 5. 核心原则
+### 事件广播
 
-1. 模块是最大代码单位；未拆 asmdef 不代表没有边界。
-2. 跨模块引用只发生在 Wiring 层与编排层：`Core` 禁止引用外部模块命名空间（含其 `Contract`）与框架 `SPFramework.Service`/`SPFramework.Event`；Wiring 跨模块只引用 `*.Contract` 与 `SPFramework.Service`/`SPFramework.Event`；编排层（第 2 节）引用权限等同 Wiring 且不被任何模块反向引用；任何层都不引用其他模块的 `Core`/`Debug`/`Editor`/`Wiring`。
-3. 要用别人的东西，走接口 + 服务（模块级或实例级）；只宣布自己做完了事，走事件总线。
-4. 事件是事实不是命令；参数只补全事实（谁、前后变化、位置、时间、结果）。
-5. 跨模块顺序业务流程按第 2 节的启用判据决定归属：不属于任何模块的归编排层（`XxxFlow`）；属于某模块业务能力的按编排型模块留在该模块 Wiring；不得堆进任何模块的 Core。
+事件由两部分契约组成，全部定义在发布方模块的 Contract/ 中：
+
+- **事件标识**：`EventKey<TPayload>`（引用类型的事件标识 class，非值类型），集中声明在 `XXXEvents` 静态类里，命名约定为 `"模块名.事件名"`；
+- **事件负载**：`readonly struct`，以只读属性描述一条已发生的事实。
+
+订阅时 `EventBus.Subscribe` 返回 `IDisposable` 句柄，订阅方必须持有并在失效时 `Dispose()`；同一处理函数重复订阅同一事件会抛异常。
+
+使用示例（规范示意：假设摄像机模块需要广播"跟随目标已变化"这一事实；示例中的 `CameraEvents` 为规范示意，真实范例见 `Module/Character/Contract/Event/CharacterEvents.cs` 与 `Module/Team/Contract/Event/TeamEvents.cs`）：
+
+1）在 Contract/ 中声明事件与负载（`public`）：
+
+```csharp
+// Module/Camera/Contract/CameraEvents.cs
+namespace SPCamera.Contract
+{
+    /// <summary>
+    /// 摄像机事件 - 由摄像机模块发布的事实广播
+    /// </summary>
+    public static class CameraEvents
+    {
+        /// <summary>跟随目标变化事件</summary>
+        public static readonly EventKey<CameraFollowTargetChangedEvent> FollowTargetChanged =
+            new EventKey<CameraFollowTargetChangedEvent>("Camera.FollowTargetChanged");
+    }
+
+    /// <summary>
+    /// 跟随目标变化事件负载
+    /// </summary>
+    public readonly struct CameraFollowTargetChangedEvent
+    {
+        /// <summary>
+        /// 创建跟随目标变化事件
+        /// </summary>
+        /// <param name="target">新的跟随目标</param>
+        public CameraFollowTargetChangedEvent(Transform target) => Target = target;
+
+        /// <summary>新的跟随目标</summary>
+        public Transform Target { get; }
+    }
+}
+```
+
+2）发布方（摄像机模块）在事实发生后发布：
+
+```csharp
+EventBus.Publish(CameraEvents.FollowTargetChanged, new CameraFollowTargetChangedEvent(target));
+```
+
+3）订阅方（任意模块的 Wiring/）订阅并成对注销：
+
+```csharp
+private IDisposable _followChangedSubscription;
+
+private void OnEnable()
+    => _followChangedSubscription = EventBus.Subscribe(CameraEvents.FollowTargetChanged, OnFollowTargetChanged);
+
+private void OnDisable()
+{
+    _followChangedSubscription?.Dispose();
+    _followChangedSubscription = null;
+}
+
+private void OnFollowTargetChanged(CameraFollowTargetChangedEvent payload)
+{
+    // 按需响应事实
+}
+```
+
+要点：发布方与订阅方唯一的共同依赖是 Contract 中的事件标识与负载类型，彼此互不知晓；订阅句柄必须成对 `Dispose`，避免泄漏与悬空回调。

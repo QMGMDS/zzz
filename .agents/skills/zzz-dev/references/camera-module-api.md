@@ -1,174 +1,72 @@
-# 摄像机模块 API 速览
+# 摄像机模块 API
 
-> 适用场景：下游模块按需做相机系方向转换，或请求摄像机切换跟随目标。
-> 边界约定：外部只允许引用 `SPCamera.Contract`，通过 `ModuleServiceHub.Get<...>()` 获取摄像机服务；不要直接引入 `SPCamera.Core` / `SPCamera.Wiring`。
-> 使用原则：外部通过 `ModuleServiceHub.Get<...>()` 取接口，判空后调用；不要自己碰内部实现。
+## 一、模块概述
 
-## 一、核心 API
+摄像机模块（`Module.SPCamera` 程序集）对外提供两项能力，均以**模块级服务**形式注册到 `ModuleServiceHub`，契约定义在 `SPCamera.Contract` 命名空间：
 
-### 对外公开的命名空间
+| 契约接口 | 能力 |
+| --- | --- |
+| `IConvertCameraTransform` | 将平面方向关联摄像机参考系，产出世界 XZ 方向 |
+| `ISetCameraFollowTarget` | 设置摄像机跟随目标，摄像机自行平滑移动到新目标 |
 
-```csharp
-using SPFramework.Service;
-using SPCamera.Contract;
-```
+边界约定：外部只允许引用 `SPCamera.Contract`，通过 `ModuleServiceHub.TryGet` 获取服务；`SPCamera.Core` 与 `SPCamera.Wiring` 中的类型均为 `internal`，编译期对外不可见。
 
-- `Contract`：稳定的接口契约。
-- `Wiring`：模块内接线胶水，负责把 `Core` 实现注册到 `ModuleServiceHub`，外部不引用。
-
-### 接口：IConvertCameraTransform
+### IConvertCameraTransform
 
 ```csharp
-public interface IConvertCameraTransform
+public interface IConvertCameraTransform : IModuleService
 {
     Vector2 ConvertCameraTransform(Vector2 inputDirection);
 }
 ```
 
-- 输入值是“角色输入方向”，不是世界方向。
-- `inputDirection.x` 表示输入右方向。
-- `inputDirection.y` 表示输入前方向。
-- 返回值是世界 XZ 平面方向。
-- 外部不重复实现相机朝向换算。
+- `inputDirection` 是平面方向：`x` 分量表示右方向，`y` 分量表示前方向。
+- 接口不做防御性处理，调用方需保证输入合法。
+- 返回值是关联摄像机参考系后的**世界 XZ 方向**（已归一化），不是摄像机物体坐标系下的方向。
 
-### 获取服务：IConvertCameraTransform
-
-- 外部通过 `ModuleServiceHub.Get<IConvertCameraTransform>()` 获取坐标转换服务。
-- 返回可能为 `null`；为空时应静默降级，不要抛异常。
-- 返回 `null` 通常表示尚未接线、对象已销毁，或场景未就绪。
-
-### 接口：ISetCameraFollowTarget
+### ISetCameraFollowTarget
 
 ```csharp
-public interface ISetCameraFollowTarget
+public interface ISetCameraFollowTarget : IModuleService
 {
     void SetCameraFollowTarget(Transform target);
 }
 ```
 
-- 外部只提交希望跟随的 `Transform`。
-- 摄像机模块内部决定实际跟随方式。
-- 外部不要直接改摄像机位置、旋转或挂点。
+- 调用方只提交希望跟随的 `Transform`，跟随方式（平滑时间、最大速度等）由摄像机模块内部决定。
+- 切换目标时摄像机会立即吸附到新目标的 XZ 位置，随后逐帧平滑跟随；跟随仅发生在世界 XZ 平面，摄像机高度保持不变。
 
-### 获取服务：ISetCameraFollowTarget
+## 二、API 调用示例
 
-- 外部通过 `ModuleServiceHub.Get<ISetCameraFollowTarget>()` 获取跟随目标设置服务。
-- 返回可能为 `null`；为空时通常直接跳过这次请求。
-- 外部不直接调用摄像机内部跟随器实现。
+获取服务统一使用 `ModuleServiceHub.TryGet`。服务未注册或已销毁时返回 `false` 且 `out` 结果为 `null`，调用方必须自行降级，不可默认服务必然可用。
 
-### 内部实现：Wiring 胶水
-
-- `CameraTransformWiring`、`CameraFollowTargetWiring` 之类的类型属于模块内部接线。
-- 它们负责把 `Core` 实现注册到 `ModuleServiceHub`。
-- 这些类型是 `internal`，外部不可依赖。
-
-### 运行时空源约定
-
-`ModuleServiceHub.Get<...>()` 不保证任何时刻都有值。
-
-常见原因：
-
-- 场景中缺少摄像机接线对象
-- 接线对象尚未完成 `Awake`
-- 对应服务尚未注册
-- 摄像机对象已销毁
-
-推荐处理：
-
-- 坐标转换服务为空：直接返回输入方向
-- 跟随目标服务为空：直接跳过请求
-- 不要临时查找 `SPCamera.Core` 组件绕过服务
-- 不要 fallback 到 `Camera.main` 自己复制实现
-
-## 二、使用模式
-
-### 标准调用：坐标转换
+### 平面方向转世界 XZ 方向
 
 ```csharp
-private Vector2 ToWorldMoveDirection(Vector2 inputDirection)
-{
-    IConvertCameraTransform converter = ModuleServiceHub.Get<IConvertCameraTransform>();
+using SPFramework.Service;
+using SPCamera.Contract;
 
-    return converter == null
-        ? inputDirection
-        : converter.ConvertCameraTransform(inputDirection);
-}
+Vector2 worldDirection = ModuleServiceHub.TryGet<IConvertCameraTransform>(out IConvertCameraTransform converter)
+    ? converter.ConvertCameraTransform(inputDirection)
+    : inputDirection; // 服务缺失时降级为原始平面方向
 ```
 
-- 适合角色模块把输入方向转成世界移动方向。
-- 适合 UI / 调试模块显示相机系输入方向。
-- 下游只消费结果，不关心摄像机内部算法。
-
-### 标准调用：切换跟随目标
+### 设置摄像机跟随目标
 
 ```csharp
-public void SwitchFollowTarget(Transform target)
-{
-    ISetCameraFollowTarget setter = ModuleServiceHub.Get<ISetCameraFollowTarget>();
+using SPFramework.Service;
+using SPCamera.Contract;
 
-    if (setter == null) return;
-    if (target == null) return;
-
-    setter.SetCameraFollowTarget(target);
-}
+if (ModuleServiceHub.TryGet<ISetCameraFollowTarget>(out ISetCameraFollowTarget follow))
+    follow.SetCameraFollowTarget(target); // 服务缺失时跳过本次请求
 ```
 
-- 适合队伍模块切换当前上场角色。
-- 适合角色生成后设置初始跟随目标。
-- 适合过场或玩法逻辑请求摄像机跟随另一个目标。
+## 三、反例
 
-### 推荐的空源保护
-
-```csharp
-IConvertCameraTransform provider = ModuleServiceHub.Get<IConvertCameraTransform>();
-if (provider == null) return;
-```
-
-```csharp
-ISetCameraFollowTarget setter = ModuleServiceHub.Get<ISetCameraFollowTarget>();
-if (setter == null) return;
-```
-
-- 服务为空时应静默处理。
-- 不要把空源当成异常流程。
-
-### 场景接线顺序
-
-```text
-CameraWiring 先把 Core 实现注册到 ModuleServiceHub
-        ↓
-下游模块每次按需 Get<...>()
-        ↓
-只调用 Contract 接口，不直接碰 Core
-```
-
-## 三、常见错误
-
-| 错误写法 | 正确写法 | 原因 |
-|---|---|---|
-| `using SPCamera.Core` | `using SPCamera.Contract` + `using SPFramework.Service` | Core 是实现层，外部禁引 |
-| 直接引用 `CameraFollower` | `ModuleServiceHub.Get<ISetCameraFollowTarget>()` | 跟随器不是项目级 API |
-| 直接调用跟随器 | `ModuleServiceHub.Get<ISetCameraFollowTarget>()?.SetCameraFollowTarget(target);` | 不跨模块调用 Core 实现 |
-| 用 `Camera.main` 转方向 | `ModuleServiceHub.Get<IConvertCameraTransform>()?.ConvertCameraTransform(inputDirection)` | 方向规则应由摄像机模块统一处理 |
-| 不判空服务 | `ModuleServiceHub.Get<IConvertCameraTransform>().ConvertCameraTransform(...)` | 服务可能未注册或已销毁 |
-| 依赖 Wiring 胶水 | `[SerializeField] private CameraTransformWiring _cameraWiring;` | `internal` 胶水不是外部 API |
-| 直接改摄像机位置 | `cameraTransform.position = ...` | 外部不接管摄像机实现细节 |
-| 复制方向算法 | 自己算 `Camera.main.transform.forward` | 会破坏统一规则，容易与模块逻辑不一致 |
-
-## 四、交叉引用
-
-| 相关文档 | 用途 |
-|---|---|
-| [framework-core.md](framework-core.md) | 访问级别语义、模块通讯方式、核心原则 |
-| [input-module-api.md](input-module-api.md) | 输入方向 `MoveDirection` 的来源与语义 |
-| [character-module-api.md](character-module-api.md) | 角色模块如何消费摄像机方向转换结果 |
-
-> 建议顺序：先看 `framework-core.md`，再看输入、摄像机、角色三份模块文档。
-
-### 边界提醒
-
-- `SPCamera.Contract`：外部可依赖的接口契约。
-- `SPCamera.Wiring`：模块内 `internal` 接线胶水，外部禁用。
-- `SPCamera.Core`：摄像机内部实现，外部禁引。
-- `internal` Wiring 胶水：模块内部接线细节，外部禁用。
-- `SPFramework.Service`：通过 `ModuleServiceHub` 获取摄像机服务。
+| 反例 | 正确做法 |
+| --- | --- |
+| 引用 `SPCamera.Core` / `SPCamera.Wiring` 中的类型 | 只引用 `SPCamera.Contract`，经 `ModuleServiceHub` 获取接口 |
+| 通过 `Camera.main` 或自行查找场景摄像机组件，自己实现方向换算或跟随逻辑 | 借用 `IConvertCameraTransform` / `ISetCameraFollowTarget` |
+| 不判空直接调用服务，默认其必然可用 | 用 `TryGet` 获取，失败时按上文示例降级 |
+| 直接修改摄像机的 `Transform`（位置、旋转、挂点）来实现跟随或切换目标 | 调用 `ISetCameraFollowTarget.SetCameraFollowTarget`，运动方式由模块内部决定 |
+| 长期缓存服务接口并假设其永久有效 | 服务随模块内部的注册/注销生命周期变动，每次按需 `TryGet` |

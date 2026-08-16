@@ -32,14 +32,15 @@ namespace SPTeam.Wiring
                 throw new InvalidOperationException($"{name}: 未配置队伍数据层");
 
             _orchestrator = new TeamSwitchOrchestrator(_service);
-            ModuleServiceHub.Register<ITeamService>(_orchestrator);
         }
 
         private void OnEnable()
         {
-            _poseAppliedSubscription = EventBus.Subscribe(CharacterSwitchEvents.SwitchInPoseApplied, OnSwitchInPoseApplied);
-            _switchInSubscription = EventBus.Subscribe(CharacterSwitchEvents.SwitchInCompleted, OnSwitchInCompleted);
-            _switchOutSubscription = EventBus.Subscribe(CharacterSwitchEvents.SwitchOutCompleted, OnSwitchOutCompleted);
+            ModuleServiceHub.Register<ITeamService>(_orchestrator);
+
+            _poseAppliedSubscription = EventBus.Subscribe(CharacterEvents.SwitchInPoseApplied, OnSwitchInPoseApplied);
+            _switchInSubscription = EventBus.Subscribe(CharacterEvents.SwitchInCompleted, OnSwitchInCompleted);
+            _switchOutSubscription = EventBus.Subscribe(CharacterEvents.SwitchOutCompleted, OnSwitchOutCompleted);
         }
 
         private void OnDisable()
@@ -50,18 +51,20 @@ namespace SPTeam.Wiring
             _poseAppliedSubscription = null;
             _switchInSubscription = null;
             _switchOutSubscription = null;
+
+            ModuleServiceHub.Unregister<ITeamService>(_orchestrator);
         }
 
         private void Update()
         {
-            IProvideFrameInput provider = ModuleServiceHub.Get<IProvideFrameInput>();
+            _orchestrator.Tick();
+
+            // 输入服务未注册时跳过本帧切换请求
+            if (!ModuleServiceHub.TryGet<IProvideFrameInput>(out IProvideFrameInput provider))
+                return;
+
             if (provider.CurrentProcessed.SwitchCharacter.IsPressed)
                 _orchestrator.TryRequestSwitch();
-        }
-
-        private void OnDestroy()
-        {
-            ModuleServiceHub.Unregister<ITeamService>();
         }
 
         private void OnSwitchInPoseApplied(CharacterSwitchInPoseAppliedEvent payload)

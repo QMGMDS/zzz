@@ -1,0 +1,19 @@
+{
+    "name": "SPFlow",
+    "rootNamespace": "",
+    "references": [
+        "GUID:d327843e5867b3b4fabfaccbbeca4d70",
+        "GUID:06c348f555d47b647b161d6056f01a09",
+        "GUID:7781013afdc6fb243bfb3cc93506c77a",
+        "GUID:3edc1d5c94f0e294b934fb376e2796b0"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

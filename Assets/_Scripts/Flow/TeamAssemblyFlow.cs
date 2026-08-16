@@ -17,34 +17,38 @@ namespace SPFlow
     {
         private void Start()
         {
-            ITeamService team = ModuleServiceHub.Get<ITeamService>();
-            IInstantiateResource resource = ModuleServiceHub.Get<IInstantiateResource>();
+            if (!ModuleServiceHub.TryGet<ITeamService>(out ITeamService team))
+                throw new InvalidOperationException($"{name}: 队伍服务未注册 无法装配队伍");
+
+            if (!ModuleServiceHub.TryGet<IInstantiateResource>(out IInstantiateResource resource))
+                throw new InvalidOperationException($"{name}: 资源实例化服务未注册 无法装配队伍");
 
             IReadOnlyList<TeamSlotPlan> plan = team.GetSlotPlan();
-            var entries = new List<TeamAssemblyEntry>(plan.Count);
+            List<TeamAssemblyEntry> entries = new List<TeamAssemblyEntry>(plan.Count);
 
             foreach (TeamSlotPlan slot in plan)
             {
-                ResourceLoadResult result = resource.Instantiate(new ResourceLoadRequest(
+                ResourceInstantiateResult result = resource.Instantiate(
                     new ResourceKey(slot.ResourceKey),
-                    parent: transform,
-                    worldPosition: transform.position,
-                    worldRotation: transform.rotation,
-                    shouldActivateAfterCreate: false));
+                    transform.position,
+                    transform.rotation,
+                    transform,
+                    activate: false);
 
                 if (!result.IsSuccess)
                 {
                     ReleaseEntries(entries);
-                    throw new InvalidOperationException($"{name}: 角色 {slot.CharacterId} 实例化失败");
+                    throw new InvalidOperationException($"{name}: 角色 {slot.CharacterId} 实例化失败 - {result.Error}");
                 }
 
-                entries.Add(new TeamAssemblyEntry(slot.CharacterId, result.Instance, result.Handle.Release));
+                entries.Add(new TeamAssemblyEntry(slot.CharacterId, result.Instance, result.Release));
             }
 
             team.InitializeRoster(entries);
 
-            if (ModuleServiceHub.TryGet<ISetCameraFollowTarget>(out ISetCameraFollowTarget setter))
-                setter.SetCameraFollowTarget(team.GetCharacterTransform(team.ActiveCharacterId));
+            Transform initialCharacter = team.GetCharacterTransform(team.ActiveCharacterId);
+            if (ModuleServiceHub.TryGet<ISetCameraFollowTarget>(out ISetCameraFollowTarget setter) && initialCharacter != null)
+                setter.SetCameraFollowTarget(initialCharacter);
         }
 
         private static void ReleaseEntries(IReadOnlyList<TeamAssemblyEntry> entries)

@@ -46,7 +46,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _catalog: {fileID: 11400000, guid: f01b20741cc0d734a9d7af5a5508d118, type: 2}
-  _shouldLogFailures: 1
 --- !u!114 &8805003261582287058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,7 +58,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 190faa1fa52555b4ea26ed008e4f486b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _loadService: {fileID: 2654576927093020468}
+  _main: {fileID: 2654576927093020468}
 --- !u!1 &5164064967347639137
 GameObject:
   m_ObjectHideFlags: 0

@@ -1298,8 +1298,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 57305059170170868}
-  - component: {fileID: 1395442575130929259}
-  - component: {fileID: 3386836749086253079}
   m_Layer: 5
   m_Name: Player_HUD
   m_TagString: Untagged
@@ -1328,43 +1326,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1395442575130929259
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7158453734709648910}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ae047f9c8b63b54894defa977934ef9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _characterAvatar1: {fileID: 636996462943339305}
-  _characterAvatar2: {fileID: 7564825132901428126}
-  _characterAvatar3: {fileID: 6780243848202595820}
-  _powerPoint1: {fileID: 5961838242618741626}
-  _powerPoint2: {fileID: 2699645370801028947}
-  _powerPoint3: {fileID: 3659606493266917758}
-  _hpBarRedSlot1: {fileID: 2619987161225787477}
-  _hpBarGreenSlot1: {fileID: 780312106119372286}
-  _hpBarGreenSlot2: {fileID: 3507480576313574826}
-  _hpBarGreenSlot3: {fileID: 4228063301471064653}
-  _redBarDrainSpeed: 0.2
---- !u!114 &3386836749086253079
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7158453734709648910}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d7315557de887241aedf39b9f626331, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _teamController: {fileID: 0}
-  _view: {fileID: 1395442575130929259}
 --- !u!1 &7264904831575982139
 GameObject:
   m_ObjectHideFlags: 0

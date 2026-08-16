@@ -174,11 +174,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Resource_Module
       objectReference: {fileID: 0}
+    - target: {fileID: 8805003261582287058, guid: 6e53f1a4b8eef4846890171419ce7ac3, type: 3}
+      propertyPath: _main
+      value: 
+      objectReference: {fileID: 6064259292710087863}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6e53f1a4b8eef4846890171419ce7ac3, type: 3}
+--- !u!114 &6064259292710087863 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2654576927093020468, guid: 6e53f1a4b8eef4846890171419ce7ac3, type: 3}
+  m_PrefabInstance: {fileID: 6064259292710087862}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18db85cef36445949a830a1bab42f32c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6276944960578693007
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -55,7 +55,10 @@ namespace SPTeam.Core
         /// <summary>当前是否允许发起切换</summary>
         public bool CanRequestSwitch => _orderedCharacterIds.Count > 1 && !IsSwitchLocked;
 
-        /// <summary>计算顺序切换的下一个角色 Id</summary>
+        /// <summary>
+        /// 计算顺序切换的下一个角色 Id
+        /// </summary>
+        /// <returns>下一个角色 Id</returns>
         public string ResolveNextCharacterId()
         {
             return _orderedCharacterIds[(_activeIndex + 1) % _orderedCharacterIds.Count];
@@ -121,6 +124,31 @@ namespace SPTeam.Core
             _hasSwitchInCompleted = true;
             _activeIndex = index;
             return true;
+        }
+
+        /// <summary>
+        /// 强制完成当前切换会话 - 超时兜底用 视入场方为新的当前角色并解锁双锁
+        /// </summary>
+        public void ForceCompleteSession()
+        {
+            if (!IsSwitchLocked)
+                return;
+
+            if (_switchInCharacterId != null)
+            {
+                int index = FindIndex(_orderedCharacterIds, _switchInCharacterId);
+                if (index >= 0)
+                    _activeIndex = index;
+
+                _switchInCharacterId = null;
+                _hasSwitchInCompleted = true;
+            }
+
+            if (_switchOutCharacterId != null)
+            {
+                _switchOutCharacterId = null;
+                _hasSwitchOutCompleted = true;
+            }
         }
 
         private static int FindIndex(IReadOnlyList<string> ids, string target)

@@ -45,7 +45,7 @@ namespace SPTeam.Contract
     public readonly struct TeamSwitchLockChangedEvent
     {
         /// <summary>
-        /// 创建切换锁状态变化事件
+        /// 创建队伍切换锁状态变化事件
         /// </summary>
         /// <param name="isOperationLocked">是否锁定玩家操作</param>
         /// <param name="isSwitchLocked">是否处于切换中</param>

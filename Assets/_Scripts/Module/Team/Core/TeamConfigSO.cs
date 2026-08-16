@@ -46,7 +46,7 @@ namespace SPTeam.Core
                 return false;
             }
 
-            var seenIds = new HashSet<string>(StringComparer.Ordinal);
+            HashSet<string> seenIds = new HashSet<string>(StringComparer.Ordinal);
 
             foreach (TeamCharacterSlot slot in _slots)
             {

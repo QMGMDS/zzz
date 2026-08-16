@@ -1,0 +1,19 @@
+{
+    "name": "Module.SPCharacter",
+    "rootNamespace": "",
+    "references": [
+        "GUID:4c25c05f410a3a447a75c3b0909152ef",
+        "GUID:d327843e5867b3b4fabfaccbbeca4d70",
+        "GUID:06c348f555d47b647b161d6056f01a09",
+        "GUID:b0b39a9b437cf8e488616cb8252e71a4"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

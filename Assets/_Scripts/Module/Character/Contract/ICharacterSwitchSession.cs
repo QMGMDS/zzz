@@ -5,9 +5,9 @@ using SPFramework.Service;
 namespace SPCharacter.Contract
 {
     /// <summary>
-    /// 角色切换服务 - 实例级契约 由每个可切换角色实现并自注册
+    /// 角色切换会话 - 实例级契约 由每个可切换角色实现并按角色 Id 自注册
     /// </summary>
-    public interface ICharacterSwitchService : IInstanceService
+    public interface ICharacterSwitchSession : IInstanceService
     {
         /// <summary>
         /// 请求角色播放退场动画
@@ -15,7 +15,7 @@ namespace SPCharacter.Contract
         void BeginSwitchOut();
 
         /// <summary>
-        /// 请求角色播放上场动画并落位
+        /// 请求角色落位并播放上场动画
         /// </summary>
         /// <param name="pose">上场位置与旋转</param>
         void BeginSwitchIn(Pose pose);

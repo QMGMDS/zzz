@@ -12,7 +12,7 @@ namespace SPInput.Core
     /// 帧输入采集器 - 每帧从 InputBindingConfigSO 读取玩家输入，产出帧级别输入数据
     /// </summary>
     [DefaultExecutionOrder(-400)]
-    internal sealed class FrameInputCollector : MonoBehaviour, IProvideFrameInput
+    internal sealed class FrameInputCollector : MonoBehaviour
     {
         [Header("输入按键绑定配置")]
         [Tooltip("通过 ScriptableObject 配置的 InputActionReference 集合")]

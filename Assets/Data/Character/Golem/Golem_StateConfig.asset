@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da01a99121469d549bfdf76d6e1fe4d3, type: 3}
+  m_Name: Golem_StateConfig
+  m_EditorClassIdentifier: 
+  _entryId: Golem_Idle
+  _nodes:
+  - {fileID: 11400000, guid: f4f7846eb2a715647a0539e48cd49b56, type: 2}
+  - {fileID: 11400000, guid: 1e8b83583fc968c41b65f737554d2724, type: 2}
+  - {fileID: 11400000, guid: 5177cc735f7b6f84895cc2eaddc8ffc0, type: 2}
+  _rules:
+  - _fromId: Golem_Idle
+    _toId: Golem_Run
+    _condition:
+      _required: 2
+      _forbidden: 0
+    _priority: 0
+    _interruptPoint: 0
+  - _fromId: Golem_Idle
+    _toId: Golem_Attack
+    _condition:
+      _required: 4
+      _forbidden: 0
+    _priority: 0
+    _interruptPoint: 0
+  - _fromId: Golem_Run
+    _toId: Golem_Idle
+    _condition:
+      _required: 0
+      _forbidden: 2
+    _priority: 0
+    _interruptPoint: 0
+  - _fromId: Golem_Run
+    _toId: Golem_Attack
+    _condition:
+      _required: 4
+      _forbidden: 0
+    _priority: 0
+    _interruptPoint: 0
+  - _fromId: Golem_Attack
+    _toId: Golem_Idle
+    _condition:
+      _required: 1
+      _forbidden: 0
+    _priority: 0
+    _interruptPoint: 0

@@ -10,14 +10,6 @@
 - 其余包：Cinemachine、TextMeshPro、Timeline。
 - 脚本根目录：`Assets/_Scripts`。
 
-## 工作流
-
-任何开发类请求（新功能、修 Bug、重构，或其他将改动 `Assets/_Scripts` 下 `.cs` 文件的需求）必须先加载 `$dev-workflow` 并按其流程执行；项目文档（zzz-dev）的按需加载、调研、分支、审查与提交均包含在该流程内。
-
-## 代码审查
-
-写完 C# 脚本后必须触发 `$unity-code-guard` 技能走门禁；用户说"跑一次软复核"时也由该技能处理。
-
 ## 注意
 
-- 仅允许修改 `_Script/` 目录下的 `.cs` 文件；`.meta` 和 `.asset` 文件应由 Unity 自动维护，或在用户明确创建/修改时再处理。
+- 仅允许修改 `_Scripts/` 目录下的 `.cs` 文件；`.meta` 和 `.asset` 文件应由 Unity 自动维护，或在用户明确创建/修改时再处理。

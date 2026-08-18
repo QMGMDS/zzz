@@ -1,0 +1,19 @@
+{
+    "name": "Module.SPAI",
+    "rootNamespace": "",
+    "references": [
+        "GUID:d327843e5867b3b4fabfaccbbeca4d70",
+        "GUID:778080f34bcceb047a3726e571c66bca",
+        "GUID:3edc1d5c94f0e294b934fb376e2796b0",
+        "BehaviorDesigner.RuntimeSource"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

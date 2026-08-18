@@ -76,7 +76,7 @@ ModelImporter:
       takeName: Golem_Ani_Run
       internalID: -2834095645514333029
       firstFrame: 0
-      lastFrame: 343
+      lastFrame: 54
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -101,7 +101,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Golem_Ani_Attack_1
+      name: Golem_Ani_Attack
       takeName: Golem_Ani_Attack_01
       internalID: 6738211031474199859
       firstFrame: 0

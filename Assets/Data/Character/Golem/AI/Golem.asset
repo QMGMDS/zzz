@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b23f08d2ae4cba14087c1ed36193d82b, type: 3}
+  m_Name: Golem
+  m_EditorClassIdentifier: 
+  mBehaviorSource:
+    behaviorName: Golem
+    behaviorDescription: 
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: '{"EntryTask":{"Type":"BehaviorDesigner.Runtime.Tasks.EntryTask","NodeData":{"Offset":"(440.8,228.400024)"},"ID":0,"Name":"Entry","Instant":true},"RootTask":{"Type":"BehaviorDesigner.Runtime.Tasks.Selector","NodeData":{"Offset":"(-4.00481033,141.913528)"},"ID":1,"Name":"Selector","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(-1040.65894,192.009628)"},"ID":2,"Name":"\u653b\u51fb","Instant":true,"AbortTypeabortType":"LowerPriority","Children":[{"Type":"SPAI.Wiring.Tasks.HasTargetCondition","NodeData":{"Offset":"(-204.883789,127.777412)"},"ID":3,"Name":"Has
+        Target Condition","Instant":true},{"Type":"SPAI.Wiring.Tasks.TargetInAttackRangeCondition","NodeData":{"Offset":"(-13.3056183,134.864929)"},"ID":4,"Name":"Target
+        In Attack Range Condition","Instant":true},{"Type":"SPAI.Wiring.Tasks.AttackAction","NodeData":{"Offset":"(156.24205,134.864944)"},"ID":5,"Name":"Attack
+        Action","Instant":true}]},{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(-466.292877,197.5)"},"ID":6,"Name":"\u8ffd\u8ff9","Instant":true,"AbortTypeabortType":"LowerPriority","Children":[{"Type":"SPAI.Wiring.Tasks.HasTargetCondition","NodeData":{"Offset":"(-103.894318,121.971077)"},"ID":7,"Name":"Has
+        Target Condition","Instant":true},{"Type":"BehaviorDesigner.Runtime.Tasks.Selector","NodeData":{"Offset":"(67.59607,124.032959)"},"ID":8,"Name":"Selector","Instant":true,"AbortTypeabortType":"Both","Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(-105.203918,162.711121)"},"ID":9,"Name":"Sequence","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"SPAI.Wiring.Tasks.IsTargetVisibleCondition","NodeData":{"Offset":"(-174.803925,142.832886)"},"ID":10,"Name":"Is
+        Target Visible Condition","Instant":true},{"Type":"SPAI.Wiring.Tasks.ChaseTargetAction","NodeData":{"Offset":"(12.3961182,142.832886)"},"ID":11,"Name":"Chase
+        Target Action","Instant":true}]},{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(110,163.47821)"},"ID":12,"Name":"Sequence","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Inverter","NodeData":{"Offset":"(-60.9648132,138.196457)"},"ID":13,"Name":"Inverter","Instant":true,"Children":[{"Type":"SPAI.Wiring.Tasks.IsTargetVisibleCondition","NodeData":{"Offset":"(3.6405468,134.833008)"},"ID":14,"Name":"Is
+        Target Visible Condition","Instant":true}]},{"Type":"SPAI.Wiring.Tasks.MoveToLastSeenTargetAction","NodeData":{"Offset":"(124.768669,136.7341)"},"ID":15,"Name":"Move
+        To Last Seen Target Action","Instant":true},{"Type":"SPAI.Wiring.Tasks.WaitForLastSeenTargetAction","NodeData":{"Offset":"(360.148743,141.6234)"},"ID":16,"Name":"Wait
+        For Last Seen Target Action","Instant":true},{"Type":"BehaviorDesigner.Runtime.Tasks.ReturnFailure","NodeData":{"Offset":"(544.7041,137.177841)"},"ID":17,"Name":"Return
+        Failure","Instant":true,"Children":[{"Type":"SPAI.Wiring.Tasks.ClearTargetAction","NodeData":{"Offset":"(4.14847374,127.815063)"},"ID":18,"Name":"Clear
+        Target Action","Instant":true}]}]}]}]},{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(104.4442,196.388885)"},"ID":19,"Name":"\u8131\u6218\u56de\u5f52","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"SPAI.Wiring.Tasks.IsReturningCondition","NodeData":{"Offset":"(-127.568169,136.109085)"},"ID":20,"Name":"Is
+        Returning Condition","Instant":true},{"Type":"SPAI.Wiring.Tasks.ReturnToAnchorAction","NodeData":{"Offset":"(42.8267746,131.006165)"},"ID":21,"Name":"Return
+        To Anchor Action","Instant":true},{"Type":"SPAI.Wiring.Tasks.ClearReturningAction","NodeData":{"Offset":"(214.757538,135.17868)"},"ID":22,"Name":"Clear
+        Returning Action","Instant":true}]},{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(747.3854,190.792938)"},"ID":23,"Name":"Sequence","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"SPAI.Wiring.Tasks.PickPatrolPointAction","NodeData":{"Offset":"(-173.391083,135.230347)"},"ID":24,"Name":"Pick
+        Patrol Point Action","Instant":true},{"Type":"SPAI.Wiring.Tasks.MoveToPatrolPointAction","NodeData":{"Offset":"(17.808857,137.630371)"},"ID":25,"Name":"Move
+        To Patrol Point Action","Instant":true},{"Type":"SPAI.Wiring.Tasks.WaitPatrolAction","NodeData":{"Offset":"(201.3995,137.230347)"},"ID":26,"Name":"Wait
+        Patrol Action","Instant":true}]}]}}'
+      fieldSerializationData:
+        typeName: []
+        fieldNameHash: 
+        startIndex: 
+        dataPosition: 
+        unityObjects: []
+        byteData: 
+        byteDataArray: 
+      Version: 1.7.12

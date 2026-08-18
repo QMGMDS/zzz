@@ -18,6 +18,7 @@ description: 让 AI 快速上手 My-ZZZ 项目各模块的 API。关键词：项
 
 | 模块 | 参考文档 | 何时加载 |
 | ---- | -------- | -------- |
+| AI 模块 (AI) | [references/ai-module-api.md](references/ai-module-api.md) | 读取敌人 AI 感知、代码黑板、Behavior Designer 节点组合或 AI 与角色/队伍模块的协作方式 |
 | 摄像机模块 (Camera) | [references/camera-module-api.md](references/camera-module-api.md) | 平面方向关联摄像机转世界 XZ 方向、设置摄像机跟随目标 |
 | 角色模块 (Character) | [references/character-module-api.md](references/character-module-api.md) | 驱动单个角色上场/退场切换会话、锁定玩家操作、订阅角色切换事实 |
 | 输入模块 (Input) | [references/input-module-api.md](references/input-module-api.md) | 读取当前帧玩家输入（移动方向、按键按下/长按状态） |

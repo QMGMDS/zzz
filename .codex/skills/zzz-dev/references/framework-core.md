@@ -10,6 +10,7 @@ Assets/
     │   └── Event/                   # 事件广播：EventBus / EventKey
     │
     ├── Module/                      # 模块层
+    │   ├── AI/                       # 敌人 AI 模块（Module.SPAI 程序集）
     │   ├── Camera/                  # 摄像机模块（Module.SPCamera 程序集）
     │   ├── Character/               # 角色模块（Module.SPCharacter 程序集）
     │   ├── Effects/                 # 空占位目录，尚无模块代码
